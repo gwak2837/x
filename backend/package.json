@@ -1,12 +1,20 @@
 {
   "name": "bike",
-  "version": "1.0.50",
+  "version": "1.0.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "NODE_ENV=development bun run --watch src/index.ts",
+    "build": "NODE_ENV=production bun build src/index.ts --target bun --minify --outdir ./out",
+    "start": "NODE_ENV=production bun out/index.js",
+    "compile": "NODE_ENV=production bun build src/index.ts --target bun --minify --compile --outfile bike.bun",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@elysiajs/bearer": "^1.0.2",
     "@elysiajs/cors": "^1.0.2",
+    "@elysiajs/jwt": "^1.0.2",
+    "@elysiajs/server-timing": "^1.0.2",
+    "@elysiajs/stream": "^1.0.3",
+    "@elysiajs/swagger": "^1.0.5",
     "elysia": "^1.0.27"
   },
   "devDependencies": {

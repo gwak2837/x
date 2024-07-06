@@ -17,3 +17,9 @@ bun run dev
 ```
 
 Open http://localhost:3000/ with your browser to see the result.
+
+## TODO
+
+- Dockerfile
+  ci
+  route handlers file 분리

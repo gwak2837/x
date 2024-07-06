@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+  <head>
+    <title>WebSocket Test</title>
+  </head>
+  <body>
+    <h1>WebSocket Test</h1>
+    <button onclick="sendMessage()">Send Message</button>
+    <div id="messages"></div>
+
+    <script>
+      const socket = new WebSocket('ws://localhost:4000/ws')
+
+      socket.addEventListener('open', (event) => {
+        console.log('Connected to the server')
+        document.getElementById('messages').innerHTML += '<p>Connected to the server</p>'
+      })
+
+      socket.addEventListener('message', (event) => {
+        console.log('Message from server:', event.data)
+        document.getElementById('messages').innerHTML += `<p>${event.data}</p>`
+      })
+
+      socket.addEventListener('close', (event) => {
+        console.log('Disconnected from the server')
+        document.getElementById('messages').innerHTML += '<p>Disconnected from the server</p>'
+      })
+
+      function sendMessage() {
+        const message = 'Hello, Server!'
+        socket.send(message)
+        console.log('Sent:', message)
+        document.getElementById('messages').innerHTML += `<p>Sent: ${message}</p>`
+      }
+    </script>
+  </body>
+</html>
