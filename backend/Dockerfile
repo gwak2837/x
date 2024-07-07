@@ -2,18 +2,16 @@
 FROM oven/bun:1 as builder
 
 WORKDIR /app
-ENV NODE_ENV production
 
-COPY package.json .
-COPY bun.lockb .
+COPY package.json bun.lockb ./
 RUN bun install --production --silent --frozen-lockfile
 
 COPY src src
-COPY tsconfig.json .
+COPY tsconfig.json ./
 RUN bun run compile
 
 # Run time
-FROM gcr.io/distroless/base-nossl-debian12:nonroot as runner
+FROM gcr.io/distroless/base-nossl-debian12:nonroot
 
 WORKDIR /app
 

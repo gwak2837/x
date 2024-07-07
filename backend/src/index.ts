@@ -2,11 +2,12 @@ import cors from '@elysiajs/cors'
 import { Elysia, t } from 'elysia'
 import { PORT } from './constants'
 import swagger from '@elysiajs/swagger'
-import serverTiming from '@elysiajs/server-timing'
 import route from './route'
 import auth from './plugin/auth'
+import serverTiming from '@elysiajs/server-timing'
+import { logger } from '@bogeychan/elysia-logger'
 
-// TODO: Logger, Rate limit, OAuth2
+// TODO: Rate limit, OAuth2
 export type BaseElysia = typeof app
 const app = new Elysia()
   .use(
@@ -19,6 +20,7 @@ const app = new Elysia()
   )
   .use(serverTiming())
   .use(swagger())
+  .use(logger())
   .use(auth())
   .get('/healthz', () => new Response(process.env.NODE_ENV, { status: 200 }), {
     response: { 200: t.String() },
@@ -31,6 +33,11 @@ const app = new Elysia()
     },
     { response: { 200: t.String() } },
   )
+
+if (process.env.NODE_ENV !== 'production') {
+  const { default: example } = await import('./plugin/example')
+  app.use(example)
+}
 
 app.use(route).listen(PORT)
 
