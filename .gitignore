@@ -173,3 +173,11 @@ dist
 .svelte-kit
 
 # End of https://www.toptal.com/developers/gitignore/api/node,nextjs
+
+**/*.trace
+**/*.zip
+**/*.tar.gz
+**/*.tgz
+**/*.log
+package-lock.json
+**/*.bun

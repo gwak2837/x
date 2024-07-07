@@ -23,3 +23,5 @@ Open http://localhost:3000/ with your browser to see the result.
 - Dockerfile
   ci
   route handlers file 분리
+  eslint monorepo
+  husky
