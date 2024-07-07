@@ -13,8 +13,8 @@ export enum UserSex {
 }
 
 export enum UserSuspendedType {
-  SELF = 0,
-  BLOCK = 1,
+  SELF = 0, // 스스로
+  BLOCK = 1, // 차단
   SLEEP = 2, // 휴면 계정
   DELETE = 3, // 삭제 유예 기간
 }

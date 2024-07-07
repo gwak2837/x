@@ -6,9 +6,8 @@ import { PostStatus } from '../../../model/Post'
 export default (app: BaseElysia) =>
   app.get(
     '/post/:id',
-    async ({ params, prisma, user }) => {
+    async ({ params, prisma, userId }) => {
       const postId = toBigInt(params.id)
-      const userId = user?.id
 
       const [post] = await prisma.$queryRaw<[PostQuery?]>`
         SELECT "Post".id,

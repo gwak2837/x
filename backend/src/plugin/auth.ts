@@ -1,18 +1,18 @@
 import Elysia from 'elysia'
-import { verifyJWT, Type } from '../utils/jwt'
+import { verifyJWT, TokenType } from '../utils/jwt'
 
 export default () => (app: Elysia) =>
   app.derive(async ({ error, headers }) => {
-    const auth = headers?.['authorization']
+    const auth = headers?.['Authorization']
     const token = auth?.startsWith('Bearer ') ? auth.slice(7) : auth
     if (!token) return {}
 
     try {
-      const { sub: userId } = await verifyJWT(token, Type.ACCESS)
+      const { sub: userId } = await verifyJWT(token, TokenType.ACCESS)
       if (!userId) return error(422)
 
-      return { user: { id: userId } }
+      return { userId }
     } catch (_) {
-      return error(401)
+      return {}
     }
   })

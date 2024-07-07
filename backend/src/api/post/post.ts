@@ -6,12 +6,10 @@ import { PostStatus } from '../../model/Post'
 export default (app: BaseElysia) =>
   app.post(
     '/post',
-    async ({ body, error, prisma, user }) => {
-      if (!user) return error(401, 'Unauthorized')
+    async ({ body, error, prisma, userId }) => {
+      if (!userId) return error(401, 'Unauthorized')
 
       const { publishAt } = body
-      const userId = user.id
-
       if (publishAt && new Date(publishAt) < new Date()) return error(400, 'Bad request')
 
       const parentPostId = body.parentPostId

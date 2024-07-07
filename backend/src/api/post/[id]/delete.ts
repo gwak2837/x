@@ -1,4 +1,4 @@
-import { NotFoundError, t } from 'elysia'
+import { InternalServerError, NotFoundError, t } from 'elysia'
 import { BaseElysia } from '../../..'
 import { toBigInt } from '../../../utils'
 import { PrismaError } from '../../../plugin/prisma'
@@ -6,19 +6,18 @@ import { PrismaError } from '../../../plugin/prisma'
 export default (app: BaseElysia) =>
   app.delete(
     '/post/:id',
-    async ({ error, params, prisma, user }) => {
-      const postId = toBigInt(params.id)
-      const userId = user?.id
+    async ({ error, params, prisma, userId }) => {
       if (!userId) return error(401, 'Unauthorized')
 
+      const postId = toBigInt(params.id)
       const deletedPost = await prisma.post
         .update({
           where: { id: postId, authorId: userId },
-          data: { deletedAt: new Date() },
+          data: { deletedAt: new Date(), content: null, imageURLs: [], referredPostId: null },
         })
         .catch((err) => {
           if (err.code === PrismaError.RECORD_NOT_FOUND) return null
-          throw err
+          throw new InternalServerError()
         })
       if (!deletedPost) throw new NotFoundError()
 
