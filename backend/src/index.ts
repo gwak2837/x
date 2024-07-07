@@ -6,6 +6,7 @@ import route from './route'
 import auth from './plugin/auth'
 import serverTiming from '@elysiajs/server-timing'
 import { logger } from '@bogeychan/elysia-logger'
+import prisma from './plugin/prisma'
 
 // TODO: Rate limit, OAuth2
 export type BaseElysia = typeof app
@@ -22,16 +23,25 @@ const app = new Elysia()
   .use(swagger())
   .use(logger())
   .use(auth())
-  .get('/healthz', () => new Response(process.env.NODE_ENV, { status: 200 }), {
-    response: { 200: t.String() },
-  })
+  .use(prisma())
+  .get('/healthz', () => 'OK', { response: { 200: t.String() } })
+  .get('/livez', () => 'OK', { response: { 200: t.String() } })
   .get(
     '/readyz',
-    () => {
-      // TODO: redis, database 연결 확인
-      return new Response('OK', { status: 200 })
+    async ({ error, prisma }) => {
+      type Result = [{ current_timestamp: Date }]
+      const result = await prisma.$queryRaw<Result>`SELECT CURRENT_TIMESTAMP`.catch(() => null)
+      const data = result?.[0]
+      if (!data) return error(502, 'Bad Gateway')
+
+      return data
     },
-    { response: { 200: t.String() } },
+    {
+      response: {
+        200: t.Object({ current_timestamp: t.Date() }),
+        502: t.String(),
+      },
+    },
   )
 
 if (process.env.NODE_ENV !== 'production') {

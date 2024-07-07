@@ -2,11 +2,11 @@
   "name": "bike",
   "version": "1.0.0",
   "scripts": {
-    "dev": "NODE_ENV=development bun run --watch src/index.ts",
+    "dev": "NODE_ENV=development bun --env-file=.env.development.local run --watch src/index.ts",
     "build": "NODE_ENV=production bun build src/index.ts --minify --outdir ./out",
-    "start": "NODE_ENV=production bun out/index.js",
+    "start": "NODE_ENV=production bun --env-file=.env.production.local out/index.js",
     "compile": "NODE_ENV=production bun build src/index.ts --minify --compile --outfile app.bun",
-    "migrate": "dotenv -e .env.local -- npx prisma migrate deploy",
+    "migrate": "dotenv -e .env.local -- bunx prisma migrate deploy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -15,6 +15,7 @@
     "@elysiajs/server-timing": "^1.0.2",
     "@elysiajs/stream": "^1.0.3",
     "@elysiajs/swagger": "^1.0.5",
+    "@prisma/client": "^5.16.1",
     "elysia": "^1.0.27",
     "jose": "^5.6.3"
   },
