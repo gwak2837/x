@@ -9,7 +9,7 @@ datasource db {
 }
 
 model User {
-  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id               BigInt    @id @default(autoincrement())
   createdAt        DateTime  @default(now())
   updatedAt        DateTime? @updatedAt
   suspendedAt      DateTime?
@@ -35,10 +35,10 @@ model User {
 // invitation_code char(8) UNIQUE DEFAULT unique_random(8, 'user', 'invitation_code'),
 
 model UserFollow {
+  leaderId   BigInt
   leader     User   @relation("following", fields: [leaderId], references: [id])
-  leaderId   String @db.Uuid
+  followerId BigInt
   follower   User   @relation("followers", fields: [followerId], references: [id])
-  followerId String @db.Uuid
 
   @@id([leaderId, followerId])
 }
@@ -50,11 +50,11 @@ model OAuth {
   email           String?  @db.VarChar(255)
   profileImageURL String?
 
-  userId String? @db.Uuid
+  userId BigInt?
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@id([id, provider])
-  @@index([userId], type: Hash)
+  @@index([userId])
 }
 
 model Post {
@@ -68,15 +68,15 @@ model Post {
   content   String?
   imageURLs String[]
 
-  authorId       String? @db.Uuid
+  authorId       BigInt?
   author         User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
   parentPostId   BigInt?
   parentPost     Post?   @relation("PostThread", fields: [parentPostId], references: [id])
-  childrenPosts  Post[]  @relation("PostThread")
   referredPostId BigInt?
+  childrenPosts  Post[]  @relation("PostThread")
   referredPost   Post?   @relation("PostReference", fields: [referredPostId], references: [id])
   referringPosts Post[]  @relation("PostReference")
 
-  // NOTE(gwak): https://dba.stackexchange.com/questions/225271/does-it-make-sense-to-create-an-index-on-foreign-key-uuid-column-in-postgres
-  @@index([authorId], type: Hash)
+  // NOTE: https://dba.stackexchange.com/questions/225271/does-it-make-sense-to-create-an-index-on-foreign-key-uuid-column-in-postgres
+  @@index([authorId])
 }

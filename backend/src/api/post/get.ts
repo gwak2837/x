@@ -36,10 +36,10 @@ export default (app: BaseElysia) =>
           "ReferredAuthor"."profileImageURLs" AS "referredAuthor_profileImageURLs",
         FROM "Post"
           LEFT JOIN "User" AS "Author" ON  "Author".id = "Post"."authorId"
-          LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author"."id" AND "UserFollow"."followerId" = ${userId}::uuid
+          LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author"."id" AND "UserFollow"."followerId" = ${userId}
         WHERE "Post".id < ${cursor} AND 
           "Post"."publishAt" <= CURRENT_TIMESTAMP AND 
-          "Post"."authorId" != ${userId}::uuid AND (
+          "Post"."authorId" != ${userId} AND (
             "Post".status = ${PostStatus.PUBLIC} OR 
             "Post".status = ${PostStatus.ONLY_FOLLOWERS} AND "UserFollow"."leaderId" IS NOT NULL
           )

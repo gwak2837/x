@@ -10,10 +10,13 @@ export default (app: BaseElysia) =>
       if (!userId) return error(401, 'Unauthorized')
 
       const postId = toBigInt(params.id)
+      if (!postId) return error(400, 'Bad Request')
+
       const deletedPost = await prisma.post
         .update({
           where: { id: postId, authorId: userId },
           data: { deletedAt: new Date(), content: null, imageURLs: [], referredPostId: null },
+          select: { id: true, deletedAt: true },
         })
         .catch((err) => {
           if (err.code === PrismaError.RECORD_NOT_FOUND) return null
@@ -22,7 +25,7 @@ export default (app: BaseElysia) =>
       if (!deletedPost) throw new NotFoundError()
 
       return {
-        id: deletedPost.id.toString(),
+        id: deletedPost.id,
         deletedAt: deletedPost.deletedAt!,
       }
     },
@@ -30,9 +33,10 @@ export default (app: BaseElysia) =>
       params: t.Object({ id: t.String() }),
       response: {
         200: t.Object({
-          id: t.String(),
+          id: t.BigInt(),
           deletedAt: t.Optional(t.Date()),
         }),
+        400: t.String(),
         401: t.String(),
         404: t.String(),
       },

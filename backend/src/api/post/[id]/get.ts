@@ -61,10 +61,10 @@ export default (app: BaseElysia) =>
         imageURLs: post.imageURLs ?? undefined,
         ...(post.author_id && {
           author: {
-            id: post.author_id,
-            name: post.author_name ?? undefined ?? undefined,
-            nickname: post.author_nickname ?? undefined ?? undefined,
-            profileImageURLs: post.author_profileImageURLs ?? undefined ?? undefined,
+            id: post.author_id.toString(),
+            name: post.author_name ?? undefined,
+            nickname: post.author_nickname ?? undefined,
+            profileImageURLs: post.author_profileImageURLs ?? undefined,
           },
         }),
         ...(post.referredPost_id && {
@@ -79,7 +79,7 @@ export default (app: BaseElysia) =>
             imageURLs: post.referredPost_imageURLs ?? undefined,
             ...(post.referredPostAuthor_id && {
               author: {
-                id: post.referredPostAuthor_id,
+                id: post.referredPostAuthor_id.toString(),
                 name: post.referredPostAuthor_name ?? undefined,
                 nickname: post.referredPostAuthor_nickname ?? undefined,
                 profileImageURLs: post.referredPostAuthor_profileImageURLs ?? undefined,
@@ -110,7 +110,7 @@ export type PostQuery = {
   status: number
   content: string | null
   imageURLs: string[] | null
-  author_id: string | null
+  author_id: bigint | null
   author_name: string | null
   author_nickname: string | null
   author_profileImageURLs: string[] | null
@@ -122,7 +122,7 @@ export type PostQuery = {
   referredPost_status: number | null
   referredPost_content: string | null
   referredPost_imageURLs: string[] | null
-  referredPostAuthor_id: string | null
+  referredPostAuthor_id: bigint | null
   referredPostAuthor_name: string | null
   referredPostAuthor_nickname: string | null
   referredPostAuthor_profileImageURLs: string[] | null

@@ -1,5 +1,7 @@
-export function toBigInt<T extends string | undefined>(
-  value: T,
-): T extends string ? bigint : undefined {
-  return (value ? BigInt(value) : undefined) as T extends string ? bigint : undefined
+export function toBigInt(value: string | undefined | null) {
+  try {
+    return value ? BigInt(value) : null
+  } catch (_) {
+    return null
+  }
 }

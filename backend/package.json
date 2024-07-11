@@ -6,7 +6,8 @@
     "build": "NODE_ENV=production bun build src/index.ts --minify --outdir ./out",
     "start": "NODE_ENV=production bun --env-file=.env.production.local out/index.js",
     "compile": "NODE_ENV=production bun build src/index.ts --minify --compile --outfile app.bun",
-    "migrate": "dotenv -e .env.local -- bunx prisma migrate deploy",
+    "migrate": "dotenv -e .env.production -- bunx prisma migrate deploy",
+    "migrate:dev": "dotenv -e .env.development.local -- bunx prisma migrate dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

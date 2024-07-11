@@ -15,7 +15,7 @@ export default (app: BaseElysia) =>
     .get('/404', () => {
       throw new NotFoundError('Not found')
     })
-    .get('/user', ({ userId }) => ({ userId }), {
+    .get('/user', ({ userId }) => ({ userId: userId?.toString() }), {
       response: { 200: t.Object({ userId: t.Optional(t.String()) }) },
     })
     .get(

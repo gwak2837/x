@@ -2,6 +2,7 @@ import { t } from 'elysia'
 import { BaseElysia } from '../../..'
 import { signJWT, TokenType, verifyJWT } from '../../../utils/jwt'
 import { LoginNotAllowed } from '../../../utils/auth'
+import { toBigInt } from '../../../utils'
 
 export default (app: BaseElysia) =>
   app.post(
@@ -12,7 +13,10 @@ export default (app: BaseElysia) =>
       if (!token) return error(401, 'Unauthorized')
 
       try {
-        const { sub: userId } = await verifyJWT(token, TokenType.REFRESH)
+        const { sub } = await verifyJWT(token, TokenType.REFRESH)
+        if (!sub) return error(422, 'Unprocessable Content')
+
+        const userId = toBigInt(sub)
         if (!userId) return error(422, 'Unprocessable Content')
 
         const user = await prisma.user.findUnique({
@@ -22,7 +26,7 @@ export default (app: BaseElysia) =>
         if (!user || (user.suspendedType && LoginNotAllowed.includes(user.suspendedType)))
           return error(403, 'Forbidden')
 
-        return { accessToken: await signJWT({ sub: userId }, TokenType.REFRESH) }
+        return { accessToken: await signJWT({ sub }, TokenType.REFRESH) }
       } catch (_) {
         return error(401, 'Unauthorized')
       }
