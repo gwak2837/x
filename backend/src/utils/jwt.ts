@@ -7,13 +7,13 @@ export enum TokenType {
 }
 
 export async function signJWT(payload: JWTPayload, type: TokenType): Promise<string> {
-  // NOTE(taeuk): https://developer.amazon.com/docs/login-with-amazon/access-token.html#:~:text=%22bearer%22%2C-,%22expires_in%22%3A3600%2C,-%22refresh_token%22%3A
-  const exp = Math.floor(Date.now() / 1000) + type === TokenType.ACCESS ? 3600 : 3600 * 720
+  // NOTE: https://developer.amazon.com/docs/login-with-amazon/access-token.html
+  const duration = type === TokenType.ACCESS ? 3600 : 3600 * 720
   const secretKey = type === TokenType.ACCESS ? ACCESS_JWT_SECRET : REFRESH_JWT_SECRET
 
   return await new SignJWT({ ...payload, iss: DOMAIN_NAME })
     .setProtectedHeader({ alg: 'HS256' })
-    .setExpirationTime(exp)
+    .setExpirationTime(Math.floor(Date.now() / 1000) + duration)
     .sign(new TextEncoder().encode(secretKey))
 }
 

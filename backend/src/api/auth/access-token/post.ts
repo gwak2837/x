@@ -1,11 +1,11 @@
 import { t } from 'elysia'
 import { BaseElysia } from '../../..'
 import { signJWT, TokenType, verifyJWT } from '../../../utils/jwt'
-import { UserSuspendedType } from '../../../model/User'
+import { LoginNotAllowed } from '../../../utils/auth'
 
 export default (app: BaseElysia) =>
   app.post(
-    '/post',
+    '/auth/access-token',
     async ({ error, headers, prisma }) => {
       const auth = headers?.['Authorization']
       const token = auth?.startsWith('Bearer ') ? auth.slice(7) : auth
@@ -19,7 +19,7 @@ export default (app: BaseElysia) =>
           select: { suspendedType: true },
           where: { id: userId },
         })
-        if (!user || (user.suspendedType && noAccessToken.includes(user.suspendedType)))
+        if (!user || (user.suspendedType && LoginNotAllowed.includes(user.suspendedType)))
           return error(403, 'Forbidden')
 
         return { accessToken: await signJWT({ sub: userId }, TokenType.ACCESS) }
@@ -37,5 +37,3 @@ export default (app: BaseElysia) =>
       },
     },
   )
-
-const noAccessToken = [UserSuspendedType.BLOCK, UserSuspendedType.SLEEP, UserSuspendedType.DELETE]

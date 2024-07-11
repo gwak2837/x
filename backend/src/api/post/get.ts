@@ -4,7 +4,7 @@ import { PostStatus } from '../../model/Post'
 import { t } from 'elysia'
 
 export default (app: BaseElysia) =>
-  app.post(
+  app.get(
     '/post',
     async ({ prisma, query, userId }) => {
       const { cursor = POSTGRES_MAX_BIGINT, limit = 30 /* only = PostsOnly.ALL */ } = query
