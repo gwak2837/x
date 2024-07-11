@@ -1,3 +1,6 @@
+# Bundling example
+# `Dockerfile.bundle` 방식보다 `Dockerfile` 방식이 더 좋음
+
 # Build time
 FROM oven/bun:1-alpine as builder
 
