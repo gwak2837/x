@@ -65,7 +65,7 @@ export default (app: BaseElysia) =>
             select: { id: true },
           })
           .catch((error) => {
-            // NOTE: 위 쿼리가 여러 번 실행될 수 있어 UNIQUE_CONSTRAINT을 만족하지 못할 수 있다
+            // NOTE: React dev 환경에선 위 쿼리가 2번 실행될 수 있어 UNIQUE_CONSTRAINT 오류가 발생할 수 있음
             if (error.code === PrismaError.UNIQUE_CONSTRAINT_FAILED) return null
             throw error
           })
@@ -76,9 +76,12 @@ export default (app: BaseElysia) =>
           refreshToken: await signJWT({ sub: user.id.toString() }, TokenType.REFRESH),
         }
       } else if (!oauth.user_id) {
-        return error(403, 'You have already signed up with this BBaton account before.')
+        return error(
+          403,
+          '해당 BBaton 계정으로 이미 회원가입한 적이 있어서 다시 가입할 수 없습니다.\n자세한 사항은 고객센터에 문의해주세요.',
+        )
       } else if (oauth.user_suspendedType) {
-        const msg = `You cannot login with this account bacause:\n${oauth.user_suspendedReason}`
+        const msg = `로그인 할 수 없습니다. 이유:\n${oauth.user_suspendedReason}`
         return error(403, msg)
       }
 
@@ -86,9 +89,9 @@ export default (app: BaseElysia) =>
         headers: { Authorization: `Bearer ${token.access_token}` },
       })
         .then(async (bbatonUserResponse) => await bbatonUserResponse.json())
-        .then(async (bbatonUser: BBatonUserResponse) => {
+        .then((bbatonUser: BBatonUserResponse) => {
           if (!bbatonUser.user_id || !oauth.user_id) return
-          await prisma.user.update({
+          prisma.user.update({
             data: {
               ageRange: +bbatonUser.birth_year,
               sex: encodeBBatonGender(bbatonUser.gender),
@@ -98,7 +101,7 @@ export default (app: BaseElysia) =>
           })
         })
         .catch((error) =>
-          console.warn('Warn: Fail to update age range of user from BBaton.\n' + error),
+          console.warn('경고: BBaton 사용자 정보를 가져오는데 실패했습니다.\n' + error),
         )
 
       return {
