@@ -1,5 +1,6 @@
 'use client'
 
+import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
 import { useState } from 'react'
 
 export default function CORSTest() {
@@ -8,14 +9,14 @@ export default function CORSTest() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:4000')
+      const response = await fetch(NEXT_PUBLIC_BACKEND_URL)
       if (!response.ok) throw new Error('Network response was not ok')
       const result = await response.text()
       setData(result)
       setError(null)
-    } catch (err: any) {
+    } catch (error: any) {
       setData('')
-      setError(err.message)
+      setError(error.message)
     }
   }
 

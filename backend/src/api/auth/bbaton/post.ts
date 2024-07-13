@@ -5,8 +5,6 @@ import { PrismaError } from '../../../plugin/prisma'
 import { signJWT, TokenType } from '../../../utils/jwt'
 import { BBATON_CLIENT_ID, BBATON_CLIENT_SECRET, BBATON_REDIRECT_URI } from '../../../constants'
 
-const base64Token = btoa(`${BBATON_CLIENT_ID}:${BBATON_CLIENT_SECRET}`)
-
 export default (app: BaseElysia) =>
   app.post(
     '/auth/bbaton',
@@ -31,6 +29,7 @@ export default (app: BaseElysia) =>
       const bbatonUsername: string = JSON.parse(atob(token.access_token.split('.')[1])).user_name
       if (!bbatonUsername) return error(502, 'Bad Gateway')
 
+      // NOTE: 동시성 처리가 없어 도중에 탈퇴하면 의도치 않은 문제가 생길 수 있음
       const [oauth] = await prisma.$queryRaw<[OAuthUserRow?]>`
         SELECT "OAuth".id,
           "User".id AS "user_id",
@@ -53,7 +52,7 @@ export default (app: BaseElysia) =>
         const user = await prisma.user
           .create({
             data: {
-              ageRange: +bbatonUser.birth_year,
+              ageRange: encodeBBatonAge(bbatonUser.birth_year, bbatonUser.adult_flag),
               sex: encodeBBatonGender(bbatonUser.gender),
               oAuth: {
                 create: {
@@ -90,10 +89,10 @@ export default (app: BaseElysia) =>
       })
         .then(async (bbatonUserResponse) => await bbatonUserResponse.json())
         .then((bbatonUser: BBatonUserResponse) => {
-          if (!bbatonUser.user_id || !oauth.user_id) return
+          if (!bbatonUser.user_id) return
           prisma.user.update({
             data: {
-              ageRange: +bbatonUser.birth_year,
+              ageRange: encodeBBatonAge(bbatonUser.birth_year, bbatonUser.adult_flag),
               sex: encodeBBatonGender(bbatonUser.gender),
             },
             where: { id: oauth.user_id },
@@ -101,7 +100,7 @@ export default (app: BaseElysia) =>
           })
         })
         .catch((error) =>
-          console.warn('경고: BBaton 사용자 정보를 가져오는데 실패했습니다.\n' + error),
+          console.warn('BBaton 사용자 정보를 가져와서 업데이트 하는데 실패했습니다.\n' + error),
         )
 
       return {
@@ -123,6 +122,8 @@ export default (app: BaseElysia) =>
     },
   )
 
+const base64Token = btoa(`${BBATON_CLIENT_ID}:${BBATON_CLIENT_SECRET}`)
+
 type BBatonTokenResponse = {
   access_token: string
   token_type: 'bearer'
@@ -135,8 +136,8 @@ type BBatonUserResponse = {
   adult_flag: string
   birth_year: string
   gender: string
-  income?: string
-  student?: string
+  income: string
+  student: string
 }
 
 type OAuthUserRow = {
@@ -159,4 +160,11 @@ function encodeBBatonGender(gender: string) {
     default:
       return 0
   }
+}
+
+function encodeBBatonAge(age: string, adultFlag: string) {
+  if (age === '20' && adultFlag === 'N') {
+    return 19
+  }
+  return +age
 }

@@ -1,6 +1,8 @@
 import { NEXT_PUBLIC_BBATON_CLIENT_ID, NEXT_PUBLIC_BBATON_REDIRECT_URI } from '@/common/constants'
-import { PageProps } from '@/common/types'
+
 import Image from 'next/image'
+import Login from './Login'
+import { PageProps } from '@/types/nextjs'
 
 export default async function Page({ params, searchParams }: PageProps) {
   return (
@@ -13,8 +15,10 @@ export default async function Page({ params, searchParams }: PageProps) {
           height="100"
           src="/images/BBaton_Logo_Login_KR_v2.png"
           width="350"
+          priority
         />
       </a>
+      <Login />
       <pre className="overflow-x-scroll">{JSON.stringify({ params, searchParams }, null, 2)}</pre>
     </main>
   )
