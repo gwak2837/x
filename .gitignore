@@ -183,3 +183,7 @@ package-lock.json
 **/*.bun
 .env.development
 .env.production
+*.key
+*.csr
+*.crt
+*.srl
