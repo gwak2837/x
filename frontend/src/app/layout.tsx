@@ -1,9 +1,10 @@
-import type { Metadata } from 'next'
-
 import './globals.css'
-import { Toaster } from 'react-hot-toast'
-import Authentication from './Authentication'
+
 import { LayoutProps } from '@/types/nextjs'
+import type { Metadata } from 'next'
+import { Toaster } from 'react-hot-toast'
+
+import Authentication from './Authentication'
 
 export const metadata: Metadata = {
   title: 'Bike',

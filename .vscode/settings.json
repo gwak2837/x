@@ -1,4 +1,5 @@
 {
+  "editor.codeActionsOnSave": { "source.fixAll": "explicit" },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.insertSpaces": true,
@@ -11,28 +12,16 @@
     "**/.pnp.*": true,
     "**/out": true
   },
-  "turboConsoleLog.includeFileNameAndLineNum": false,
-  "turboConsoleLog.logMessagePrefix": "👀",
   "sqltools.format": {
     "linesBetweenQueries": 2,
     "reservedWordCase": "upper"
   },
-  "[dockerfile]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
-  },
-  "[dotenv]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
-  },
-  "[ignore]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
-  },
-  "[prisma]": {
-    "editor.defaultFormatter": "Prisma.prisma"
-  },
-  "[shellscript]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
-  },
-  "[sql]": {
-    "editor.defaultFormatter": "mtxr.sqltools"
-  }
+  "turboConsoleLog.includeFileNameAndLineNum": false,
+  "turboConsoleLog.logMessagePrefix": "👀",
+  "[dockerfile]": { "editor.defaultFormatter": "foxundermoon.shell-format" },
+  "[dotenv]": { "editor.defaultFormatter": "foxundermoon.shell-format" },
+  "[ignore]": { "editor.defaultFormatter": "foxundermoon.shell-format" },
+  "[prisma]": { "editor.defaultFormatter": "Prisma.prisma" },
+  "[shellscript]": { "editor.defaultFormatter": "foxundermoon.shell-format" },
+  "[sql]": { "editor.defaultFormatter": "mtxr.sqltools" }
 }

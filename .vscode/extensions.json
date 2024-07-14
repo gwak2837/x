@@ -4,7 +4,6 @@
     "christian-kohler.npm-intellisense",
     "christian-kohler.path-intellisense",
     "ms-azuretools.vscode-docker",
-    "mtxr.sqltools",
     "foxundermoon.shell-format",
     "ckolkman.vscode-postgres",
     "dbaeumer.vscode-eslint",

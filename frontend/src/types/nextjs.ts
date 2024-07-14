@@ -11,7 +11,9 @@ export type PageProps<T extends Record<string, unknown> = Record<string, string>
 }
 
 export type ErrorProps = {
-  error: Error
+  error: Error & {
+    digest?: string
+  }
   reset: () => void
 }
 

@@ -1,15 +1,17 @@
-import cors from '@elysiajs/cors'
-import { Elysia, t } from 'elysia'
-import { PORT } from './constants'
-import swagger from '@elysiajs/swagger'
-import route from './route'
-import auth from './plugin/auth'
-import serverTiming from '@elysiajs/server-timing'
 import { logger } from '@bogeychan/elysia-logger'
+import cors from '@elysiajs/cors'
+import serverTiming from '@elysiajs/server-timing'
+import swagger from '@elysiajs/swagger'
+import { Elysia, t } from 'elysia'
+
+import { PORT } from './constants'
+import auth from './plugin/auth'
 import prisma from './plugin/prisma'
+import route from './route'
 
 // TODO: Rate limit, OAuth2
 export type BaseElysia = typeof app
+
 const app = new Elysia()
   .use(
     cors({

@@ -1,5 +1,6 @@
 import { JWTPayload, SignJWT, jwtVerify } from 'jose'
-import { ACCESS_JWT_SECRET, REFRESH_JWT_SECRET, DOMAIN_NAME } from '../constants'
+
+import { ACCESS_JWT_SECRET, DOMAIN_NAME, REFRESH_JWT_SECRET } from '../constants'
 
 export enum TokenType {
   ACCESS,

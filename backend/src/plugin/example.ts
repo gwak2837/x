@@ -1,6 +1,7 @@
-import { NotFoundError, t } from 'elysia'
-import { BaseElysia } from '..'
 import Stream from '@elysiajs/stream'
+import { NotFoundError, t } from 'elysia'
+
+import { BaseElysia } from '..'
 
 export default (app: BaseElysia) =>
   app

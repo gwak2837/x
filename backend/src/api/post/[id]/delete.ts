@@ -1,7 +1,8 @@
 import { InternalServerError, NotFoundError, t } from 'elysia'
+
 import { BaseElysia } from '../../..'
-import { toBigInt } from '../../../utils'
 import { PrismaError } from '../../../plugin/prisma'
+import { toBigInt } from '../../../utils'
 
 export default (app: BaseElysia) =>
   app.delete(

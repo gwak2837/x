@@ -5,13 +5,7 @@ import * as Sentry from '@sentry/nextjs'
 import NextError from 'next/error'
 import { useEffect } from 'react'
 
-type Props = ErrorProps & {
-  error: Error & {
-    digest?: string
-  }
-}
-
-export default function GlobalError({ error }: Props) {
+export default function GlobalError({ error }: ErrorProps) {
   useEffect(() => {
     Sentry.captureException(error)
   }, [error])

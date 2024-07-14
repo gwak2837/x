@@ -1,8 +1,9 @@
 import { t } from 'elysia'
+
 import { BaseElysia } from '../../..'
-import { signJWT, TokenType, verifyJWT } from '../../../utils/jwt'
-import { LoginNotAllowed } from '../../../utils/auth'
 import { toBigInt } from '../../../utils'
+import { LoginNotAllowed } from '../../../utils/auth'
+import { TokenType, signJWT, verifyJWT } from '../../../utils/jwt'
 
 export default (app: BaseElysia) =>
   app.post(

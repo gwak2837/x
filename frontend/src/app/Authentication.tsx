@@ -21,7 +21,7 @@ export default function Authentication() {
     async function fetchAccessToken(retries: number, delay: number) {
       if (retries < 0) {
         localStorage.removeItem('refreshToken')
-        toast.error('알 수 없는 오류가 발생했어요. 잠시 후 다시 시도해주세요.')
+        toast.error('인증 오류가 발생했어요. 잠시 후 다시 시도해주세요.')
         return
       }
 
@@ -39,7 +39,6 @@ export default function Authentication() {
           toast.error('로그인할 수 없어요')
           return
         } else if (!response.ok) {
-          // TODO: sentry 보내기 {response}
           await sleep(delay)
           fetchAccessToken(retries - 1, delay * 2)
           return
@@ -48,7 +47,6 @@ export default function Authentication() {
         const { accessToken } = await response.json()
         setAccessToken(accessToken)
       } catch (error) {
-        // TODO: sentry 보내기 {error}
         await sleep(delay)
         fetchAccessToken(retries - 1, delay * 3)
       }

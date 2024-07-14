@@ -1,8 +1,8 @@
 import { NEXT_PUBLIC_BBATON_CLIENT_ID, NEXT_PUBLIC_BBATON_REDIRECT_URI } from '@/common/constants'
-
-import Image from 'next/image'
-import Login from './Login'
 import { PageProps } from '@/types/nextjs'
+import Image from 'next/image'
+
+import Login from './Login'
 
 export default async function Page({ params, searchParams }: PageProps) {
   return (

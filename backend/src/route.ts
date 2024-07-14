@@ -1,3 +1,4 @@
+import { BaseElysia } from '.'
 import getAccessToken from './api/auth/access-token/post'
 import loginByBBaton from './api/auth/bbaton/post'
 import getRefreshToken from './api/auth/refresh-token/post'
@@ -6,7 +7,6 @@ import getPost from './api/post/[id]/get'
 import updatePost from './api/post/[id]/patch'
 import getPosts from './api/post/get'
 import createPost from './api/post/post'
-import { BaseElysia } from '.'
 
 export default (app: BaseElysia) =>
   app

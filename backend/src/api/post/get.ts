@@ -1,7 +1,8 @@
-import { POSTGRES_MAX_BIGINT } from '../../plugin/prisma'
+import { t } from 'elysia'
+
 import { BaseElysia } from '../..'
 import { PostStatus } from '../../model/Post'
-import { t } from 'elysia'
+import { POSTGRES_MAX_BIGINT } from '../../plugin/prisma'
 
 export default (app: BaseElysia) =>
   app.get(
@@ -52,16 +53,16 @@ export default (app: BaseElysia) =>
       query: t.Object({
         cursor: t.BigInt(),
         limit: t.Number(),
-        userId: t.Optional(t.String()),
         only: t.Enum(PostsOnly),
+        userId: t.Optional(t.String()),
       }),
     },
   )
 
 export enum PostsOnly {
-  MINE = 'mine',
-  FOLLOWING = 'following',
   ALL = 'all',
+  FOLLOWING = 'following',
+  MINE = 'mine',
 }
 
 type Post = {

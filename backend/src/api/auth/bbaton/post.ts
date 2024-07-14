@@ -1,9 +1,10 @@
 import { t } from 'elysia'
+
 import { BaseElysia } from '../../..'
+import { BBATON_CLIENT_ID, BBATON_CLIENT_SECRET, BBATON_REDIRECT_URI } from '../../../constants'
 import { OAuthProvider } from '../../../model/User'
 import { PrismaError } from '../../../plugin/prisma'
-import { signJWT, TokenType } from '../../../utils/jwt'
-import { BBATON_CLIENT_ID, BBATON_CLIENT_SECRET, BBATON_REDIRECT_URI } from '../../../constants'
+import { TokenType, signJWT } from '../../../utils/jwt'
 
 export default (app: BaseElysia) =>
   app.post(
@@ -89,8 +90,8 @@ export default (app: BaseElysia) =>
       })
         .then(async (bbatonUserResponse) => await bbatonUserResponse.json())
         .then((bbatonUser: BBatonUserResponse) => {
-          if (!bbatonUser.user_id) return
-          prisma.user.update({
+          if (!bbatonUser.user_id) throw new Error(JSON.stringify(bbatonUser))
+          return prisma.user.update({
             data: {
               ageRange: encodeBBatonAge(bbatonUser.birth_year, bbatonUser.adult_flag),
               sex: encodeBBatonGender(bbatonUser.gender),
@@ -166,5 +167,5 @@ function encodeBBatonAge(age: string, adultFlag: string) {
   if (age === '20' && adultFlag === 'N') {
     return 19
   }
-  return +age
+  return Math.max(+age, 20)
 }
