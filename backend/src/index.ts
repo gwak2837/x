@@ -17,7 +17,7 @@ const app = new Elysia()
     cors({
       origin: [/^https?:\/\/localhost:\d+$/, /^https:\/\/.*\.vercel\.app$/],
       allowedHeaders: '',
-      exposedHeaders: '',
+      exposeHeaders: '',
       maxAge: 86400,
     }),
   )
