@@ -53,7 +53,7 @@ export default (app: BaseElysia) =>
 
       return {
         id: post.id.toString(),
-        createdAt: isAuthor ? post.createdAt ?? undefined : undefined,
+        createdAt: isAuthor ? (post.createdAt ?? undefined) : undefined,
         updatedAt: post.updatedAt ?? undefined,
         deletedAt: post.deletedAt ?? undefined,
         publishAt: post.publishAt,
@@ -71,11 +71,11 @@ export default (app: BaseElysia) =>
         ...(post.referredPost_id && {
           referredPost: {
             id: post.referredPost_id.toString(),
-            createdAt: isReferredAuthor ? post.referredPost_createdAt ?? undefined : undefined,
+            createdAt: isReferredAuthor ? (post.referredPost_createdAt ?? undefined) : undefined,
             updatedAt: post.referredPost_updatedAt ?? undefined,
             deletedAt: post.referredPost_deletedAt ?? undefined,
             publishAt: post.referredPost_publishAt ?? undefined,
-            status: isReferredAuthor ? post.referredPost_status ?? undefined : undefined,
+            status: isReferredAuthor ? (post.referredPost_status ?? undefined) : undefined,
             content: post.referredPost_content ?? undefined,
             imageURLs: post.referredPost_imageURLs ?? undefined,
             ...(post.referredPostAuthor_id && {

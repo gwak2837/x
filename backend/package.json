@@ -8,26 +8,22 @@
     "compile": "NODE_ENV=production bun build src/index.ts --minify --compile --outfile app.bun",
     "migrate": "dotenv -e .env.production -- bunx prisma migrate deploy",
     "migrate:dev": "dotenv -e .env.development.local -- bunx prisma migrate dev",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepush": "cd ../ && eslint . --fix && prettier . --write --log-level=warn"
   },
   "dependencies": {
     "@bogeychan/elysia-logger": "^0.0.22",
-    "@elysiajs/cors": "^1.0.2",
+    "@elysiajs/cors": "^1.0.4",
     "@elysiajs/server-timing": "^1.0.2",
     "@elysiajs/stream": "^1.0.3",
     "@elysiajs/swagger": "^1.0.5",
-    "@prisma/client": "^5.16.1",
+    "@prisma/client": "^5.16.2",
     "elysia": "^1.0.27",
     "jose": "^5.6.3"
   },
   "devDependencies": {
-    "@eslint/js": "^9.6.0",
     "bun-types": "latest",
     "dotenv-cli": "^7.4.2",
-    "eslint": "9.x",
-    "globals": "^15.8.0",
-    "prisma": "^5.16.1",
-    "typescript-eslint": "^7.15.0"
+    "prisma": "^5.16.2"
   },
   "module": "src/index.js"
 }
