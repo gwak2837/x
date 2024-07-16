@@ -6,8 +6,8 @@ export default () => (app: Elysia) =>
     try {
       const prisma = new PrismaClient({ log: process.env.NODE_ENV === 'test' ? [] : ['query'] })
       return { prisma }
-    } catch (_) {
-      return error(502)
+    } catch (e) {
+      return error(502, (e as Error).message)
     }
   })
 
