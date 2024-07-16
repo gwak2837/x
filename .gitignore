@@ -181,8 +181,8 @@ dist
 **/*.log
 package-lock.json
 **/*.bun
-.env.development
-.env.production
+.env.*
+!.env.template
 *.key
 *.csr
 *.crt
