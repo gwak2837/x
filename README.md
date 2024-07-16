@@ -19,6 +19,8 @@ cp .env.template .env.development.local
 bun dev
 ```
 
+Open http://localhost:4000/ with your browser to see the result.
+
 ### frontend
 
 ```bash
@@ -26,3 +28,5 @@ cd frontend
 cp .env.template .env.development.local
 npm run dev
 ```
+
+Open http://localhost:3000/ with your browser to see the result.
