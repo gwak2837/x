@@ -4,11 +4,13 @@ FROM oven/bun:1 as builder
 WORKDIR /app
 
 COPY package.json bun.lockb ./
-RUN bun install --production --silent --frozen-lockfile
+RUN bun install --silent --frozen-lockfile
+
+COPY prisma prisma
+RUN bun run prisma generate
 
 COPY src src
 COPY tsconfig.json ./
-RUN bun run prisma generate
 RUN bun run compile
 
 # Run time
