@@ -8,6 +8,7 @@ RUN bun install --production --silent --frozen-lockfile
 
 COPY src src
 COPY tsconfig.json ./
+RUN bun run prisma generate
 RUN bun run compile
 
 # Run time

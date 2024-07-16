@@ -96,12 +96,3 @@ jobs:
         with:
           project_id: ${{ env.GCP_PROJECT_ID }}
           workload_identity_provider: projects/761490712850/locations/global/workloadIdentityPools/github/providers/my-repo
-
-      - name: Deploy to Google Cloud Run
-        if: ${{ github.event_name != 'pull_request' }}
-        uses: google-github-actions/deploy-cloudrun@v2
-        with:
-          image: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/bike:backend-main
-          region: asia-northeast3
-          project_id: ${{ env.GCP_PROJECT_ID }}
-          service: bike-prod
