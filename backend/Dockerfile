@@ -14,7 +14,7 @@ COPY tsconfig.json ./
 RUN bun run compile
 
 # Run time
-FROM gcr.io/distroless/base-nossl-debian12:nonroot
+FROM gcr.io/distroless/base-debian12:nonroot
 
 WORKDIR /app
 
