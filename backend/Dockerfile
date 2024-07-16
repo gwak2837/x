@@ -17,5 +17,5 @@ WORKDIR /app
 
 COPY --from=builder --chown=nonroot:nonroot /app/app.bun .
 
-EXPOSE $PORT
+EXPOSE 4000
 ENTRYPOINT [ "./app.bun" ]

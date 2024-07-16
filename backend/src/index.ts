@@ -52,13 +52,13 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(example)
 }
 
-app.use(route).listen({ hostname: '0.0.0.0', port: PORT })
+app.use(route).listen({ hostname: '0.0.0.0', port: PORT ?? 4000 })
 
 console.log(`🦊 Elysia is running at: ${app.server?.url}`)
 
 if (process.env.NODE_ENV !== 'production') {
   const nets = networkInterfaces()
   if (nets.en0) {
-    console.log(`   On Your Network:      https://${nets.en0[1].address}:${PORT}`)
+    console.log(`   On Your Network:      http://${nets.en0[1].address}:${PORT}`)
   }
 }
