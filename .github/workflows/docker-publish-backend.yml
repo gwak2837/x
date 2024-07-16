@@ -93,4 +93,5 @@ jobs:
         with:
           image: ghcr.io/gwak2837/bike/backend:${{ steps.meta-backend.outputs.tags }}
           region: asia-northeast3
+          project_id: bike-428810
           service: bike-prod
