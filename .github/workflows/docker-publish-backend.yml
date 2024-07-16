@@ -91,5 +91,6 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         uses: google-github-actions/deploy-cloudrun@v2
         with:
-          service: bike-prod
           image: ghcr.io/gwak2837/bike/backend:${{ steps.meta-backend.outputs.tags }}
+          region: asia-northeast3
+          service: bike-prod
