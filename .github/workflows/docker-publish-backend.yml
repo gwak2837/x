@@ -80,3 +80,16 @@ jobs:
           TAGS: ${{ steps.meta-backend.outputs.tags }}
           DIGEST: ${{ steps.build-and-push-backend.outputs.digest }}
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+
+      - uses: google-github-actions/auth@v2
+        if: ${{ github.event_name != 'pull_request' }}
+        with:
+          project_id: bike-428810
+          workload_identity_provider: projects/761490712850/locations/global/workloadIdentityPools/github/providers/my-repo
+
+      - name: Deploy to Google Cloud Run
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: bike-prod
+          image: ghcr.io/gwak2837/bike/backend:${{ steps.meta-backend.outputs.tags }}

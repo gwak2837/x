@@ -187,3 +187,4 @@ package-lock.json
 *.csr
 *.crt
 *.srl
+gha-creds-*.json
