@@ -3,6 +3,7 @@ import cors from '@elysiajs/cors'
 import serverTiming from '@elysiajs/server-timing'
 import swagger from '@elysiajs/swagger'
 import { Elysia, t } from 'elysia'
+import { networkInterfaces } from 'os'
 
 import { PORT } from './constants'
 import auth from './plugin/auth'
@@ -51,6 +52,13 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(example)
 }
 
-app.use(route).listen(PORT)
+app.use(route).listen({ hostname: '0.0.0.0', port: PORT })
 
-console.log(`🦊 Elysia is running at ${app.server?.url}`)
+console.log(`🦊 Elysia is running at: ${app.server?.url}`)
+
+if (process.env.NODE_ENV !== 'production') {
+  const nets = networkInterfaces()
+  if (nets.en0) {
+    console.log(`   On Your Network:      https://${nets.en0[1].address}:${PORT}`)
+  }
+}
