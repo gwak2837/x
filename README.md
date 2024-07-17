@@ -11,6 +11,15 @@
 bun i
 ```
 
+### Infra
+
+```bash
+cd infra
+docker compose up -d --build --force-recreate
+```
+
+Start PostgreSQL and Redis server.
+
 ### backend
 
 ```bash
