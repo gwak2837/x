@@ -4,8 +4,8 @@
   "scripts": {
     "dev": "NODE_ENV=development bun --env-file=.env.development.local run --watch src/index.ts",
     "build": "NODE_ENV=production bun build src/index.ts --minify --outdir ./out",
-    "start": "NODE_ENV=production bun --env-file=.env.production.local out/index.js",
-    "compile": "NODE_ENV=production bun build src/index.ts --minify --compile --outfile app.bun",
+    "start": "NODE_ENV=production bun --env-file=.env.development.local out/index.js",
+    "compile": "NODE_ENV=production bun build --compile --minify src/index.ts --outfile app.bun",
     "migrate": "dotenv -e .env.production -- bunx prisma migrate deploy",
     "migrate:dev": "dotenv -e .env.development.local -- bunx prisma migrate dev",
     "prepush": "cd ../ && eslint . --fix && prettier . --write --log-level=warn"
@@ -16,7 +16,6 @@
     "@elysiajs/server-timing": "^1.0.2",
     "@elysiajs/stream": "^1.0.3",
     "@elysiajs/swagger": "^1.0.5",
-    "@prisma/client": "^5.16.2",
     "elysia": "^1.0.27",
     "jose": "^5.6.3"
   },

@@ -2,7 +2,7 @@ import { t } from 'elysia'
 
 import { BaseElysia } from '../..'
 import { PostStatus } from '../../model/Post'
-import { POSTGRES_MAX_BIGINT } from '../../plugin/prisma'
+import { POSTGRES_MAX_BIGINT } from '../../model'
 
 export default (app: BaseElysia) =>
   app.get(

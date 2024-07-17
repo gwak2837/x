@@ -4,6 +4,7 @@
 - Bun 1.1
 - Node.js 20.15
 - PostgreSQL 16.3
+- Docker 25.0
 
 ## Getting Started
 

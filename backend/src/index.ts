@@ -5,7 +5,7 @@ import swagger from '@elysiajs/swagger'
 import { Elysia, t } from 'elysia'
 import { networkInterfaces } from 'os'
 
-import { PORT } from './constants'
+import { ENV, PORT } from './constants'
 import auth from './plugin/auth'
 import prisma from './plugin/prisma'
 import route from './route'
@@ -28,16 +28,23 @@ const app = new Elysia()
   .use(auth())
   .use(prisma())
   .get('/healthz', () => 'OK', { response: { 200: t.String() } })
-  .get('/livez', () => 'OK', { response: { 200: t.String() } })
+  .get('/livez', () => ({ ENV, NODE_ENV: process.env.NODE_ENV ?? '' }), {
+    response: {
+      200: t.Object({
+        ENV: t.String(),
+        NODE_ENV: t.String(),
+      }),
+    },
+  })
   .get(
     '/readyz',
     async ({ error, prisma }) => {
       type Result = [{ current_timestamp: Date }]
-      const result = await prisma.$queryRaw<Result>`SELECT CURRENT_TIMESTAMP`.catch(() => null)
-      const data = result?.[0]
-      if (!data) return error(502, 'Bad Gateway')
+      // const result = await prisma.$queryRaw<Result>`SELECT CURRENT_TIMESTAMP`.catch(() => null)
+      // const data = result?.[0]
+      // if (!data) return error(502, 'Bad Gateway')
 
-      return data
+      return 'data'
     },
     {
       response: {
