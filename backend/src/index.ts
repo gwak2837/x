@@ -7,7 +7,7 @@ import { networkInterfaces } from 'os'
 
 import { ENV, PORT } from './constants'
 import auth from './plugin/auth'
-import prisma from './plugin/prisma'
+import prisma from './plugin/postgres'
 import route from './route'
 
 // TODO: Rate limit, OAuth2
@@ -38,7 +38,9 @@ const app = new Elysia()
   })
   .get(
     '/readyz',
-    async ({ error, prisma }) => {
+    async ({ error, sql }) => {
+      return JSON.stringify(await sql`SELECT CURRENT_TIMESTAMP`)
+
       type Result = [{ current_timestamp: Date }]
       // const result = await prisma.$queryRaw<Result>`SELECT CURRENT_TIMESTAMP`.catch(() => null)
       // const data = result?.[0]
@@ -47,10 +49,10 @@ const app = new Elysia()
       return 'data'
     },
     {
-      response: {
-        200: t.Object({ current_timestamp: t.Date() }),
-        502: t.String(),
-      },
+      // response: {
+      // 200: t.Object({ current_timestamp: t.Date() }),
+      // 502: t.String(),
+      // },
     },
   )
 

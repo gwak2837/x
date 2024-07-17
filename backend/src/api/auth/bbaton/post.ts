@@ -3,7 +3,7 @@ import { t } from 'elysia'
 import { BaseElysia } from '../../..'
 import { BBATON_CLIENT_ID, BBATON_CLIENT_SECRET, BBATON_REDIRECT_URI } from '../../../constants'
 import { OAuthProvider } from '../../../model/User'
-import { PrismaError } from '../../../plugin/prisma'
+import { PrismaError } from '../../../plugin/postgres'
 import { TokenType, signJWT } from '../../../utils/jwt'
 
 export default (app: BaseElysia) =>

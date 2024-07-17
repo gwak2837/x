@@ -8,13 +8,12 @@ import updatePost from './api/post/[id]/patch'
 import getPosts from './api/post/get'
 import createPost from './api/post/post'
 
-export default (app: BaseElysia) =>
-  app
-    .use(getAccessToken)
-    .use(loginByBBaton)
-    .use(getRefreshToken)
-    .use(deletePost)
-    .use(getPost)
-    .use(updatePost)
-    .use(getPosts)
-    .use(createPost)
+export default (app: BaseElysia) => app
+// .use(getAccessToken)
+// .use(loginByBBaton)
+// .use(getRefreshToken)
+// .use(deletePost)
+// .use(getPost)
+// .use(updatePost)
+// .use(getPosts)
+// .use(createPost)

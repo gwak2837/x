@@ -7,9 +7,6 @@ WORKDIR /app
 COPY package.json bun.lockb ./
 RUN bun install --silent --frozen-lockfile
 
-COPY prisma prisma
-RUN bunx prisma generate
-
 COPY src src
 COPY tsconfig.json ./
 RUN bun run compile

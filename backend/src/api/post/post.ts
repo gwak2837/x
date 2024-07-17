@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client'
 import { t } from 'elysia'
 
 import { BaseElysia } from '../..'
@@ -21,7 +20,7 @@ export default (app: BaseElysia) =>
         FROM "Post"
           LEFT JOIN "User" AS "Author" ON  "Author".id = "Post"."authorId"
           LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author"."id" AND "UserFollow"."followerId" = ${userId}::uuid
-        WHERE "Post".id IN (${Prisma.join([parentPostId, referredPostId])}) AND (
+        WHERE "Post".id IN (parentPostId, referredPostId) AND (
           "Post".status = ${PostStatus.PUBLIC} OR 
           "Post".status = ${PostStatus.ONLY_FOLLOWERS} AND "UserFollow"."leaderId" IS NOT NULL OR
           "Post".status = ${PostStatus.PRIVATE} AND "Author".id = ${userId}::uuid

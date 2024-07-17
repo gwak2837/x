@@ -8,7 +8,7 @@ import { TokenType, signJWT, verifyJWT } from '../../../utils/jwt'
 export default (app: BaseElysia) =>
   app.post(
     '/auth/access-token',
-    async ({ error, headers, prisma }) => {
+    async ({ error, headers, sql }) => {
       const auth = headers?.['Authorization']
       const token = auth?.startsWith('Bearer ') ? auth.slice(7) : auth
       if (!token) return error(401, 'Unauthorized')

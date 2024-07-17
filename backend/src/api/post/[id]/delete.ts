@@ -1,7 +1,7 @@
 import { InternalServerError, NotFoundError, t } from 'elysia'
 
 import { BaseElysia } from '../../..'
-import { PrismaError } from '../../../plugin/prisma'
+import { PrismaError } from '../../../plugin/postgres'
 import { toBigInt } from '../../../utils'
 
 export default (app: BaseElysia) =>

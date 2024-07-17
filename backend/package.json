@@ -8,7 +8,7 @@
     "compile": "NODE_ENV=production bun build --compile --minify src/index.ts --outfile app.bun",
     "migrate": "dotenv -e .env.production -- bunx prisma migrate deploy",
     "migrate:dev": "dotenv -e .env.development.local -- bunx prisma migrate dev",
-    "prepush": "cd ../ && eslint . --fix && prettier . --write --log-level=warn"
+    "prepush": "bunx tsc --noEmit && cd ../ && eslint . --fix && prettier . --write --log-level=warn"
   },
   "dependencies": {
     "@bogeychan/elysia-logger": "^0.0.22",
@@ -17,12 +17,14 @@
     "@elysiajs/stream": "^1.0.3",
     "@elysiajs/swagger": "^1.0.5",
     "elysia": "^1.0.27",
-    "jose": "^5.6.3"
+    "jose": "^5.6.3",
+    "postgres": "^3.4.4"
   },
   "devDependencies": {
     "bun-types": "latest",
     "dotenv-cli": "^7.4.2",
-    "prisma": "^5.16.2"
+    "prisma": "^5.16.2",
+    "typescript": "^5.5.3"
   },
   "module": "src/index.js"
 }
