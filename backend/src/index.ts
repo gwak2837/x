@@ -61,7 +61,7 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(example)
 }
 
-app.use(route).listen({ hostname: '0.0.0.0', port: PORT ?? 4000 })
+app.use(route).listen({ hostname: '0.0.0.0', port: PORT || 4000 })
 
 console.log(`🦊 Elysia is running at: ${app.server?.url}`)
 
