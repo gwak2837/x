@@ -5,3 +5,7 @@ export function toBigInt(value: string | null | undefined) {
     return null
   }
 }
+
+export function isNumberString(value: string) {
+  return /^\d+$/.test(value)
+}

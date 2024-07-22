@@ -7,17 +7,18 @@ import { networkInterfaces } from 'os'
 
 import { ENV, PORT } from './constants'
 import auth from './plugin/auth'
-import prisma from './plugin/postgres'
+import example from './plugin/example'
+import { sql } from './plugin/postgres'
 import route from './route'
 
-// TODO: Rate limit, OAuth2
+// TODO: Rate limit
 export type BaseElysia = typeof app
 
 const app = new Elysia()
   .use(
     cors({
-      origin: [/^https?:\/\/localhost:\d+$/, /^https:\/\/.*\.vercel\.app$/],
-      allowedHeaders: '',
+      origin: [/^https?:\/\/localhost:\d+$/, /^https:\/\/.+\.vercel\.app$/],
+      allowedHeaders: '*',
       exposeHeaders: '',
       maxAge: 86400,
     }),
@@ -26,7 +27,7 @@ const app = new Elysia()
   .use(swagger())
   .use(logger())
   .use(auth())
-  .use(prisma())
+  .derive(() => ({ sql }))
   .get('/healthz', () => 'OK', { response: { 200: t.String() } })
   .get('/livez', () => ({ ENV, NODE_ENV: process.env.NODE_ENV ?? '' }), {
     response: {
@@ -39,25 +40,23 @@ const app = new Elysia()
   .get(
     '/readyz',
     async ({ error, sql }) => {
-      return JSON.stringify(await sql`SELECT CURRENT_TIMESTAMP`)
-
       type Result = [{ current_timestamp: Date }]
-      // const result = await prisma.$queryRaw<Result>`SELECT CURRENT_TIMESTAMP`.catch(() => null)
-      // const data = result?.[0]
-      // if (!data) return error(502, 'Bad Gateway')
+      const result = await sql<Result>`SELECT CURRENT_TIMESTAMP`
 
-      return 'data'
+      const timestamp = result?.[0]
+      if (!timestamp) return error(502, 'Bad Gateway')
+
+      return timestamp
     },
     {
-      // response: {
-      // 200: t.Object({ current_timestamp: t.Date() }),
-      // 502: t.String(),
-      // },
+      response: {
+        200: t.Object({ current_timestamp: t.Date() }),
+        502: t.String(),
+      },
     },
   )
 
 if (process.env.NODE_ENV !== 'production') {
-  const { default: example } = await import('./plugin/example')
   app.use(example)
 }
 
@@ -67,6 +66,7 @@ console.log(`🦊 Elysia is running at: ${app.server?.url}`)
 
 if (process.env.NODE_ENV !== 'production') {
   const nets = networkInterfaces()
+
   if (nets.en0) {
     console.log(`   On Your Network:      http://${nets.en0[1].address}:${PORT}`)
   }

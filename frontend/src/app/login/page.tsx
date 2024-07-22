@@ -3,6 +3,7 @@ import { PageProps } from '@/types/nextjs'
 import Image from 'next/image'
 
 import Login from './Login'
+import Test from './Test'
 
 export default async function Page({ params, searchParams }: PageProps) {
   return (
@@ -19,6 +20,7 @@ export default async function Page({ params, searchParams }: PageProps) {
         />
       </a>
       <Login />
+      <Test />
       <pre className="overflow-x-scroll">{JSON.stringify({ params, searchParams }, null, 2)}</pre>
     </main>
   )

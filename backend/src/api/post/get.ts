@@ -7,10 +7,12 @@ import { PostStatus } from '../../model/Post'
 export default (app: BaseElysia) =>
   app.get(
     '/post',
-    async ({ prisma, query, userId }) => {
-      const { cursor = POSTGRES_MAX_BIGINT, limit = 30 /* only = PostsOnly.ALL */ } = query
+    async ({ error, query, sql, userId }) => {
+      const { cursor = POSTGRES_MAX_BIGINT, limit = 30, only = PostsOnly.OTHERS } = query
+      if (!userId && (only === PostsOnly.MINE || only === PostsOnly.FOLLOWING))
+        return error(400, 'Bad Request')
 
-      const posts = await prisma.$queryRaw<Post[]>`
+      const posts = await sql<Post[]>`
         SELECT "Post".id,
           "Post"."createdAt",
           "Post"."updatedAt",
@@ -36,11 +38,17 @@ export default (app: BaseElysia) =>
           "ReferredAuthor".nickname AS "referredAuthor_nickname",
           "ReferredAuthor"."profileImageURLs" AS "referredAuthor_profileImageURLs",
         FROM "Post"
-          LEFT JOIN "User" AS "Author" ON  "Author".id = "Post"."authorId"
+          JOIN "User" AS "Author" ON  "Author".id = "Post"."authorId"
           LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author"."id" AND "UserFollow"."followerId" = ${userId}
         WHERE "Post".id < ${cursor} AND 
-          "Post"."publishAt" <= CURRENT_TIMESTAMP AND 
-          "Post"."authorId" != ${userId} AND (
+          "Post"."deletedAt" IS NULL AND
+          "Post"."publishAt" <= CURRENT_TIMESTAMP AND (
+            ${userId && only === PostsOnly.MINE ? sql`"Post"."authorId" = ${userId}` : ''}
+            ${userId && only === PostsOnly.FOLLOWING ? sql`"UserFollow"."followerId" = ${userId}` : ''}
+            ${userId && only === PostsOnly.OTHERS ? sql`"Post"."authorId" != ${userId}` : ''}
+            ${!userId && only === PostsOnly.OTHERS ? 'TRUE' : ''}
+          ) AND (
+            ${userId && only === PostsOnly.MINE ? 'TRUE OR' : ''}
             "Post".status = ${PostStatus.PUBLIC} OR 
             "Post".status = ${PostStatus.ONLY_FOLLOWERS} AND "UserFollow"."leaderId" IS NOT NULL
           )
@@ -51,7 +59,7 @@ export default (app: BaseElysia) =>
     },
     {
       query: t.Object({
-        cursor: t.BigInt(),
+        cursor: t.String(),
         limit: t.Number(),
         only: t.Enum(PostsOnly),
         userId: t.Optional(t.String()),
@@ -60,11 +68,11 @@ export default (app: BaseElysia) =>
   )
 
 export enum PostsOnly {
-  ALL = 'all',
+  OTHERS = 'others',
   FOLLOWING = 'following',
   MINE = 'mine',
 }
 
 type Post = {
-  id: bigint
+  id: string
 }

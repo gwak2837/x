@@ -1,15 +1,16 @@
 import { t } from 'elysia'
+import { PostgresError } from 'postgres'
 
 import { BaseElysia } from '../../..'
 import { BBATON_CLIENT_ID, BBATON_CLIENT_SECRET, BBATON_REDIRECT_URI } from '../../../constants'
 import { OAuthProvider } from '../../../model/User'
-import { PrismaError } from '../../../plugin/postgres'
+import { PostgresErrorCode } from '../../../plugin/postgres'
 import { TokenType, signJWT } from '../../../utils/jwt'
 
 export default (app: BaseElysia) =>
   app.post(
     '/auth/bbaton',
-    async ({ error, prisma, query }) => {
+    async ({ error, query, sql }) => {
       const code = query.code
       const tokenResponse = await fetch('https://bauth.bbaton.com/oauth/token', {
         method: 'POST',
@@ -31,7 +32,7 @@ export default (app: BaseElysia) =>
       if (!bbatonUsername) return error(502, 'Bad Gateway')
 
       // NOTE: 동시성 처리가 없어 도중에 탈퇴하면 의도치 않은 문제가 생길 수 있음
-      const [oauth] = await prisma.$queryRaw<[OAuthUserRow?]>`
+      const [oauth] = await sql<[OAuthUserRow?]>`
         SELECT "OAuth".id,
           "User".id AS "user_id",
           "User"."suspendedAt" AS "user_suspendedAt",
@@ -39,7 +40,7 @@ export default (app: BaseElysia) =>
           "User"."suspendedType" AS "user_suspendedType",
           "User"."suspendedReason" AS "user_suspendedReason"
         FROM "OAuth"
-          JOIN "User" ON "User".id = "OAuth"."userId"
+          LEFT JOIN "User" ON "User".id = "OAuth"."userId"
         WHERE "OAuth".id = ${bbatonUsername}
           AND "OAuth".provider = ${OAuthProvider.BBATON};`
 
@@ -50,25 +51,28 @@ export default (app: BaseElysia) =>
         const bbatonUser: BBatonUserResponse = await bbatonUserResponse.json()
         if (!bbatonUser.user_id) return error(502, 'Bad Gateway')
 
-        const user = await prisma.user
-          .create({
-            data: {
-              ageRange: encodeBBatonAge(bbatonUser.birth_year, bbatonUser.adult_flag),
-              sex: encodeBBatonGender(bbatonUser.gender),
-              oAuth: {
-                create: {
-                  id: bbatonUser.user_id,
-                  provider: OAuthProvider.BBATON,
-                },
-              },
-            },
-            select: { id: true },
-          })
-          .catch((error) => {
-            // NOTE: React dev 환경에선 위 쿼리가 2번 실행될 수 있어 UNIQUE_CONSTRAINT 오류가 발생할 수 있음
-            if (error.code === PrismaError.UNIQUE_CONSTRAINT_FAILED) return null
-            throw error
-          })
+        const [user] = await sql<[RegisteredUserRow]>`
+          WITH
+            new_user AS (
+              INSERT INTO "User" ${sql({
+                ageRange: encodeBBatonAge(bbatonUser.birth_year, bbatonUser.adult_flag),
+                sex: encodeBBatonGender(bbatonUser.gender),
+              })}
+              RETURNING id
+            ),
+            new_oauth AS (
+              INSERT INTO "OAuth" (id, provider, "userId")
+              SELECT ${bbatonUser.user_id}, ${OAuthProvider.BBATON}, new_user.id
+              FROM new_user
+            )
+          SELECT new_user.id
+          FROM new_user;
+        `.catch((error: PostgresError) => {
+          if (error.code === PostgresErrorCode.UNIQUE_VIOLATION) return []
+
+          console.error(error)
+          return []
+        })
         if (!user) return error(400, 'Bad Request')
 
         return {
@@ -91,14 +95,14 @@ export default (app: BaseElysia) =>
         .then(async (bbatonUserResponse) => await bbatonUserResponse.json())
         .then((bbatonUser: BBatonUserResponse) => {
           if (!bbatonUser.user_id) throw new Error(JSON.stringify(bbatonUser))
-          return prisma.user.update({
-            data: {
+
+          return sql`
+            UPDATE "User"
+            SET ${sql({
               ageRange: encodeBBatonAge(bbatonUser.birth_year, bbatonUser.adult_flag),
               sex: encodeBBatonGender(bbatonUser.gender),
-            },
-            where: { id: oauth.user_id },
-            select: { id: true },
-          })
+            })}
+            WHERE id = ${oauth.user_id};`
         })
         .catch((error) =>
           console.warn('BBaton 사용자 정보를 가져와서 업데이트 하는데 실패했습니다.\n' + error),
@@ -143,11 +147,15 @@ type BBatonUserResponse = {
 
 type OAuthUserRow = {
   id: string
-  user_id: bigint
+  user_id: string
   user_suspendedAt: string
   user_unsuspendAt: string
   user_suspendedType: string
   user_suspendedReason: string
+}
+
+type RegisteredUserRow = {
+  id: string
 }
 
 function encodeBBatonGender(gender: string) {

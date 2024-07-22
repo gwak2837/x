@@ -1,21 +1,6 @@
-import Elysia from 'elysia'
 import postgres from 'postgres'
 
-import { DATABASE_URL } from '../constants'
-
-export default () => (app: Elysia) =>
-  app.derive(async ({ error }) => {
-    try {
-      const sql = postgres(DATABASE_URL, {
-        ssl: {
-          ca: supabaseCA,
-        },
-      })
-      return { sql }
-    } catch (e) {
-      return error(502, (e as Error).message)
-    }
-  })
+import { DATABASE_URL, ENV } from '../constants'
 
 const supabaseCA = `-----BEGIN CERTIFICATE-----
 MIIDxDCCAqygAwIBAgIUbLxMod62P2ktCiAkxnKJwtE9VPYwDQYJKoZIhvcNAQEL
@@ -41,3 +26,13 @@ CMTyZKG3XEu5Ghl1LEnI3QmEKsqaCLv12BnVjbkSeZsMnevJPs1Ye6TjjJwdik5P
 o/bKiIz+Fq8=
 -----END CERTIFICATE-----
 `
+
+export const sql = postgres(DATABASE_URL, {
+  idle_timeout: 60,
+  prepare: false,
+  ssl: ENV === 'production' ? { ca: supabaseCA } : false,
+})
+
+export enum PostgresErrorCode {
+  UNIQUE_VIOLATION = '23505',
+}
