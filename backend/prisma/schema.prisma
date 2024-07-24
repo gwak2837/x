@@ -32,9 +32,10 @@ model User {
 
 model UserFollow {
   leaderId   BigInt
-  leader     User   @relation("following", fields: [leaderId], references: [id])
   followerId BigInt
-  follower   User   @relation("followers", fields: [followerId], references: [id])
+
+  leader   User @relation("following", fields: [leaderId], references: [id])
+  follower User @relation("followers", fields: [followerId], references: [id])
 
   @@id([leaderId, followerId])
 }
@@ -47,7 +48,8 @@ model OAuth {
   profileImageURL String?
 
   userId BigInt?
-  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@id([id, provider])
   @@index([userId])
@@ -65,14 +67,33 @@ model Post {
   imageURLs String[]
 
   authorId       BigInt?
-  author         User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
   parentPostId   BigInt?
-  parentPost     Post?   @relation("PostThread", fields: [parentPostId], references: [id])
   referredPostId BigInt?
-  childrenPosts  Post[]  @relation("PostThread")
-  referredPost   Post?   @relation("PostReference", fields: [referredPostId], references: [id])
-  referringPosts Post[]  @relation("PostReference")
+
+  author         User?         @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  parentPost     Post?         @relation("PostThread", fields: [parentPostId], references: [id])
+  childrenPosts  Post[]        @relation("PostThread")
+  referredPost   Post?         @relation("PostReference", fields: [referredPostId], references: [id])
+  referringPosts Post[]        @relation("PostReference")
+  hashtags       PostHashTag[] @relation("hashtags")
 
   // NOTE: https://dba.stackexchange.com/questions/225271/does-it-make-sense-to-create-an-index-on-foreign-key-uuid-column-in-postgres
   @@index([authorId])
+}
+
+model Hashtag {
+  id   BigInt @id @default(autoincrement())
+  name String @unique
+
+  posts PostHashTag[] @relation("posts")
+}
+
+model PostHashTag {
+  postId    BigInt
+  hashtagId BigInt
+
+  post    Post    @relation("hashtags", fields: [postId], references: [id])
+  hashtag Hashtag @relation("posts", fields: [hashtagId], references: [id])
+
+  @@id([postId, hashtagId])
 }
