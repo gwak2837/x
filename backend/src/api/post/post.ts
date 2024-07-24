@@ -15,34 +15,35 @@ export default (app: BaseElysia) =>
       const parentPostId = body.parentPostId
       const referredPostId = body.referredPostId
 
-      return await sql<PostRow>`
+      const [newPost] = await sql<[PostRow]>`
         WITH 
-          RelatedPosts AS (
+          related_posts AS (
             SELECT "Post".id
             FROM "Post"
             JOIN "User" AS "Author" ON "Author".id = "Post"."authorId"
               LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author".id AND "UserFollow"."followerId" = ${userId}::uuid
             WHERE (
-              ${parentPostId && sql`"Post".id = ${parentPostId} OR`}
-              ${referredPostId && sql`"Post".id = ${referredPostId} OR`}
+              ${parentPostId ? sql`"Post".id = ${parentPostId} OR` : ''}
+              ${referredPostId ? sql`"Post".id = ${referredPostId} OR` : ''}
               ${parentPostId || referredPostId ? 'FALSE' : 'TRUE'}
             ) AND (
-              "Post".id = ${parentPostId} OR "Post".id = ${referredPostId}) AND (
               "Post".status = ${PostStatus.PUBLIC} OR
               ("Post".status = ${PostStatus.ONLY_FOLLOWERS} AND "UserFollow"."leaderId" IS NOT NULL) OR
               ("Post".status = ${PostStatus.PRIVATE} AND "Author".id = ${userId})
             )
           ),
-          Validation AS (
+          validation AS (
             SELECT
-              ${parentPostId} IS NULL OR EXISTS (SELECT 1 FROM RelatedPosts WHERE id = ${parentPostId}) AS isValidParent,
-              ${referredPostId} IS NULL OR EXISTS (SELECT 1 FROM RelatedPosts WHERE id = ${referredPostId}) AS isValidReferred
+              ${parentPostId ? sql`EXISTS (SELECT 1 FROM related_posts WHERE id = ${parentPostId})` : 'TRUE'} AS is_valid_parent,
+              ${referredPostId ? sql`EXISTS (SELECT 1 FROM related_posts WHERE id = ${referredPostId})` : 'TRUE'} AS is_valid_referred,
           )
         INSERT INTO "Post" ("publishAt", "status", "content", "authorId", "parentPostId", "referredPostId")
-        SELECT ${body.publishAt}, ${body.status}, ${body.content}, ${userId}, ${parentPostId}, ${referredPostId}
-        FROM Validation
-        WHERE isValidParent AND isValidReferred
+        SELECT ${body.publishAt ?? 'DEFAULT'}, ${body.status ?? 'DEFAULT'}, ${body.content}, ${userId}, ${parentPostId ?? 'DEFAULT'}, ${referredPostId ?? 'DEFAULT'}
+        FROM validation
+        WHERE is_valid_parent AND is_valid_referred
         RETURNING id, "createdAt";`
+
+      return newPost
     },
     {
       headers: t.Object({ authorization: t.String() }),

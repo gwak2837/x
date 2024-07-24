@@ -17,4 +17,4 @@ export default (app: BaseElysia) =>
     // .use(getPost)
     // .use(updatePost)
     .use(getPosts)
-// .use(createPost)
+    .use(createPost)
