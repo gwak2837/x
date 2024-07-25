@@ -28,6 +28,14 @@ o/bKiIz+Fq8=
 `
 
 export const sql = postgres(DATABASE_URL, {
+  debug:
+    process.env.NODE_ENV === 'development'
+      ? (connection, query, parameters) => {
+          console.log('👀 ~ connection:', connection)
+          console.log('👀 ~ query:', query)
+          console.log('👀 ~ parameters:', parameters)
+        }
+      : false,
   idle_timeout: 60,
   prepare: false,
   ssl: ENV === 'production' ? { ca: supabaseCA } : false,

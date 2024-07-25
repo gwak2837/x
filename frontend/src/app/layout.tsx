@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 import { Toaster } from 'react-hot-toast'
 
 import Authentication from './Authentication'
+import Navigation from './Navigation'
 
 export const metadata: Metadata = {
   title: 'Bike',
@@ -15,6 +16,7 @@ export default function RootLayout({ children }: LayoutProps) {
   return (
     <html lang="en">
       <body>
+        <Navigation />
         {children}
         <Authentication />
         <Toaster toastOptions={{ error: { duration: 6000 } }} />

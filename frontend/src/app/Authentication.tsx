@@ -4,6 +4,7 @@
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
 import { sleep } from '@/utils'
 import { AuthStore, useAuthStore } from '@/zustand/auth'
+import Link from 'next/link'
 import { useEffect } from 'react'
 import toast from 'react-hot-toast'
 
@@ -32,7 +33,14 @@ export default function Authentication() {
         })
         if (response.status === 401) {
           localStorage.removeItem('refreshToken')
-          toast.error('로그인 기간이 만료됐어요. 다시 로그인해주세요.')
+          toast.error(
+            <div>
+              로그인 유지 기간이 만료됐어요{' '}
+              <Link className="text-violet-700 underline underline-offset-2" href="/login">
+                로그인하기
+              </Link>
+            </div>,
+          )
           return
         } else if (response.status === 403) {
           localStorage.removeItem('refreshToken')

@@ -6,6 +6,7 @@ import { BBATON_CLIENT_ID, BBATON_CLIENT_SECRET, BBATON_REDIRECT_URI } from '../
 import { OAuthProvider } from '../../../model/User'
 import { PostgresErrorCode } from '../../../plugin/postgres'
 import { TokenType, signJWT } from '../../../utils/jwt'
+import { generateRandomNickname } from '../../../utils/nickname'
 
 export default (app: BaseElysia) =>
   app.post(
@@ -31,7 +32,7 @@ export default (app: BaseElysia) =>
       const bbatonUsername: string = JSON.parse(atob(token.access_token.split('.')[1])).user_name
       if (!bbatonUsername) return error(502, 'Bad Gateway')
 
-      // NOTE: 동시성 처리가 없어 도중에 탈퇴하면 의도치 않은 문제가 생길 수 있음
+      // NOTE: 동시성 처리가 없어 탈퇴와 동시에 로그인 시 순간적으로 로그인이 가능할 수 있음
       const [oauth] = await sql<[OAuthUserRow?]>`
         SELECT "OAuth".id,
           "User".id AS "user_id",
@@ -56,6 +57,9 @@ export default (app: BaseElysia) =>
             new_user AS (
               INSERT INTO "User" ${sql({
                 ageRange: encodeBBatonAge(bbatonUser.birth_year, bbatonUser.adult_flag),
+                name: crypto.randomUUID(),
+                nickname: generateRandomNickname(),
+                nameLastModified: new Date(),
                 sex: encodeBBatonGender(bbatonUser.gender),
               })}
               RETURNING id

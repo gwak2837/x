@@ -1,4 +1,4 @@
-import { t } from 'elysia'
+import { Static, t } from 'elysia'
 
 import { BaseElysia } from '../..'
 import { PostStatus } from '../../model/Post'
@@ -15,7 +15,7 @@ export default (app: BaseElysia) =>
       const parentPostId = body.parentPostId
       const referredPostId = body.referredPostId
 
-      const [newPost] = await sql<[PostRow]>`
+      const [newPost] = await sql<[NewPost]>`
         WITH 
           related_posts AS (
             SELECT "Post".id
@@ -56,10 +56,7 @@ export default (app: BaseElysia) =>
         status: t.Optional(t.Number()),
       }),
       response: {
-        200: t.Object({
-          id: t.String(),
-          createdAt: t.Date(),
-        }),
+        200: newPostSchema,
         400: t.String(),
         401: t.String(),
         403: t.String(),
@@ -67,7 +64,9 @@ export default (app: BaseElysia) =>
     },
   )
 
-type PostRow = {
-  id: string
-  createdAt: Date
-}
+type NewPost = Static<typeof newPostSchema>
+
+const newPostSchema = t.Object({
+  id: t.String(),
+  createdAt: t.Date(),
+})
