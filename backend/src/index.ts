@@ -16,8 +16,10 @@ export type BaseElysia = typeof app
 
 const app = new Elysia()
   .onError(({ error }) => {
-    console.error(error)
-    return new Response('Internal Server Error', { status: 500 })
+    if (error.name === 'PostgresError') {
+      console.error(error)
+      return new Response('Bad Gateway', { status: 502 })
+    }
   })
   .use(
     cors({

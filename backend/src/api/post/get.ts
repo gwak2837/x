@@ -18,6 +18,7 @@ export default (app: BaseElysia) =>
           "Post"."createdAt",
           "Post"."updatedAt",
           "Post"."publishAt",
+          "Post".category,
           "Post".status,
           "Post".content,
           "Post"."imageURLs",

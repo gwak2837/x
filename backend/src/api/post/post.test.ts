@@ -22,6 +22,10 @@ describe('POST /post', () => {
     // headers.authorization: null
   })
 
+  test('`content` 값과 `referredPostId` 값 둘 다 없으면 글을 작성할 수 없습니다.', async () => {
+    // ...
+  })
+
   test('`publishAt` 값의 유효성을 검사합니다.', async () => {
     // ...
   })

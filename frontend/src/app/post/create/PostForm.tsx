@@ -1,16 +1,26 @@
+'use client'
+
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
+import { useAuthStore } from '@/zustand/auth'
 import { FormEvent } from 'react'
 
 export default function PostForm() {
+  const accessToken = useAuthStore((state) => state.accessToken)
+
   async function createPost(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
     const formData = new FormData(event.currentTarget)
     const data = {
-      title: formData.get('title'),
       content: formData.get('content'),
     }
 
     const response = await fetch(`${NEXT_PUBLIC_BACKEND_URL}/post`, {
       method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(data),
     })
 
@@ -28,13 +38,13 @@ export default function PostForm() {
         <label htmlFor="title" className="block">
           Title
         </label>
-        <input type="text" id="title" name="title" className="w-full" />
+        <input type="text" id="title" name="title" className="w-full bg-slate-500" />
       </div>
       <div>
         <label htmlFor="content" className="block">
           Content
         </label>
-        <textarea id="content" name="content" className="w-full" />
+        <textarea id="content" name="content" className="w-full bg-slate-500" />
       </div>
       <button className="bg-blue-500 text-white" type="submit">
         Submit

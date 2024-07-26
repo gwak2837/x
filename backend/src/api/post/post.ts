@@ -1,13 +1,14 @@
 import { Static, t } from 'elysia'
 
 import { BaseElysia } from '../..'
-import { PostStatus } from '../../model/Post'
+import { PostCategory, PostStatus } from '../../model/Post'
 
 export default (app: BaseElysia) =>
   app.post(
     '/post',
     async ({ body, error, sql, userId }) => {
       if (!userId) return error(401, 'Unauthorized')
+      if (!body.content && !body.referredPostId) return error(400, 'Bad request')
 
       const { publishAt } = body
       if (publishAt && new Date(publishAt) < new Date()) return error(400, 'Bad request')
@@ -21,11 +22,11 @@ export default (app: BaseElysia) =>
             SELECT "Post".id
             FROM "Post"
             JOIN "User" AS "Author" ON "Author".id = "Post"."authorId"
-              LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author".id AND "UserFollow"."followerId" = ${userId}::uuid
+              LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author".id AND "UserFollow"."followerId" = ${userId}
             WHERE (
-              ${parentPostId ? sql`"Post".id = ${parentPostId} OR` : ''}
-              ${referredPostId ? sql`"Post".id = ${referredPostId} OR` : ''}
-              ${parentPostId || referredPostId ? 'FALSE' : 'TRUE'}
+              ${parentPostId ? sql`"Post".id = ${parentPostId} OR` : sql``}
+              ${referredPostId ? sql`"Post".id = ${referredPostId} OR` : sql``}
+              ${parentPostId || referredPostId ? sql`FALSE` : sql`TRUE`}
             ) AND (
               "Post".status = ${PostStatus.PUBLIC} OR
               ("Post".status = ${PostStatus.ONLY_FOLLOWERS} AND "UserFollow"."leaderId" IS NOT NULL) OR
@@ -34,11 +35,11 @@ export default (app: BaseElysia) =>
           ),
           validation AS (
             SELECT
-              ${parentPostId ? sql`EXISTS (SELECT 1 FROM related_posts WHERE id = ${parentPostId})` : 'TRUE'} AS is_valid_parent,
-              ${referredPostId ? sql`EXISTS (SELECT 1 FROM related_posts WHERE id = ${referredPostId})` : 'TRUE'} AS is_valid_referred,
+            ${parentPostId ? sql`EXISTS (SELECT 1 FROM related_posts WHERE id = ${parentPostId})` : sql`TRUE`} AS is_valid_parent,
+            ${referredPostId ? sql`EXISTS (SELECT 1 FROM related_posts WHERE id = ${referredPostId})` : sql`TRUE`} AS is_valid_referred
           )
-        INSERT INTO "Post" ("publishAt", "status", "content", "authorId", "parentPostId", "referredPostId")
-        SELECT ${body.publishAt ?? 'DEFAULT'}, ${body.status ?? 'DEFAULT'}, ${body.content}, ${userId}, ${parentPostId ?? 'DEFAULT'}, ${referredPostId ?? 'DEFAULT'}
+        INSERT INTO "Post" ("publishAt", "category", "status", "content", "authorId", "parentPostId", "referredPostId")
+        SELECT ${body.publishAt ?? sql`CURRENT_TIMESTAMP`}, ${body.category ?? PostCategory.GENERAL}, ${body.status ?? PostStatus.PUBLIC}, ${body.content ?? null}, ${userId}, ${parentPostId ?? null}, ${referredPostId ?? null}
         FROM validation
         WHERE is_valid_parent AND is_valid_referred
         RETURNING id, "createdAt";`
@@ -48,7 +49,8 @@ export default (app: BaseElysia) =>
     {
       headers: t.Object({ authorization: t.String() }),
       body: t.Object({
-        content: t.String(),
+        category: t.Optional(t.Number()),
+        content: t.Optional(t.String()),
         imageURLs: t.Optional(t.Array(t.String())),
         parentPostId: t.Optional(t.String()),
         publishAt: t.Optional(t.String({ format: 'date-time' })),

@@ -2,20 +2,21 @@ import { NotFoundError, t } from 'elysia'
 
 import { BaseElysia } from '../../..'
 import { PostStatus } from '../../../model/Post'
-import { toBigInt } from '../../../utils'
+import { recursivelyRemoveNull } from '../../../utils'
 
 export default (app: BaseElysia) =>
   app.get(
     '/post/:id',
-    async ({ params, prisma, userId }) => {
-      const postId = toBigInt(params.id)
+    async ({ params, sql, userId }) => {
+      const { id: postId } = params
 
-      const [post] = await prisma.$queryRaw<[PostQuery?]>`
+      const [post] = await sql<[PostRow]>`
         SELECT "Post".id,
           "Post"."createdAt",
           "Post"."updatedAt",
           "Post"."deletedAt",
           "Post"."publishAt",
+          "Post".category,
           "Post".status,
           "Post".content,
           "Post"."imageURLs",
@@ -51,71 +52,69 @@ export default (app: BaseElysia) =>
       const isAuthor = userId === post.author_id
       const isReferredAuthor = userId === post.referredPostAuthor_id
 
-      return {
-        id: post.id.toString(),
-        createdAt: isAuthor ? (post.createdAt ?? undefined) : undefined,
-        updatedAt: post.updatedAt ?? undefined,
-        deletedAt: post.deletedAt ?? undefined,
+      return recursivelyRemoveNull({
+        id: post.id,
+        createdAt: isAuthor ? post.createdAt : undefined,
+        updatedAt: post.updatedAt,
+        deletedAt: post.deletedAt,
         publishAt: post.publishAt,
         status: isAuthor ? post.status : undefined,
-        content: post.content ?? undefined,
-        imageURLs: post.imageURLs ?? undefined,
+        content: post.content,
+        imageURLs: post.imageURLs,
         ...(post.author_id && {
           author: {
-            id: post.author_id.toString(),
-            name: post.author_name ?? undefined,
-            nickname: post.author_nickname ?? undefined,
-            profileImageURLs: post.author_profileImageURLs ?? undefined,
+            id: post.author_id,
+            name: post.author_name,
+            nickname: post.author_nickname,
+            profileImageURLs: post.author_profileImageURLs,
           },
         }),
         ...(post.referredPost_id && {
           referredPost: {
-            id: post.referredPost_id.toString(),
-            createdAt: isReferredAuthor ? (post.referredPost_createdAt ?? undefined) : undefined,
-            updatedAt: post.referredPost_updatedAt ?? undefined,
-            deletedAt: post.referredPost_deletedAt ?? undefined,
-            publishAt: post.referredPost_publishAt ?? undefined,
-            status: isReferredAuthor ? (post.referredPost_status ?? undefined) : undefined,
-            content: post.referredPost_content ?? undefined,
-            imageURLs: post.referredPost_imageURLs ?? undefined,
+            id: post.referredPost_id,
+            createdAt: isReferredAuthor ? post.referredPost_createdAt : undefined,
+            updatedAt: post.referredPost_updatedAt,
+            deletedAt: post.referredPost_deletedAt,
+            publishAt: post.referredPost_publishAt,
+            status: isReferredAuthor ? post.referredPost_status : undefined,
+            content: post.referredPost_content,
+            imageURLs: post.referredPost_imageURLs,
             ...(post.referredPostAuthor_id && {
               author: {
-                id: post.referredPostAuthor_id.toString(),
-                name: post.referredPostAuthor_name ?? undefined,
-                nickname: post.referredPostAuthor_nickname ?? undefined,
-                profileImageURLs: post.referredPostAuthor_profileImageURLs ?? undefined,
+                id: post.referredPostAuthor_id,
+                name: post.referredPostAuthor_name,
+                nickname: post.referredPostAuthor_nickname,
+                profileImageURLs: post.referredPostAuthor_profileImageURLs,
               },
             }),
           },
         }),
-      }
+      })
     },
     {
       params: t.Object({ id: t.String() }),
       response: {
-        200: t.Object({
-          ...postSchema,
-          referredPost: t.Optional(t.Object(postSchema)),
-        }),
+        200: postSchema,
         404: t.String(),
       },
     },
   )
 
-export type PostQuery = {
-  id: bigint
+export type PostRow = {
+  id: string
   createdAt: Date
   updatedAt: Date | null
   deletedAt: Date | null
   publishAt: Date
+  category: number
   status: number
   content: string | null
   imageURLs: string[] | null
-  author_id: bigint | null
+  author_id: string | null
   author_name: string | null
   author_nickname: string | null
   author_profileImageURLs: string[] | null
-  referredPost_id: bigint | null
+  referredPost_id: string | null
   referredPost_createdAt: Date | null
   referredPost_updatedAt: Date | null
   referredPost_deletedAt: Date | null
@@ -123,13 +122,13 @@ export type PostQuery = {
   referredPost_status: number | null
   referredPost_content: string | null
   referredPost_imageURLs: string[] | null
-  referredPostAuthor_id: bigint | null
+  referredPostAuthor_id: string | null
   referredPostAuthor_name: string | null
   referredPostAuthor_nickname: string | null
   referredPostAuthor_profileImageURLs: string[] | null
 }
 
-const postSchema = {
+const post = {
   id: t.String(),
   createdAt: t.Optional(t.Date()),
   updatedAt: t.Optional(t.Date()),
@@ -147,3 +146,8 @@ const postSchema = {
     }),
   ),
 }
+
+const postSchema = t.Object({
+  ...post,
+  referredPost: t.Optional(t.Object(post)),
+})
