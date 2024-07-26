@@ -26,6 +26,7 @@ Start PostgreSQL and Redis server.
 ```bash
 cd backend
 cp .env.template .env.development.local
+bun migrate:dev
 bun dev
 ```
 

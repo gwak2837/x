@@ -23,10 +23,12 @@ model User {
   sex              Int       @default(0) @db.SmallInt
   config           Json?
 
-  oAuth     OAuth[]
-  posts     Post[]
-  following UserFollow[] @relation("following")
-  followers UserFollow[] @relation("followers")
+  oAuth OAuth[]
+  posts Post[]
+
+  likedPosts UserLikePost[] @relation("likedPosts")
+  following  UserFollow[]   @relation("following")
+  followers  UserFollow[]   @relation("followers")
 }
 
 // invitation_code char(8) UNIQUE DEFAULT unique_random(8, 'user', 'invitation_code'),
@@ -71,15 +73,27 @@ model Post {
   parentPostId   BigInt?
   referredPostId BigInt?
 
-  author         User?         @relation(fields: [authorId], references: [id], onDelete: SetNull)
-  parentPost     Post?         @relation("PostThread", fields: [parentPostId], references: [id])
-  childrenPosts  Post[]        @relation("PostThread")
-  referredPost   Post?         @relation("PostReference", fields: [referredPostId], references: [id])
-  referringPosts Post[]        @relation("PostReference")
-  hashtags       PostHashTag[] @relation("hashtags")
+  author         User?  @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  parentPost     Post?  @relation("PostThread", fields: [parentPostId], references: [id])
+  childrenPosts  Post[] @relation("PostThread")
+  referredPost   Post?  @relation("PostReference", fields: [referredPostId], references: [id])
+  referringPosts Post[] @relation("PostReference")
+
+  hashtags   PostHashTag[]  @relation("hashtags")
+  likedUsers UserLikePost[] @relation("likedUsers")
 
   // NOTE: https://dba.stackexchange.com/questions/225271/does-it-make-sense-to-create-an-index-on-foreign-key-uuid-column-in-postgres
   @@index([authorId])
+}
+
+model UserLikePost {
+  userId BigInt
+  postId BigInt
+
+  user User @relation("likedPosts", fields: [userId], references: [id])
+  post Post @relation("likedUsers", fields: [postId], references: [id])
+
+  @@id([userId, postId])
 }
 
 model Hashtag {

@@ -15,6 +15,10 @@ import route from './route'
 export type BaseElysia = typeof app
 
 const app = new Elysia()
+  .onError(({ error }) => {
+    console.error(error)
+    return new Response('Internal Server Error', { status: 500 })
+  })
   .use(
     cors({
       origin: [/^https?:\/\/localhost:\d+$/, /^https:\/\/.+\.vercel\.app$/],
