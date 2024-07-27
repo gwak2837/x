@@ -11,6 +11,22 @@ export function isNumberString(value: string) {
   return /^\d+$/.test(value)
 }
 
+type ReplaceNullWithUndefined<T> = {
+  [K in keyof T]: T[K] extends null ? undefined : T[K]
+}
+
+export function removeNull<T extends object>(obj: T): ReplaceNullWithUndefined<T> {
+  const result = {} as Record<keyof T, unknown>
+
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      result[key] = obj[key] === null ? undefined : obj[key]
+    }
+  }
+
+  return result as ReplaceNullWithUndefined<T>
+}
+
 type NullToUndefined<T> = T extends null ? undefined : T
 
 type RecursivelyRemoveNull<T> = T extends Date

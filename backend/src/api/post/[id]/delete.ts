@@ -1,41 +1,35 @@
-import { InternalServerError, NotFoundError, t } from 'elysia'
+import { NotFoundError, t } from 'elysia'
 
 import { BaseElysia } from '../../..'
-import { PrismaError } from '../../../plugin/postgres'
-import { toBigInt } from '../../../utils'
 
 export default (app: BaseElysia) =>
   app.delete(
     '/post/:id',
-    async ({ error, params, prisma, userId }) => {
+    async ({ error, params, sql, userId }) => {
       if (!userId) return error(401, 'Unauthorized')
 
-      const postId = toBigInt(params.id)
-      if (!postId) return error(400, 'Bad Request')
+      const { id: postId } = params
 
-      const deletedPost = await prisma.post
-        .update({
-          where: { id: postId, authorId: userId },
-          data: { deletedAt: new Date(), content: null, imageURLs: [], referredPostId: null },
-          select: { id: true, deletedAt: true },
-        })
-        .catch((err) => {
-          if (err.code === PrismaError.RECORD_NOT_FOUND) return null
-          throw new InternalServerError()
-        })
+      const [deletedPost] = await sql<[DeletedPost]>`
+        UPDATE "Post"
+        SET "deletedAt" = CURRENT_TIMESTAMP,
+            content = NULL,
+            "imageURLs" = NULL,
+            "referredPostId" = NULL
+        WHERE id = ${postId}
+          AND "authorId" = ${userId}
+        RETURNING id, "deletedAt"`
       if (!deletedPost) throw new NotFoundError()
 
-      return {
-        id: deletedPost.id,
-        deletedAt: deletedPost.deletedAt!,
-      }
+      return deletedPost
     },
     {
-      params: t.Object({ id: t.String() }),
+      headers: t.Object({ authorization: t.String() }),
+      params: t.Object({ id: t.String({ maxLength: 19 }) }),
       response: {
         200: t.Object({
-          id: t.BigInt(),
-          deletedAt: t.Optional(t.Date()),
+          id: t.String(),
+          deletedAt: t.Date(),
         }),
         400: t.String(),
         401: t.String(),
@@ -43,3 +37,8 @@ export default (app: BaseElysia) =>
       },
     },
   )
+
+type DeletedPost = {
+  id: string
+  deletedAt: Date
+}

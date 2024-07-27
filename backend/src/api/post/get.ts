@@ -1,8 +1,8 @@
 import { Static, t } from 'elysia'
 
 import { BaseElysia } from '../..'
-import { POSTGRES_MAX_BIGINT } from '../../model'
 import { PostStatus } from '../../model/Post'
+import { POSTGRES_MAX_BIGINT } from '../../plugin/postgres'
 import { removeNull } from '../../utils'
 
 export default (app: BaseElysia) =>

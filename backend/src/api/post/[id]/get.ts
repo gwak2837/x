@@ -1,14 +1,15 @@
-import { NotFoundError, t } from 'elysia'
+import { NotFoundError, Static, t } from 'elysia'
 
 import { BaseElysia } from '../../..'
-import { PostStatus } from '../../../model/Post'
+import { PostCategory, PostStatus } from '../../../model/Post'
 import { recursivelyRemoveNull } from '../../../utils'
 
 export default (app: BaseElysia) =>
   app.get(
     '/post/:id',
-    async ({ params, sql, userId }) => {
+    async ({ error, params, sql, userId }) => {
       const { id: postId } = params
+      if (isNaN(+postId)) return error(400, 'Bad request')
 
       const [post] = await sql<[PostRow]>`
         SELECT "Post".id,
@@ -35,18 +36,27 @@ export default (app: BaseElysia) =>
           "ReferredPostAuthor".id AS "referredPostAuthor_id",
           "ReferredPostAuthor".name AS "referredPostAuthor_name",
           "ReferredPostAuthor".nickname AS "referredPostAuthor_nickname",
-          "ReferredPostAuthor"."profileImageURLs" AS "referredPostAuthor_profileImageURLs"
+          "ReferredPostAuthor"."profileImageURLs" AS "referredPostAuthor_profileImageURLs",
+          MAX(CASE WHEN "UserLikePost"."userId" = ${userId} THEN 1 ELSE 0 END) AS "likedByMe",
+          COUNT("UserLikePost"."postId") AS "likeCount",
+          COUNT("Comment".id) AS "commentCount",
+          COUNT("Repost".id) AS "repostCount"
         FROM "Post"
           LEFT JOIN "User" AS "Author" ON "Author".id = "Post"."authorId"
           LEFT JOIN "Post" AS "ReferredPost" ON "ReferredPost".id = "Post"."referredPostId"
           LEFT JOIN "User" AS "ReferredPostAuthor" ON "ReferredPostAuthor".id = "ReferredPost"."authorId"
           LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author".id AND "UserFollow"."followerId" = ${userId}
+          LEFT JOIN "UserLikePost" ON "UserLikePost"."postId" = "Post".id
+          LEFT JOIN "Post" AS "Comment" ON "Comment"."parentPostId" = "Post".id
+          LEFT JOIN "Post" AS "Repost" ON "Repost"."referredPostId" = "Post".id
         WHERE "Post".id = ${postId} AND (
           "Post"."authorId" = ${userId} OR
           "Post"."publishAt" < CURRENT_TIMESTAMP AND (
             "Post".status = ${PostStatus.PUBLIC} OR 
             "Post".status = ${PostStatus.ONLY_FOLLOWERS} AND "UserFollow"."leaderId" IS NOT NULL
-          ));`
+          ))
+        GROUP BY "Post".id, "Author".id, "ReferredPost".id, "ReferredPostAuthor".id
+         ;`
       if (!post) throw new NotFoundError()
 
       const isAuthor = userId === post.author_id
@@ -89,12 +99,17 @@ export default (app: BaseElysia) =>
             }),
           },
         }),
+        likedByMe: post.likedByMe === 1 ? true : false,
+        likeCount: post.likeCount,
+        commentCount: post.commentCount,
+        repostCount: post.repostCount,
       })
     },
     {
-      params: t.Object({ id: t.String() }),
+      params: t.Object({ id: t.String({ maxLength: 19 }) }),
       response: {
         200: postSchema,
+        400: t.String(),
         404: t.String(),
       },
     },
@@ -106,8 +121,8 @@ export type PostRow = {
   updatedAt: Date | null
   deletedAt: Date | null
   publishAt: Date
-  category: number
-  status: number
+  category: PostCategory
+  status: PostStatus
   content: string | null
   imageURLs: string[] | null
   author_id: string | null
@@ -119,13 +134,17 @@ export type PostRow = {
   referredPost_updatedAt: Date | null
   referredPost_deletedAt: Date | null
   referredPost_publishAt: Date | null
-  referredPost_status: number | null
+  referredPost_status: PostStatus | null
   referredPost_content: string | null
   referredPost_imageURLs: string[] | null
   referredPostAuthor_id: string | null
   referredPostAuthor_name: string | null
   referredPostAuthor_nickname: string | null
   referredPostAuthor_profileImageURLs: string[] | null
+  likedByMe: 0 | 1
+  likeCount: string
+  commentCount: string
+  repostCount: string
 }
 
 const post = {
@@ -134,12 +153,13 @@ const post = {
   updatedAt: t.Optional(t.Date()),
   deletedAt: t.Optional(t.Date()),
   publishAt: t.Optional(t.Date()),
-  status: t.Optional(t.Integer()),
+  category: t.Optional(t.Enum(PostCategory)),
+  status: t.Optional(t.Enum(PostStatus)),
   content: t.Optional(t.String()),
   imageURLs: t.Optional(t.Array(t.String())),
   author: t.Optional(
     t.Object({
-      id: t.Optional(t.String({ format: 'uuid' })),
+      id: t.Optional(t.String()),
       name: t.Optional(t.String()),
       nickname: t.Optional(t.String()),
       profileImageURLs: t.Optional(t.Array(t.String())),
@@ -150,4 +170,10 @@ const post = {
 const postSchema = t.Object({
   ...post,
   referredPost: t.Optional(t.Object(post)),
+  likedByMe: t.Optional(t.Boolean()),
+  likeCount: t.Optional(t.String()),
+  commentCount: t.Optional(t.String()),
+  repostCount: t.Optional(t.String()),
 })
+
+export type GETPostId = Static<typeof postSchema>

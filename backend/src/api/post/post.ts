@@ -49,13 +49,13 @@ export default (app: BaseElysia) =>
     {
       headers: t.Object({ authorization: t.String() }),
       body: t.Object({
-        category: t.Optional(t.Number()),
+        category: t.Optional(t.Enum(PostCategory)),
         content: t.Optional(t.String()),
         imageURLs: t.Optional(t.Array(t.String())),
         parentPostId: t.Optional(t.String()),
         publishAt: t.Optional(t.String({ format: 'date-time' })),
         referredPostId: t.Optional(t.String()),
-        status: t.Optional(t.Number()),
+        status: t.Optional(t.Enum(PostStatus)),
       }),
       response: {
         200: newPostSchema,

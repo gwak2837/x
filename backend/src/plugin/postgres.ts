@@ -31,9 +31,9 @@ export const sql = postgres(DATABASE_URL, {
   debug:
     process.env.NODE_ENV === 'development'
       ? (connection, query, parameters) => {
-          console.log('👀 ~ connection:', connection)
           console.log('👀 ~ query:', query)
           console.log('👀 ~ parameters:', parameters)
+          console.log('👀 ~ connection:', connection)
         }
       : false,
   idle_timeout: 60,
@@ -44,3 +44,5 @@ export const sql = postgres(DATABASE_URL, {
 export enum PostgresErrorCode {
   UNIQUE_VIOLATION = '23505',
 }
+
+export const POSTGRES_MAX_BIGINT = '9223372036854775807'
