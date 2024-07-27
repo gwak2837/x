@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 import { Toaster } from 'react-hot-toast'
 
 import Authentication from './Authentication'
+import ReactQueryProvider from '@/components/ReactQueryProvider'
 import Navigation from './Navigation'
 
 export const metadata: Metadata = {
@@ -17,7 +18,7 @@ export default function RootLayout({ children }: LayoutProps) {
     <html lang="en">
       <body>
         <Navigation />
-        {children}
+        <ReactQueryProvider>{children}</ReactQueryProvider>
         <Authentication />
         <Toaster toastOptions={{ error: { duration: 6000 } }} />
       </body>

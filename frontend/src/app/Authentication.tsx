@@ -22,7 +22,7 @@ export default function Authentication() {
     async function fetchAccessToken(retries: number, delay: number) {
       if (retries <= 0) {
         localStorage.removeItem('refreshToken')
-        toast.error('인증 오류가 발생했어요. 잠시 후 다시 시도해주세요.')
+        toast.error('인증 오류가 발생했어요. 잠시 후 다시 로그인해주세요.')
         return
       }
 
