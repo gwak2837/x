@@ -11,20 +11,19 @@
     "prepush": "bunx tsc --noEmit && cd ../ && eslint . --fix && prettier . --write --log-level=warn"
   },
   "dependencies": {
-    "@bogeychan/elysia-logger": "^0.0.22",
-    "@elysiajs/cors": "^1.0.4",
-    "@elysiajs/server-timing": "^1.0.2",
-    "@elysiajs/stream": "^1.0.3",
-    "@elysiajs/swagger": "^1.0.5",
-    "elysia": "^1.0.27",
+    "@elysiajs/cors": "^1.1.0",
+    "@elysiajs/server-timing": "^1.1.0",
+    "@elysiajs/stream": "^1.1.0",
+    "@elysiajs/swagger": "^1.1.0",
+    "elysia": "^1.1.4",
     "jose": "^5.6.3",
     "postgres": "^3.4.4"
   },
   "devDependencies": {
     "bun-types": "latest",
     "dotenv-cli": "^7.4.2",
-    "prisma": "^5.16.2",
-    "typescript": "^5.5.3"
+    "prisma": "^5.17.0",
+    "typescript": "^5.5.4"
   },
   "module": "src/index.js"
 }

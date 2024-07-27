@@ -1,15 +1,17 @@
-import { Static, t } from 'elysia'
+import { t } from 'elysia'
 
 import { BaseElysia } from '../..'
-import { PostStatus } from '../../model/Post'
+import { PostCategory, PostStatus } from '../../model/Post'
 import { POSTGRES_MAX_BIGINT } from '../../plugin/postgres'
-import { removeNull } from '../../utils'
+import { deeplyRemoveNull } from '../../utils'
+import { removeZero } from '../../utils/type'
 
 export default (app: BaseElysia) =>
   app.get(
     '/post',
     async ({ error, query, sql, userId }) => {
-      const { cursor = POSTGRES_MAX_BIGINT, limit = 30, only = PostsOnly.OTHERS } = query
+      const { category, cursor = POSTGRES_MAX_BIGINT, limit = 30, only = PostsOnly.OTHERS } = query
+
       if (!userId && (only === PostsOnly.MINE || only === PostsOnly.FOLLOWING))
         return error(400, 'Bad Request')
 
@@ -18,7 +20,6 @@ export default (app: BaseElysia) =>
           "Post"."createdAt",
           "Post"."updatedAt",
           "Post"."publishAt",
-          "Post".category,
           "Post".status,
           "Post".content,
           "Post"."imageURLs",
@@ -31,6 +32,7 @@ export default (app: BaseElysia) =>
           "ReferredPost"."updatedAt" AS "referredPost_updatedAt",
           "ReferredPost"."deletedAt" AS "referredPost_deletedAt",
           "ReferredPost"."publishAt" AS "referredPost_publishAt",
+          "ReferredPost".category AS "referredPost_category",
           "ReferredPost".status AS "referredPost_status",
           "ReferredPost".content AS "referredPost_content",
           "ReferredPost"."imageURLs" AS "referredPost_imageURLs",
@@ -44,6 +46,7 @@ export default (app: BaseElysia) =>
           LEFT JOIN "Post" AS "ReferredPost" ON "ReferredPost".id = "Post"."referredPostId"
           LEFT JOIN "User" AS "ReferredAuthor" ON "ReferredAuthor".id = "ReferredPost"."authorId"
         WHERE "Post".id < ${cursor} AND 
+          ${category !== undefined ? sql`"Post".category = ${category} AND` : sql``}
           "Post"."deletedAt" IS NULL AND
           "Post"."publishAt" <= CURRENT_TIMESTAMP AND (
             ${userId && only === PostsOnly.MINE ? sql`"Post"."authorId" = ${userId}` : sql``}
@@ -59,17 +62,61 @@ export default (app: BaseElysia) =>
         LIMIT ${limit};`
       if (!posts.length) return error(404, 'Not Found')
 
-      return posts.map(removeNull)
+      return posts.map((post) =>
+        deeplyRemoveNull({
+          id: post.id,
+          createdAt: post.createdAt,
+          updatedAt: post.updatedAt,
+          publishAt: post.publishAt,
+          status: post.status,
+          content: post.content,
+          imageURLs: post.imageURLs,
+          ...(post.author_id && {
+            author: {
+              id: post.author_id,
+              name: post.author_name!,
+              nickname: post.author_nickname!,
+              profileImageURLs: post.author_profileImageURLs,
+            },
+          }),
+          ...(post.referredPost_id && {
+            referredPost: {
+              id: post.referredPost_id,
+              createdAt: post.referredPost_createdAt!,
+              updatedAt: post.referredPost_updatedAt,
+              deletedAt: post.referredPost_deletedAt,
+              publishAt: post.referredPost_publishAt!,
+              category: post.referredPost_category,
+              status: post.referredPost_status!,
+              content: post.referredPost_content,
+              imageURLs: post.referredPost_imageURLs,
+              ...(post.referredPostAuthor_id && {
+                author: {
+                  id: post.referredPostAuthor_id,
+                  name: post.referredPostAuthor_name!,
+                  nickname: post.referredPostAuthor_nickname!,
+                  profileImageURLs: post.referredPostAuthor_profileImageURLs,
+                },
+              }),
+            },
+          }),
+          likedByMe: post.likedByMe === 1 || undefined,
+          likeCount: removeZero(post.likeCount),
+          commentCount: removeZero(post.commentCount),
+          repostCount: removeZero(post.repostCount),
+        }),
+      )
     },
     {
       headers: t.Object({ authorization: t.Optional(t.String()) }),
       query: t.Object({
+        category: t.Optional(t.Enum(PostCategory)),
         cursor: t.Optional(t.String()),
         limit: t.Optional(t.Number()),
         only: t.Optional(t.Enum(PostsOnly)),
       }),
       response: {
-        200: t.Array(postRowSchema),
+        200: t.Array(postSchema),
         400: t.String(),
         404: t.String(),
       },
@@ -82,30 +129,67 @@ export enum PostsOnly {
   MINE = 'mine',
 }
 
-type PostRow = Static<typeof postRowSchema>
+type PostRow = {
+  id: string
+  createdAt: Date
+  updatedAt: Date | null
+  deletedAt: Date | null
+  publishAt: Date
+  category: PostCategory | null
+  status: PostStatus
+  content: string | null
+  imageURLs: string[] | null
+  author_id: string | null
+  author_name: string | null
+  author_nickname: string | null
+  author_profileImageURLs: string[] | null
+  referredPost_id: string | null
+  referredPost_createdAt: Date | null
+  referredPost_updatedAt: Date | null
+  referredPost_deletedAt: Date | null
+  referredPost_publishAt: Date | null
+  referredPost_category: PostCategory | null
+  referredPost_status: PostStatus | null
+  referredPost_content: string | null
+  referredPost_imageURLs: string[] | null
+  referredPostAuthor_id: string | null
+  referredPostAuthor_name: string | null
+  referredPostAuthor_nickname: string | null
+  referredPostAuthor_profileImageURLs: string[] | null
+  likedByMe: 0 | 1
+  likeCount: string
+  commentCount: string
+  repostCount: string
+}
 
-const postRowSchema = t.Object({
+const post = {
   id: t.String(),
   createdAt: t.Date(),
   updatedAt: t.Optional(t.Date()),
   publishAt: t.Date(),
-  status: t.Number(),
-  content: t.String(),
+  status: t.Enum(PostStatus),
+  content: t.Optional(t.String()),
   imageURLs: t.Optional(t.Array(t.String())),
-  author_id: t.String(),
-  author_name: t.String(),
-  author_nickname: t.String(),
-  author_profileImageURLs: t.Optional(t.Array(t.String())),
-  referredPost_id: t.Optional(t.String()),
-  referredPost_createdAt: t.Optional(t.Date()),
-  referredPost_updatedAt: t.Optional(t.Date()),
-  referredPost_deletedAt: t.Optional(t.Date()),
-  referredPost_publishAt: t.Optional(t.Date()),
-  referredPost_status: t.Optional(t.Number()),
-  referredPost_content: t.Optional(t.String()),
-  referredPost_imageURLs: t.Optional(t.Array(t.String())),
-  referredAuthor_id: t.Optional(t.String()),
-  referredAuthor_name: t.Optional(t.String()),
-  referredAuthor_nickname: t.Optional(t.String()),
-  referredAuthor_profileImageURLs: t.Optional(t.Array(t.String())),
+  author: t.Optional(
+    t.Object({
+      id: t.String(),
+      name: t.String(),
+      nickname: t.String(),
+      profileImageURLs: t.Optional(t.Array(t.String())),
+    }),
+  ),
+}
+
+const postSchema = t.Object({
+  ...post,
+  referredPost: t.Optional(
+    t.Object({
+      ...post,
+      category: t.Optional(t.Enum(PostCategory)),
+    }),
+  ),
+  likedByMe: t.Optional(t.Literal(true)),
+  likeCount: t.Optional(t.String()),
+  commentCount: t.Optional(t.String()),
+  repostCount: t.Optional(t.String()),
 })

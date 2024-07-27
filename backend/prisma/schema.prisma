@@ -64,7 +64,7 @@ model Post {
   updatedAt DateTime? @updatedAt
   deletedAt DateTime?
   publishAt DateTime  @default(now())
-  category  Int       @default(0) @db.SmallInt
+  category  Int?      @default(0) @db.SmallInt
   status    Int       @default(0) @db.SmallInt
   content   String?
   imageURLs String[]

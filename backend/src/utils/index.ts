@@ -35,7 +35,7 @@ type RecursivelyRemoveNull<T> = T extends Date
     ? { [K in keyof T]: RecursivelyRemoveNull<NullToUndefined<T[K]>> }
     : NullToUndefined<T>
 
-export function recursivelyRemoveNull<T>(obj: T): RecursivelyRemoveNull<T> {
+export function deeplyRemoveNull<T>(obj: T): RecursivelyRemoveNull<T> {
   if (obj === null) {
     return undefined as any
   }
@@ -47,7 +47,7 @@ export function recursivelyRemoveNull<T>(obj: T): RecursivelyRemoveNull<T> {
 
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      result[key] = recursivelyRemoveNull(obj[key])
+      result[key] = deeplyRemoveNull(obj[key])
     }
   }
 

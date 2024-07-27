@@ -1,4 +1,4 @@
-import { Static, t } from 'elysia'
+import { t } from 'elysia'
 
 import { BaseElysia } from '../..'
 import { PostCategory, PostStatus } from '../../model/Post'
@@ -39,7 +39,7 @@ export default (app: BaseElysia) =>
             ${referredPostId ? sql`EXISTS (SELECT 1 FROM related_posts WHERE id = ${referredPostId})` : sql`TRUE`} AS is_valid_referred
           )
         INSERT INTO "Post" ("publishAt", "category", "status", "content", "authorId", "parentPostId", "referredPostId")
-        SELECT ${body.publishAt ?? sql`CURRENT_TIMESTAMP`}, ${body.category ?? PostCategory.GENERAL}, ${body.status ?? PostStatus.PUBLIC}, ${body.content ?? null}, ${userId}, ${parentPostId ?? null}, ${referredPostId ?? null}
+        SELECT ${body.publishAt ?? sql`CURRENT_TIMESTAMP`}, ${body.category ?? null}, ${body.status ?? PostStatus.PUBLIC}, ${body.content ?? null}, ${userId}, ${parentPostId ?? null}, ${referredPostId ?? null}
         FROM validation
         WHERE is_valid_parent AND is_valid_referred
         RETURNING id, "createdAt";`
@@ -58,7 +58,10 @@ export default (app: BaseElysia) =>
         status: t.Optional(t.Enum(PostStatus)),
       }),
       response: {
-        200: newPostSchema,
+        200: t.Object({
+          id: t.String(),
+          createdAt: t.Date(),
+        }),
         400: t.String(),
         401: t.String(),
         403: t.String(),
@@ -66,9 +69,7 @@ export default (app: BaseElysia) =>
     },
   )
 
-type NewPost = Static<typeof newPostSchema>
-
-const newPostSchema = t.Object({
-  id: t.String(),
-  createdAt: t.Date(),
-})
+type NewPost = {
+  id: string
+  createdAt: Date
+}

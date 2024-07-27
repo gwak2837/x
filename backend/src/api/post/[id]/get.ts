@@ -2,7 +2,8 @@ import { NotFoundError, Static, t } from 'elysia'
 
 import { BaseElysia } from '../../..'
 import { PostCategory, PostStatus } from '../../../model/Post'
-import { recursivelyRemoveNull } from '../../../utils'
+import { deeplyRemoveNull } from '../../../utils'
+import { removeZero } from '../../../utils/type'
 
 export default (app: BaseElysia) =>
   app.get(
@@ -54,21 +55,19 @@ export default (app: BaseElysia) =>
           "Post"."publishAt" < CURRENT_TIMESTAMP AND (
             "Post".status = ${PostStatus.PUBLIC} OR 
             "Post".status = ${PostStatus.ONLY_FOLLOWERS} AND "UserFollow"."leaderId" IS NOT NULL
-          ))
-        GROUP BY "Post".id, "Author".id, "ReferredPost".id, "ReferredPostAuthor".id
-         ;`
+          )
+        )
+        GROUP BY "Post".id, "Author".id, "ReferredPost".id, "ReferredPostAuthor".id;`
       if (!post) throw new NotFoundError()
 
-      const isAuthor = userId === post.author_id
-      const isReferredAuthor = userId === post.referredPostAuthor_id
-
-      return recursivelyRemoveNull({
+      return deeplyRemoveNull({
         id: post.id,
-        createdAt: isAuthor ? post.createdAt : undefined,
+        createdAt: post.createdAt,
         updatedAt: post.updatedAt,
         deletedAt: post.deletedAt,
         publishAt: post.publishAt,
-        status: isAuthor ? post.status : undefined,
+        category: post.category,
+        status: post.status,
         content: post.content,
         imageURLs: post.imageURLs,
         ...(post.author_id && {
@@ -82,11 +81,12 @@ export default (app: BaseElysia) =>
         ...(post.referredPost_id && {
           referredPost: {
             id: post.referredPost_id,
-            createdAt: isReferredAuthor ? post.referredPost_createdAt : undefined,
+            createdAt: post.referredPost_createdAt,
             updatedAt: post.referredPost_updatedAt,
             deletedAt: post.referredPost_deletedAt,
             publishAt: post.referredPost_publishAt,
-            status: isReferredAuthor ? post.referredPost_status : undefined,
+            category: post.referredPost_category,
+            status: post.referredPost_status,
             content: post.referredPost_content,
             imageURLs: post.referredPost_imageURLs,
             ...(post.referredPostAuthor_id && {
@@ -99,10 +99,10 @@ export default (app: BaseElysia) =>
             }),
           },
         }),
-        likedByMe: post.likedByMe === 1 ? true : false,
-        likeCount: post.likeCount,
-        commentCount: post.commentCount,
-        repostCount: post.repostCount,
+        likedByMe: post.likedByMe === 1 || undefined,
+        likeCount: removeZero(post.likeCount),
+        commentCount: removeZero(post.commentCount),
+        repostCount: removeZero(post.repostCount),
       })
     },
     {
@@ -134,6 +134,7 @@ export type PostRow = {
   referredPost_updatedAt: Date | null
   referredPost_deletedAt: Date | null
   referredPost_publishAt: Date | null
+  referredPost_category: PostCategory | null
   referredPost_status: PostStatus | null
   referredPost_content: string | null
   referredPost_imageURLs: string[] | null
@@ -170,7 +171,7 @@ const post = {
 const postSchema = t.Object({
   ...post,
   referredPost: t.Optional(t.Object(post)),
-  likedByMe: t.Optional(t.Boolean()),
+  likedByMe: t.Optional(t.Literal(true)),
   likeCount: t.Optional(t.String()),
   commentCount: t.Optional(t.String()),
   repostCount: t.Optional(t.String()),

@@ -1,4 +1,3 @@
-import { logger } from '@bogeychan/elysia-logger'
 import cors from '@elysiajs/cors'
 import serverTiming from '@elysiajs/server-timing'
 import swagger from '@elysiajs/swagger'
@@ -11,7 +10,7 @@ import example from './plugin/example'
 import { sql } from './plugin/postgres'
 import route from './route'
 
-// TODO: Rate limit
+// TODO: Rate limit, Logger
 export type BaseElysia = typeof app
 
 const app = new Elysia()
@@ -31,7 +30,6 @@ const app = new Elysia()
   )
   .use(serverTiming())
   .use(swagger())
-  .use(logger())
   .use(auth())
   .derive(() => ({ sql }))
   .get('/healthz', () => 'OK', { response: { 200: t.String() } })
