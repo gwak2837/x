@@ -10,7 +10,13 @@ export default (app: BaseElysia) =>
   app.get(
     '/post',
     async ({ error, query, sql, userId }) => {
-      const { category, cursor = POSTGRES_MAX_BIGINT, limit = 30, only = PostsOnly.OTHERS } = query
+      const {
+        category,
+        cursor = POSTGRES_MAX_BIGINT,
+        hashtags,
+        limit = 30,
+        only = PostsOnly.OTHERS,
+      } = query
 
       if (!userId && (only === PostsOnly.MINE || only === PostsOnly.FOLLOWING))
         return error(400, 'Bad Request')
@@ -39,13 +45,28 @@ export default (app: BaseElysia) =>
           "ReferredAuthor".id AS "referredAuthor_id",
           "ReferredAuthor".name AS "referredAuthor_name",
           "ReferredAuthor".nickname AS "referredAuthor_nickname",
-          "ReferredAuthor"."profileImageURLs" AS "referredAuthor_profileImageURLs"
+          "ReferredAuthor"."profileImageURLs" AS "referredAuthor_profileImageURLs",
+          MAX(CASE WHEN "UserLikePost"."userId" = ${userId} THEN 1 ELSE 0 END) AS "likedByMe",
+          COUNT("UserLikePost"."postId") AS "likeCount",
+          COUNT("Comment".id) AS "commentCount",
+          COUNT("Repost".id) AS "repostCount"
         FROM "Post"
           JOIN "User" AS "Author" ON  "Author".id = "Post"."authorId"
-          LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author"."id" AND "UserFollow"."followerId" = ${userId}
           LEFT JOIN "Post" AS "ReferredPost" ON "ReferredPost".id = "Post"."referredPostId"
           LEFT JOIN "User" AS "ReferredAuthor" ON "ReferredAuthor".id = "ReferredPost"."authorId"
+          LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author"."id" AND "UserFollow"."followerId" = ${userId}
+          LEFT JOIN "UserLikePost" ON "UserLikePost"."postId" = "Post".id
+          LEFT JOIN "Post" AS "Comment" ON "Comment"."parentPostId" = "Post".id
+          LEFT JOIN "Post" AS "Repost" ON "Repost"."referredPostId" = "Post".id
+          ${
+            hashtags
+              ? sql`
+          LEFT JOIN "PostHashtag" ON "PostHashtag"."postId" = "Post".id
+          LEFT JOIN "Hashtag" ON "Hashtag".id = "PostHashtag"."hashtagId"`
+              : sql``
+          }
         WHERE "Post".id < ${cursor} AND 
+          ${hashtags ? sql`"Hashtag".name IN ${sql(hashtags)} AND` : sql``}
           ${category !== undefined ? sql`"Post".category = ${category} AND` : sql``}
           "Post"."deletedAt" IS NULL AND
           "Post"."publishAt" <= CURRENT_TIMESTAMP AND (
@@ -58,6 +79,7 @@ export default (app: BaseElysia) =>
             "Post".status = ${PostStatus.PUBLIC} OR 
             "Post".status = ${PostStatus.ONLY_FOLLOWERS} AND "UserFollow"."leaderId" IS NOT NULL
           )
+        GROUP BY "Post".id, "Author".id, "ReferredPost".id, "ReferredAuthor".id
         ORDER BY "Post".id DESC
         LIMIT ${limit};`
       if (!posts.length) return error(404, 'Not Found')
@@ -112,6 +134,7 @@ export default (app: BaseElysia) =>
       query: t.Object({
         category: t.Optional(t.Enum(PostCategory)),
         cursor: t.Optional(t.String()),
+        hashtags: t.Optional(t.Array(t.String())),
         limit: t.Optional(t.Number()),
         only: t.Optional(t.Enum(PostsOnly)),
       }),

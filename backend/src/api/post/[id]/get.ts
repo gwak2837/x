@@ -34,10 +34,10 @@ export default (app: BaseElysia) =>
           "ReferredPost".status AS "referredPost_status",
           "ReferredPost".content AS "referredPost_content",
           "ReferredPost"."imageURLs" AS "referredPost_imageURLs",
-          "ReferredPostAuthor".id AS "referredPostAuthor_id",
-          "ReferredPostAuthor".name AS "referredPostAuthor_name",
-          "ReferredPostAuthor".nickname AS "referredPostAuthor_nickname",
-          "ReferredPostAuthor"."profileImageURLs" AS "referredPostAuthor_profileImageURLs",
+          "ReferredAuthor".id AS "referredPostAuthor_id",
+          "ReferredAuthor".name AS "referredPostAuthor_name",
+          "ReferredAuthor".nickname AS "referredPostAuthor_nickname",
+          "ReferredAuthor"."profileImageURLs" AS "referredPostAuthor_profileImageURLs",
           MAX(CASE WHEN "UserLikePost"."userId" = ${userId} THEN 1 ELSE 0 END) AS "likedByMe",
           COUNT("UserLikePost"."postId") AS "likeCount",
           COUNT("Comment".id) AS "commentCount",
@@ -45,7 +45,7 @@ export default (app: BaseElysia) =>
         FROM "Post"
           LEFT JOIN "User" AS "Author" ON "Author".id = "Post"."authorId"
           LEFT JOIN "Post" AS "ReferredPost" ON "ReferredPost".id = "Post"."referredPostId"
-          LEFT JOIN "User" AS "ReferredPostAuthor" ON "ReferredPostAuthor".id = "ReferredPost"."authorId"
+          LEFT JOIN "User" AS "ReferredAuthor" ON "ReferredAuthor".id = "ReferredPost"."authorId"
           LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author".id AND "UserFollow"."followerId" = ${userId}
           LEFT JOIN "UserLikePost" ON "UserLikePost"."postId" = "Post".id
           LEFT JOIN "Post" AS "Comment" ON "Comment"."parentPostId" = "Post".id
@@ -57,7 +57,7 @@ export default (app: BaseElysia) =>
             "Post".status = ${PostStatus.ONLY_FOLLOWERS} AND "UserFollow"."leaderId" IS NOT NULL
           )
         )
-        GROUP BY "Post".id, "Author".id, "ReferredPost".id, "ReferredPostAuthor".id;`
+        GROUP BY "Post".id, "Author".id, "ReferredPost".id, "ReferredAuthor".id;`
       if (!post) throw new NotFoundError()
 
       return deeplyRemoveNull({
@@ -106,6 +106,7 @@ export default (app: BaseElysia) =>
       })
     },
     {
+      headers: t.Object({ authorization: t.Optional(t.String()) }),
       params: t.Object({ id: t.String({ maxLength: 19 }) }),
       response: {
         200: postSchema,

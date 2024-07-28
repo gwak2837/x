@@ -79,7 +79,7 @@ model Post {
   referredPost   Post?  @relation("PostReference", fields: [referredPostId], references: [id])
   referringPosts Post[] @relation("PostReference")
 
-  hashtags   PostHashTag[]  @relation("hashtags")
+  hashtags   PostHashtag[]  @relation("hashtags")
   likedUsers UserLikePost[] @relation("likedUsers")
 
   // NOTE: https://dba.stackexchange.com/questions/225271/does-it-make-sense-to-create-an-index-on-foreign-key-uuid-column-in-postgres
@@ -100,10 +100,10 @@ model Hashtag {
   id   BigInt @id @default(autoincrement())
   name String @unique
 
-  posts PostHashTag[] @relation("posts")
+  posts PostHashtag[] @relation("posts")
 }
 
-model PostHashTag {
+model PostHashtag {
   postId    BigInt
   hashtagId BigInt
 
