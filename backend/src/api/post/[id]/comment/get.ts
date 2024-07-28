@@ -121,7 +121,7 @@ export default (app: BaseElysia) =>
         limit: t.Optional(t.Number()),
       }),
       response: {
-        200: t.Array(commentSchema),
+        200: t.Array(schemaGETPostIdComment),
         400: t.String(),
         404: t.String(),
       },
@@ -181,7 +181,7 @@ const comment = {
   ),
 }
 
-const commentSchema = t.Object({
+const schemaGETPostIdComment = t.Object({
   ...comment,
   referredPost: t.Optional(t.Object(comment)),
   likedByMe: t.Optional(t.Boolean()),

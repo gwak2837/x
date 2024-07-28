@@ -109,7 +109,7 @@ export default (app: BaseElysia) =>
       headers: t.Object({ authorization: t.Optional(t.String()) }),
       params: t.Object({ id: t.String({ maxLength: 19 }) }),
       response: {
-        200: postSchema,
+        200: schemaGETPostId,
         400: t.String(),
         404: t.String(),
       },
@@ -169,7 +169,7 @@ const post = {
   ),
 }
 
-const postSchema = t.Object({
+const schemaGETPostId = t.Object({
   ...post,
   referredPost: t.Optional(t.Object(post)),
   likedByMe: t.Optional(t.Literal(true)),
@@ -178,4 +178,4 @@ const postSchema = t.Object({
   repostCount: t.Optional(t.String()),
 })
 
-export type GETPostId = Static<typeof postSchema>
+export type GETPostId = Static<typeof schemaGETPostId>

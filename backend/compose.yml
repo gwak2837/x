@@ -30,8 +30,7 @@ services:
   elysia:
     build: .
     container_name: elysia
-    env_file:
-      - path: ./.env.development.local
+    env_file: .env.development.local
     ports:
       - '4000:4000'
     restart: on-failure

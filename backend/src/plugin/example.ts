@@ -10,7 +10,7 @@ export default (app: BaseElysia) =>
       response: { 200: t.Object({ message: t.String() }) },
     })
     .get('/302', ({ redirect }) => redirect('https://google.com', 302))
-    .get('/403', ({ error }) => error(403), {
+    .get('/403', ({ error }) => error(403, 'Forbidden'), {
       response: { 403: t.String() },
     })
     .get('/404', () => {

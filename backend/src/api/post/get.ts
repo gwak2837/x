@@ -139,7 +139,7 @@ export default (app: BaseElysia) =>
         only: t.Optional(t.Enum(PostsOnly)),
       }),
       response: {
-        200: t.Array(postSchema),
+        200: t.Array(schemaGETPost),
         400: t.String(),
         404: t.String(),
       },
@@ -203,7 +203,7 @@ const post = {
   ),
 }
 
-const postSchema = t.Object({
+const schemaGETPost = t.Object({
   ...post,
   referredPost: t.Optional(
     t.Object({
