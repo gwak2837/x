@@ -69,17 +69,19 @@ export async function fetchWithToken<T>(
   input: Parameters<typeof fetch>[0],
   init?: Parameters<typeof fetch>[1],
 ) {
-  const response = await fetch(input, {
+  const response = await fetch(`${NEXT_PUBLIC_BACKEND_URL}${input}`, {
     ...init,
     headers: {
       ...init?.headers,
       Authorization: `Bearer ${authStore.accessToken}`,
     },
   })
-  if (!response.ok) {
-    if (response.status === 401) authStore.setAccessToken('')
-    throw Error(await response.text())
+  if (response.status === 401) {
+    authStore.setAccessToken('')
+    return await response.text()
   }
+  if (response.status >= 400) return await response.text()
+  if (response.status >= 500) throw new Error(await response.text())
 
   return (await response.json()) as T
 }

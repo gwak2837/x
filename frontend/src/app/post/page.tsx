@@ -1,5 +1,6 @@
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
 import { PageProps } from '@/types/nextjs'
+import PostItem from './PostItem'
 
 async function fetchPosts() {
   const response = await fetch(`${NEXT_PUBLIC_BACKEND_URL}/post`)
@@ -15,7 +16,9 @@ export default async function Page({}: PageProps) {
 
   return (
     <main className="min-h-[100dvh] p-4 sm:p-8 md:p-16 lg:p-24">
-      <pre className="overflow-x-scroll">{JSON.stringify(posts, null, 2)}</pre>
+      {posts.map((post: any) => (
+        <PostItem key={post.id} post={post} />
+      ))}
     </main>
   )
 }

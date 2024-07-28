@@ -1,5 +1,7 @@
 'use client'
 
+import { fetchWithToken } from '@/app/Authentication'
+import { useAuthStore } from '@/zustand/auth'
 import { useQuery } from '@tanstack/react-query'
 
 interface Props {
@@ -7,10 +9,13 @@ interface Props {
 }
 
 export default function Post({ initialPost }: Props) {
+  const authStore = useAuthStore((state) => state)
+
   const { data: post } = useQuery({
-    queryKey: ['post'],
-    queryFn: () => ({ id: 12 }),
+    queryKey: ['post', initialPost.id],
+    queryFn: () => fetchWithToken(authStore, `/post/${initialPost.id}`),
     initialData: initialPost,
+    enabled: Boolean(authStore.accessToken),
   })
 
   return <pre>{JSON.stringify(post, null, 2)}</pre>
