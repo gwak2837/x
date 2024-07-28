@@ -8,7 +8,8 @@
     "compile": "NODE_ENV=production bun build --compile --minify src/index.ts --outfile app.bun",
     "migrate:deploy": "dotenv -e .env.production.local -- bunx prisma migrate deploy",
     "migrate:dev": "dotenv -e .env.development.local -- bunx prisma migrate dev",
-    "prepush": "bunx tsc --noEmit && cd ../ && eslint . --fix && prettier . --write --log-level=warn"
+    "prepush": "bunx tsc --noEmit && cd ../ && eslint . --fix && prettier . --write --log-level=warn",
+    "prepare": "cd .. && husky install backend/.husky"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.1.0",
