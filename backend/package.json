@@ -6,8 +6,8 @@
     "build": "NODE_ENV=production bun build src/index.ts --target bun --minify --outdir ./out",
     "start": "NODE_ENV=production bun --env-file=.env.development.local out/index.js",
     "compile": "NODE_ENV=production bun build --compile --minify src/index.ts --outfile app.bun",
-    "migrate:deploy": "dotenv -e .env.production.local -- bunx prisma migrate deploy",
     "migrate:dev": "dotenv -e .env.development.local -- bunx prisma migrate dev",
+    "migrate:deploy": "dotenv -e .env.production.local -- bunx prisma migrate deploy",
     "pre-push": "bunx tsc --noEmit && cd ../ && eslint . --fix && prettier . --write --log-level=warn",
     "prepare": "cd .. && husky backend/.husky"
   },

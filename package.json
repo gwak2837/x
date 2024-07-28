@@ -1,7 +1,8 @@
 {
   "scripts": {
     "lint": "eslint . --fix",
-    "postinstall": "cd backend && bun i && cd ../frontend && npm i"
+    "postinstall": "cd backend && bun i && cd ../frontend && npm i",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@eslint/compat": "^1.1.1",
@@ -12,6 +13,7 @@
     "eslint-plugin-n": "^17.9.0",
     "eslint-plugin-perfectionist": "^2.11.0",
     "eslint-plugin-promise": "^6.4.0",
+    "husky": "^9.1.3",
     "prettier": "3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.5",
     "typescript-eslint": "^7.16.0"
