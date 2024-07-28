@@ -32,7 +32,7 @@ export default (app: BaseElysia) =>
       const bbatonUsername: string = JSON.parse(atob(token.access_token.split('.')[1])).user_name
       if (!bbatonUsername) return error(502, 'Bad Gateway')
 
-      // NOTE: 동시성 처리가 없어 탈퇴와 동시에 로그인 시 순간적으로 로그인이 가능할 수 있음
+      // NOTE: 동시성 처리가 없어 탈퇴와 동시에 로그인 시 순간적으로 로그인이 가능할 수 있음.
       const [oauth] = await sql<[OAuthUserRow?]>`
         SELECT "OAuth".id,
           "User".id AS "user_id",
