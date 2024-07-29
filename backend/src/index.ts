@@ -14,11 +14,25 @@ import route from './route'
 export type BaseElysia = typeof app
 
 const app = new Elysia()
+  .on('start', () => {
+    console.log(`🦊 Elysia is running at: ${app.server?.url}`)
+
+    if (process.env.NODE_ENV !== 'production') {
+      const nets = networkInterfaces()
+      if (nets.en0) {
+        console.log(`   On Your Network:      http://${nets.en0[1].address}:${PORT}`)
+      }
+    }
+  })
   .onError(({ error }) => {
     if (error.name === 'PostgresError') {
       console.error(error)
       return new Response('Bad Gateway', { status: 502 })
     }
+  })
+  .on('stop', async () => {
+    await Promise.all([sql.end({ timeout: 5000 })])
+    console.log('🦊 Elysia is stopped')
   })
   .use(
     cors({
@@ -32,17 +46,19 @@ const app = new Elysia()
   .use(swagger())
   .use(auth())
   .derive(() => ({ sql }))
-  .get('/healthz', () => 'OK', { response: { 200: t.String() } })
-  .get('/livez', () => ({ ENV, NODE_ENV: process.env.NODE_ENV ?? '' }), {
+  .get('/', async () => ({ ENV, NODE_ENV: process.env.NODE_ENV }), {
     response: {
       200: t.Object({
         ENV: t.String(),
-        NODE_ENV: t.String(),
+        NODE_ENV: t.Optional(t.String()),
       }),
     },
   })
+  .get('/live', () => ({ uptime: Bun.nanoseconds() }), {
+    response: { 200: t.Object({ uptime: t.Number() }) },
+  })
   .get(
-    '/readyz',
+    '/ready',
     async ({ error, sql }) => {
       type Result = [{ current_timestamp: Date }]
       const result = await sql<Result>`SELECT CURRENT_TIMESTAMP`
@@ -65,13 +81,3 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 app.use(route).listen({ hostname: '0.0.0.0', port: PORT || 4000 })
-
-console.log(`🦊 Elysia is running at: ${app.server?.url}`)
-
-if (process.env.NODE_ENV !== 'production') {
-  const nets = networkInterfaces()
-
-  if (nets.en0) {
-    console.log(`   On Your Network:      http://${nets.en0[1].address}:${PORT}`)
-  }
-}
