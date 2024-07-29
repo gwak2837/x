@@ -3,6 +3,7 @@ export enum PostStatus {
   DRAFT = 1,
   PRIVATE = 2,
   ONLY_FOLLOWERS = 3,
+  ANNONYMOUS = 4,
 }
 
 export enum PostCategory {

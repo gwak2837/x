@@ -20,7 +20,8 @@ export default (app: BaseElysia) =>
             FROM "Post"
             JOIN "User" AS "Author" ON "Author".id = "Post"."authorId"
               LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author".id AND "UserFollow"."followerId" = ${userId}
-            WHERE (
+            WHERE "Post"."publishAt" < CURRENT_TIMESTAMP AND 
+              "Post"."deletedAt" IS NOT NULL AND (
               ${parentPostId ? sql`"Post".id = ${parentPostId} OR` : sql``}
               ${referredPostId ? sql`"Post".id = ${referredPostId} OR` : sql``}
               ${parentPostId || referredPostId ? sql`FALSE` : sql`TRUE`}

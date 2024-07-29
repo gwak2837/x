@@ -70,14 +70,15 @@ export default (app: BaseElysia) =>
         status: post.status,
         content: post.content,
         imageURLs: post.imageURLs,
-        ...(post.author_id && {
-          author: {
-            id: post.author_id,
-            name: post.author_name,
-            nickname: post.author_nickname,
-            profileImageURLs: post.author_profileImageURLs,
-          },
-        }),
+        ...(post.author_id &&
+          post.status !== PostStatus.ANNONYMOUS && {
+            author: {
+              id: post.author_id,
+              name: post.author_name,
+              nickname: post.author_nickname,
+              profileImageURLs: post.author_profileImageURLs,
+            },
+          }),
         ...(post.referredPost_id && {
           referredPost: {
             id: post.referredPost_id,
@@ -89,14 +90,15 @@ export default (app: BaseElysia) =>
             status: post.referredPost_status,
             content: post.referredPost_content,
             imageURLs: post.referredPost_imageURLs,
-            ...(post.referredPostAuthor_id && {
-              author: {
-                id: post.referredPostAuthor_id,
-                name: post.referredPostAuthor_name,
-                nickname: post.referredPostAuthor_nickname,
-                profileImageURLs: post.referredPostAuthor_profileImageURLs,
-              },
-            }),
+            ...(post.referredPostAuthor_id &&
+              post.referredPost_status !== PostStatus.ANNONYMOUS && {
+                author: {
+                  id: post.referredPostAuthor_id,
+                  name: post.referredPostAuthor_name,
+                  nickname: post.referredPostAuthor_nickname,
+                  profileImageURLs: post.referredPostAuthor_profileImageURLs,
+                },
+              }),
           },
         }),
         likedByMe: post.likedByMe === 1 || undefined,

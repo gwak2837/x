@@ -29,6 +29,7 @@ export default (app: BaseElysia) =>
           "Post".status,
           "Post".content,
           "Post"."imageURLs",
+          "Post"."referredPostId",
           "Author".id AS "author_id",
           "Author".name AS "author_name",
           "Author".nickname AS "author_nickname",
@@ -52,9 +53,11 @@ export default (app: BaseElysia) =>
           COUNT("Repost".id) AS "repostCount"
         FROM "Post"
           JOIN "User" AS "Author" ON  "Author".id = "Post"."authorId"
+          LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author"."id" AND "UserFollow"."followerId" = ${userId}
           LEFT JOIN "Post" AS "ReferredPost" ON "ReferredPost".id = "Post"."referredPostId"
           LEFT JOIN "User" AS "ReferredAuthor" ON "ReferredAuthor".id = "ReferredPost"."authorId"
-          LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author"."id" AND "UserFollow"."followerId" = ${userId}
+          LEFT JOIN "UserFollow" AS "ReferredAuthorFollow" 
+            ON "ReferredAuthorFollow"."leaderId" = "ReferredAuthor"."id" AND "ReferredAuthorFollow"."followerId" = ${userId}
           LEFT JOIN "UserLikePost" ON "UserLikePost"."postId" = "Post".id
           LEFT JOIN "Post" AS "Comment" ON "Comment"."parentPostId" = "Post".id
           LEFT JOIN "Post" AS "Repost" ON "Repost"."referredPostId" = "Post".id
@@ -93,14 +96,16 @@ export default (app: BaseElysia) =>
           status: post.status,
           content: post.content,
           imageURLs: post.imageURLs,
-          ...(post.author_id && {
-            author: {
-              id: post.author_id,
-              name: post.author_name!,
-              nickname: post.author_nickname!,
-              profileImageURLs: post.author_profileImageURLs,
-            },
-          }),
+          referredPostId: post.referredPostId,
+          ...(post.author_id &&
+            post.status !== PostStatus.ANNONYMOUS && {
+              author: {
+                id: post.author_id,
+                name: post.author_name!,
+                nickname: post.author_nickname!,
+                profileImageURLs: post.author_profileImageURLs,
+              },
+            }),
           ...(post.referredPost_id && {
             referredPost: {
               id: post.referredPost_id,
@@ -112,16 +117,18 @@ export default (app: BaseElysia) =>
               status: post.referredPost_status!,
               content: post.referredPost_content,
               imageURLs: post.referredPost_imageURLs,
-              ...(post.referredPostAuthor_id && {
-                author: {
-                  id: post.referredPostAuthor_id,
-                  name: post.referredPostAuthor_name!,
-                  nickname: post.referredPostAuthor_nickname!,
-                  profileImageURLs: post.referredPostAuthor_profileImageURLs,
-                },
-              }),
+              ...(post.referredAuthor_id &&
+                post.referredPost_status !== PostStatus.ANNONYMOUS && {
+                  author: {
+                    id: post.referredAuthor_id,
+                    name: post.referredAuthor_name!,
+                    nickname: post.referredAuthor_nickname!,
+                    profileImageURLs: post.referredAuthor_profileImageURLs,
+                  },
+                }),
             },
           }),
+
           likedByMe: post.likedByMe === 1 || undefined,
           likeCount: removeZero(post.likeCount),
           commentCount: removeZero(post.commentCount),
@@ -162,6 +169,7 @@ type PostRow = {
   status: PostStatus
   content: string | null
   imageURLs: string[] | null
+  referredPostId: string | null
   author_id: string | null
   author_name: string | null
   author_nickname: string | null
@@ -175,17 +183,17 @@ type PostRow = {
   referredPost_status: PostStatus | null
   referredPost_content: string | null
   referredPost_imageURLs: string[] | null
-  referredPostAuthor_id: string | null
-  referredPostAuthor_name: string | null
-  referredPostAuthor_nickname: string | null
-  referredPostAuthor_profileImageURLs: string[] | null
+  referredAuthor_id: string | null
+  referredAuthor_name: string | null
+  referredAuthor_nickname: string | null
+  referredAuthor_profileImageURLs: string[] | null
   likedByMe: 0 | 1
   likeCount: string
   commentCount: string
   repostCount: string
 }
 
-const post = {
+const basePost = {
   id: t.String(),
   createdAt: t.Date(),
   updatedAt: t.Optional(t.Date()),
@@ -204,10 +212,11 @@ const post = {
 }
 
 const schemaGETPost = t.Object({
-  ...post,
+  ...basePost,
+  referredPostId: t.Optional(t.String()),
   referredPost: t.Optional(
     t.Object({
-      ...post,
+      ...basePost,
       category: t.Optional(t.Enum(PostCategory)),
     }),
   ),

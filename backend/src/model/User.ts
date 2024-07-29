@@ -20,3 +20,10 @@ export enum UserSuspendedType {
 }
 
 export const USER_NAME_MAX_LENGTH = 255
+
+export enum UserGrade {
+  NORMAL = 0,
+  VIP = 1,
+  ADMIN = 2,
+  SUPER_ADMIN = 3,
+}

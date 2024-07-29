@@ -1,6 +1,6 @@
 {
-  "name": "bike",
-  "version": "1.0.0",
+  "name": "backend",
+  "version": "0.1.0",
   "scripts": {
     "dev": "NODE_ENV=development bun --env-file=.env.development.local run --watch src/index.ts",
     "build": "NODE_ENV=production bun build src/index.ts --target bun --minify --outdir ./out",
