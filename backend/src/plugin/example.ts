@@ -1,4 +1,3 @@
-import Stream from '@elysiajs/stream'
 import { NotFoundError, t } from 'elysia'
 
 import { BaseElysia } from '..'
@@ -19,14 +18,11 @@ export default (app: BaseElysia) =>
     .get('/user', ({ userId }) => ({ userId: userId?.toString() }), {
       response: { 200: t.Object({ userId: t.Optional(t.String()) }) },
     })
-    .get(
-      '/stream',
-      () =>
-        new Stream(async (stream) => {
-          stream.send('Hello')
-          await stream.wait(3000)
-          stream.send('world!')
-          stream.close()
-        }),
-    )
+    .get('/stream', async function* ({ set }) {
+      set.headers['x-name'] = 'Elysia'
+
+      yield 1
+      yield 2
+      yield 3
+    })
     .ws('/ws', { message: (ws, message) => ws.send({ message, time: Date.now() }) })

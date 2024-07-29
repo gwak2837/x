@@ -37,7 +37,7 @@ Open http://localhost:4000/ with your browser to see the result.
 ```bash
 cd frontend
 cp .env.template .env.development.local
-npm run dev
+bun dev
 ```
 
 Open http://localhost:3000/ with your browser to see the result.

@@ -10,11 +10,8 @@ export default (app: BaseElysia) =>
       if (!userId) return error(401, 'Unauthorized')
       if (!body.content && !body.referredPostId) return error(400, 'Bad request')
 
-      const { publishAt } = body
+      const { publishAt, parentPostId, referredPostId, hashtags } = body
       if (publishAt && new Date(publishAt) < new Date()) return error(400, 'Bad request')
-
-      const parentPostId = body.parentPostId
-      const referredPostId = body.referredPostId
 
       const [newPost] = await sql<[NewPost]>`
         WITH 
@@ -37,12 +34,36 @@ export default (app: BaseElysia) =>
             SELECT
             ${parentPostId ? sql`EXISTS (SELECT 1 FROM related_posts WHERE id = ${parentPostId})` : sql`TRUE`} AS is_valid_parent,
             ${referredPostId ? sql`EXISTS (SELECT 1 FROM related_posts WHERE id = ${referredPostId})` : sql`TRUE`} AS is_valid_referred
+          ),
+          new_post AS (
+            INSERT INTO "Post" ("publishAt", "category", "status", "content", "authorId", "parentPostId", "referredPostId")
+            SELECT ${body.publishAt ?? sql`CURRENT_TIMESTAMP`}, ${body.category ?? null}, ${body.status ?? PostStatus.PUBLIC}, ${body.content ?? null}, ${userId}, ${parentPostId ?? null}, ${referredPostId ?? null}
+            FROM validation
+            WHERE is_valid_parent AND is_valid_referred
+            RETURNING id, "createdAt"
           )
-        INSERT INTO "Post" ("publishAt", "category", "status", "content", "authorId", "parentPostId", "referredPostId")
-        SELECT ${body.publishAt ?? sql`CURRENT_TIMESTAMP`}, ${body.category ?? null}, ${body.status ?? PostStatus.PUBLIC}, ${body.content ?? null}, ${userId}, ${parentPostId ?? null}, ${referredPostId ?? null}
-        FROM validation
-        WHERE is_valid_parent AND is_valid_referred
-        RETURNING id, "createdAt";`
+          ${
+            hashtags
+              ? sql`, 
+          hashtags AS (
+            INSERT INTO "Hashtag" ${sql(hashtags)}
+            ON CONFLICT (name) DO NOTHING
+            RETURNING id
+          )`
+              : sql``
+          }
+          ${
+            hashtags
+              ? sql`, 
+          post_x_hashtag AS (
+            INSERT INTO "PostHashtag" ("postId", "hashtagId")
+            SELECT new_post.id, hashtags.id
+            FROM new_post, hashtags
+          )`
+              : sql``
+          }
+        SELECT id, "createdAt"
+        FROM new_post;`
 
       return newPost
     },
@@ -51,6 +72,7 @@ export default (app: BaseElysia) =>
       body: t.Object({
         category: t.Optional(t.Enum(PostCategory)),
         content: t.Optional(t.String()),
+        hashtags: t.Optional(t.Array(t.String())),
         imageURLs: t.Optional(t.Array(t.String())),
         parentPostId: t.Optional(t.String()),
         publishAt: t.Optional(t.String({ format: 'date-time' })),
