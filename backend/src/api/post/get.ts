@@ -54,7 +54,19 @@ export default (app: BaseElysia) =>
         FROM "Post"
           JOIN "User" AS "Author" ON  "Author".id = "Post"."authorId"
           LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author"."id" AND "UserFollow"."followerId" = ${userId}
-          LEFT JOIN "Post" AS "ReferredPost" ON "ReferredPost".id = "Post"."referredPostId"
+          LEFT JOIN "Post" AS "ReferredPost" ON "ReferredPost".id = (
+            SELECT "ReferredPost".id
+            FROM "Post" AS "ReferredPost"
+              LEFT JOIN "User" AS "ReferredAuthor" ON "ReferredAuthor".id = "ReferredPost"."authorId"
+              LEFT JOIN "UserFollow" AS "ReferredAuthorFollow"
+                ON "ReferredAuthorFollow"."leaderId" = "ReferredAuthor".id AND "ReferredAuthorFollow"."followerId" = ${userId}
+            WHERE "ReferredPost".id = "Post"."referredPostId"
+              AND "ReferredPost"."publishAt" < CURRENT_TIMESTAMP AND (
+                "ReferredPost".status = ${PostStatus.PUBLIC} OR 
+                "ReferredPost".status = ${PostStatus.ANNONYMOUS} OR 
+                "ReferredPost".status = ${PostStatus.ONLY_FOLLOWERS} AND "ReferredAuthorFollow"."leaderId" IS NOT NULL
+              )
+          )
           LEFT JOIN "User" AS "ReferredAuthor" ON "ReferredAuthor".id = "ReferredPost"."authorId"
           LEFT JOIN "UserFollow" AS "ReferredAuthorFollow" 
             ON "ReferredAuthorFollow"."leaderId" = "ReferredAuthor"."id" AND "ReferredAuthorFollow"."followerId" = ${userId}
@@ -80,6 +92,7 @@ export default (app: BaseElysia) =>
           ) AND (
             ${userId && only === PostsOnly.MINE ? sql`TRUE OR` : sql``}
             "Post".status = ${PostStatus.PUBLIC} OR 
+            "Post".status = ${PostStatus.ANNONYMOUS} OR 
             "Post".status = ${PostStatus.ONLY_FOLLOWERS} AND "UserFollow"."leaderId" IS NOT NULL
           )
         GROUP BY "Post".id, "Author".id, "ReferredPost".id, "ReferredAuthor".id

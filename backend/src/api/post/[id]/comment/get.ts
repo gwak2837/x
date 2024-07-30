@@ -85,6 +85,7 @@ export default (app: BaseElysia) =>
             WHERE "ReplyPost"."parentPostId" = "Post".id
               AND "ReplyPost"."publishAt" < CURRENT_TIMESTAMP AND (
                 "ReplyPost".status = ${PostStatus.PUBLIC} OR 
+                "ReplyPost".status = ${PostStatus.ANNONYMOUS} OR 
                 "ReplyPost".status = ${PostStatus.ONLY_FOLLOWERS} AND "ReplyUserFollow"."leaderId" IS NOT NULL
               )
             ORDER BY "Post"."publishAt" DESC
@@ -99,6 +100,7 @@ export default (app: BaseElysia) =>
           "Post"."authorId" = ${userId} OR
           "Post"."publishAt" < CURRENT_TIMESTAMP AND (
             "Post".status = ${PostStatus.PUBLIC} OR 
+            "Post".status = ${PostStatus.ANNONYMOUS} OR 
             "Post".status = ${PostStatus.ONLY_FOLLOWERS} AND "UserFollow"."leaderId" IS NOT NULL
           )
         )
