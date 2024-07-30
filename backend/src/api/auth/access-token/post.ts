@@ -10,8 +10,8 @@ export default (app: BaseElysia) =>
   app.post(
     '/auth/access-token',
     async ({ error, headers, sql }) => {
-      const auth = headers?.['authorization']
-      const token = auth?.startsWith('Bearer ') ? auth.slice(7) : auth
+      const auth = headers['authorization']
+      const token = auth.startsWith('Bearer ') ? auth.slice(7) : auth
       if (!token) return error(401, 'Unauthorized')
 
       try {

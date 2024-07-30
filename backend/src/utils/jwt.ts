@@ -7,14 +7,18 @@ export enum TokenType {
   REFRESH,
 }
 
-export async function signJWT(payload: JWTPayload, type: TokenType): Promise<string> {
+export async function signJWT(
+  payload: JWTPayload,
+  type: TokenType,
+  expires?: number,
+): Promise<string> {
   // NOTE: https://developer.amazon.com/docs/login-with-amazon/access-token.html
   const duration = type === TokenType.ACCESS ? 3600 : 3600 * 720
   const secretKey = type === TokenType.ACCESS ? ACCESS_JWT_SECRET : REFRESH_JWT_SECRET
 
   return await new SignJWT({ ...payload, iss: DOMAIN_NAME })
     .setProtectedHeader({ alg: 'HS256' })
-    .setExpirationTime(Math.floor(Date.now() / 1000) + duration)
+    .setExpirationTime(expires ?? Math.floor(Date.now() / 1000) + duration)
     .sign(new TextEncoder().encode(secretKey))
 }
 

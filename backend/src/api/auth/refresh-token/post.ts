@@ -10,8 +10,8 @@ export default (app: BaseElysia) =>
   app.post(
     '/auth/refresh-token',
     async ({ error, headers, sql }) => {
-      const auth = headers?.['authorization']
-      const token = auth?.startsWith('Bearer ') ? auth.slice(7) : auth
+      const auth = headers['authorization']
+      const token = auth.startsWith('Bearer ') ? auth.slice(7) : auth
       if (!token) return error(401, 'Unauthorized')
 
       try {
@@ -21,8 +21,8 @@ export default (app: BaseElysia) =>
         const [user] = await sql<[Result]>`
           SELECT "suspendedType"
           FROM "User"
-          WHERE id = ${userId};
-        `
+          WHERE id = ${userId};`
+
         if (!user || (user.suspendedType && LoginNotAllowed.includes(user.suspendedType)))
           return error(403, 'Forbidden')
 

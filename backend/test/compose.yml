@@ -12,6 +12,6 @@ services:
       POSTGRES_DB: postgres_db
       POSTGRES_INITDB_ARGS: --data-checksums
     ports:
-      - '5432:5432'
+      - '54321:5432'
     restart: on-failure
     shm_size: 256MB
