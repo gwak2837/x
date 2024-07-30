@@ -3,7 +3,7 @@ import { PostgresError } from 'postgres'
 
 import { BaseElysia } from '../../..'
 import { BBATON_CLIENT_ID, BBATON_CLIENT_SECRET, BBATON_REDIRECT_URI } from '../../../constants'
-import { OAuthProvider } from '../../../model/User'
+import { OAuthProvider } from '../../../model/OAuth'
 import { PostgresErrorCode } from '../../../plugin/postgres'
 import { TokenType, signJWT } from '../../../utils/jwt'
 import { generateRandomNickname } from '../../../utils/nickname'
@@ -80,13 +80,13 @@ export default (app: BaseElysia) =>
         if (!user) return error(400, 'Bad Request')
 
         return {
-          accessToken: await signJWT({ sub: user.id.toString() }, TokenType.ACCESS),
-          refreshToken: await signJWT({ sub: user.id.toString() }, TokenType.REFRESH),
+          accessToken: await signJWT({ sub: user.id }, TokenType.ACCESS),
+          refreshToken: await signJWT({ sub: user.id }, TokenType.REFRESH),
         }
       } else if (!oauth.user_id) {
         return error(
           403,
-          '해당 BBaton 계정으로 이미 회원가입한 적이 있어서 다시 가입할 수 없습니다.\n자세한 사항은 고객센터에 문의해주세요.',
+          '해당 BBaton 계정으로 이미 회원가입한 적이 있어서 다시 가입할 수 없습니다. 자세한 사항은 고객센터에 문의해주세요.',
         )
       } else if (oauth.user_suspendedType) {
         const msg = `로그인 할 수 없습니다. 이유:\n${oauth.user_suspendedReason}`
@@ -113,8 +113,8 @@ export default (app: BaseElysia) =>
         )
 
       return {
-        accessToken: await signJWT({ sub: oauth.user_id.toString() }, TokenType.ACCESS),
-        refreshToken: await signJWT({ sub: oauth.user_id.toString() }, TokenType.REFRESH),
+        accessToken: await signJWT({ sub: oauth.user_id }, TokenType.ACCESS),
+        refreshToken: await signJWT({ sub: oauth.user_id }, TokenType.REFRESH),
       }
     },
     {
@@ -133,16 +133,16 @@ export default (app: BaseElysia) =>
 
 const base64Token = btoa(`${BBATON_CLIENT_ID}:${BBATON_CLIENT_SECRET}`)
 
-type BBatonTokenResponse = {
+export type BBatonTokenResponse = {
   access_token: string
   token_type: 'bearer'
   expires_in: number
   scope: string
 }
 
-type BBatonUserResponse = {
+export type BBatonUserResponse = {
   user_id: string
-  adult_flag: string
+  adult_flag: 'N' | 'Y'
   birth_year: string
   gender: string
   income: string

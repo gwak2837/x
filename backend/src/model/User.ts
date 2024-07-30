@@ -1,11 +1,3 @@
-export enum OAuthProvider {
-  BBATON = 0,
-  NAVER = 1,
-  KAKAO = 2,
-  GOOGLE = 3,
-  FACEBOOK = 4,
-}
-
 export enum UserSex {
   UNKNOWN = 0,
   MALE = 1,

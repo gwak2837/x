@@ -13,7 +13,7 @@ import route from './route'
 // TODO: Rate limit, Logger
 export type BaseElysia = typeof app
 
-const app = new Elysia()
+export const app = new Elysia()
   .on('start', () => {
     console.log(`🦊 Elysia is running at: ${app.server?.url}`)
 
@@ -76,7 +76,7 @@ const app = new Elysia()
     },
   )
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV === 'development') {
   app.use(example)
 }
 

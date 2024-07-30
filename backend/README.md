@@ -36,3 +36,11 @@ bun start
 bun run compile
 ./app.bun
 ```
+
+## Test
+
+```bash
+bun test:db
+bun test:migrate
+bun test
+```

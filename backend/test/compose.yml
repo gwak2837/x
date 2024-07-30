@@ -1,0 +1,17 @@
+name: bike-test
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    environment:
+      LANG: ko_KR.UTF8
+      LC_COLLATE: C
+      POSTGRES_USER: postgres_user
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: postgres_db
+      POSTGRES_INITDB_ARGS: --data-checksums
+    ports:
+      - '5432:5432'
+    restart: on-failure
+    shm_size: 256MB
