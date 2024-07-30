@@ -35,16 +35,16 @@ export default function PostForm() {
   return (
     <form className="space-y-4" onSubmit={createPost}>
       <div>
-        <label htmlFor="title" className="block">
+        <label className="block" htmlFor="title">
           Title
         </label>
-        <input type="text" id="title" name="title" className="w-full bg-slate-500" />
+        <input className="w-full bg-slate-500" id="title" name="title" type="text" />
       </div>
       <div>
-        <label htmlFor="content" className="block">
+        <label className="block" htmlFor="content">
           Content
         </label>
-        <textarea id="content" name="content" className="w-full bg-slate-500" />
+        <textarea className="w-full bg-slate-500" id="content" name="content" />
       </div>
       <button className="bg-blue-500 text-white" type="submit">
         Submit

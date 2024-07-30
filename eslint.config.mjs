@@ -25,21 +25,24 @@ export default [
     languageOptions: { globals: globals.node },
   },
   {
-    ignores: [
-      ...includeIgnoreFile(gitignorePath).ignores,
-      'frontend/', // Next.js 14에서 ESLint v9 flat config 미지원
-      'eslint.config.mjs',
-    ],
+    ignores: [...includeIgnoreFile(gitignorePath).ignores, 'eslint.config.mjs'],
   },
   {
     rules: {
       '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
+
       'n/no-missing-import': 'off',
       'n/no-unsupported-features/node-builtins': 'off',
+
       'perfectionist/sort-enums': 'off',
       'perfectionist/sort-objects': 'off',
       'perfectionist/sort-object-types': 'off',
       'perfectionist/sort-union-types': ['error', { 'nullable-last': true }],
+
+      'no-async-promise-executor': 'off',
+      'no-empty-pattern': 'warn',
     },
   },
   eslintConfigPrettier,

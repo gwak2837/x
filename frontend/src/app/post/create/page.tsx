@@ -1,4 +1,5 @@
 import { PageProps } from '@/types/nextjs'
+
 import PostForm from './PostForm'
 
 export default async function Page({ params, searchParams }: PageProps) {

@@ -1,12 +1,12 @@
-import './globals.css'
-
-import { LayoutProps } from '@/types/nextjs'
 import type { Metadata } from 'next'
+
+import ReactQueryProvider from '@/components/ReactQueryProvider'
+import { LayoutProps } from '@/types/nextjs'
 import { Toaster } from 'react-hot-toast'
 
 import Authentication from './Authentication'
-import ReactQueryProvider from '@/components/ReactQueryProvider'
 import Navigation from './Navigation'
+import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Bike',

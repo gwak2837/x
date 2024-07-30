@@ -14,9 +14,9 @@ export default async function Page({ params, searchParams }: PageProps) {
         <Image
           alt="BBaton_Logo_Login_KR_v2.png"
           height="100"
+          priority
           src="/images/BBaton_Logo_Login_KR_v2.png"
           width="350"
-          priority
         />
       </a>
       <Login />

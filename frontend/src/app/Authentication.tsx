@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'

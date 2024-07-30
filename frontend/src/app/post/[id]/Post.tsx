@@ -4,7 +4,7 @@ import { fetchWithToken } from '@/app/Authentication'
 import { useAuthStore } from '@/zustand/auth'
 import { useQuery } from '@tanstack/react-query'
 
-interface Props {
+type Props = {
   initialPost: Record<string, unknown>
 }
 

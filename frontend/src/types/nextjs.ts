@@ -11,9 +11,9 @@ export type PageProps<T extends Record<string, unknown> = Record<string, string>
 }
 
 export type ErrorProps = {
-  error: Error & {
+  error: {
     digest?: string
-  }
+  } & Error
   reset: () => void
 }
 
@@ -22,7 +22,7 @@ export type RouteProps = {
 }
 
 export type Params = {
-  lang: 'ko' | 'en'
+  lang: 'en' | 'ko'
   postId: string
   questionCount: string
 }

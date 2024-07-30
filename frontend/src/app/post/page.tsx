@@ -1,5 +1,6 @@
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
 import { PageProps } from '@/types/nextjs'
+
 import PostItem from './PostItem'
 
 async function fetchPosts() {
