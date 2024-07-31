@@ -19,10 +19,10 @@ export default (app: BaseElysia) =>
         !referredPostId &&
         !status
       )
-        return error(400, 'Bad request')
+        return error(400, 'Bad Request')
 
       const { id: postId } = params
-      if (isNaN(+postId) || !isFinite(+postId)) return error(400, 'Bad request')
+      if (isNaN(+postId) || !isFinite(+postId)) return error(400, 'Bad Request')
 
       const [updatedPost] = await sql<[UpdatedPost]>`
         UPDATE "Post"

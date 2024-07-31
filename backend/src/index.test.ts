@@ -26,6 +26,6 @@ describe('backend/src/index.ts', () => {
   test('GET /ready', async () => {
     const result = await app.handle(new Request('http://localhost/ready')).then((res) => res.json())
 
-    expect(new Date(result.current_timestamp)).toBeInstanceOf(Date)
+    expect(new Date(result.current_timestamp).getTime()).not.toBeNaN()
   })
 })

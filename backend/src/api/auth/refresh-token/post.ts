@@ -18,7 +18,7 @@ export default (app: BaseElysia) =>
         const { sub: userId } = await verifyJWT(token, TokenType.REFRESH)
         if (!userId || !isNumberString(userId)) return error(422, 'Unprocessable Content')
 
-        const [user] = await sql<[Result]>`
+        const [user] = await sql<[UserRow]>`
           SELECT "suspendedType"
           FROM "User"
           WHERE id = ${userId};`
@@ -26,7 +26,7 @@ export default (app: BaseElysia) =>
         if (!user || (user.suspendedType && LoginNotAllowed.includes(user.suspendedType)))
           return error(403, 'Forbidden')
 
-        return { accessToken: await signJWT({ sub: userId }, TokenType.REFRESH) }
+        return { refreshToken: await signJWT({ sub: userId }, TokenType.REFRESH) }
       } catch (_) {
         return error(401, 'Unauthorized')
       }
@@ -34,7 +34,7 @@ export default (app: BaseElysia) =>
     {
       headers: t.Object({ authorization: t.String() }),
       response: {
-        200: t.Object({ accessToken: t.String() }),
+        200: t.Object({ refreshToken: t.String() }),
         401: t.String(),
         403: t.String(),
         422: t.String(),
@@ -42,6 +42,6 @@ export default (app: BaseElysia) =>
     },
   )
 
-type Result = {
+type UserRow = {
   suspendedType: UserSuspendedType
 }

@@ -6,7 +6,7 @@ import { sql } from '../../../../test/postgres'
 import { UserSuspendedType } from '../../../model/User'
 import { TokenType, signJWT } from '../../../utils/jwt'
 
-describe('POST /auth/access-token', async () => {
+describe('POST /auth/refresh-token', async () => {
   const invalidUserId = '0'
   let newUserId = ''
 
@@ -15,9 +15,9 @@ describe('POST /auth/access-token', async () => {
     await sql`DELETE FROM "User"`
   })
 
-  test('422: 요청 헤더에 `Authorization`가 없는 경우', async () => {
+  test('요청 헤더에 `Authorization`가 없는 경우', async () => {
     const response = await app.handle(
-      new Request('http://localhost/auth/access-token', { method: 'POST' }),
+      new Request('http://localhost/auth/refresh-token', { method: 'POST' }),
     )
 
     expect(response.status).toBe(422)
@@ -26,9 +26,9 @@ describe('POST /auth/access-token', async () => {
     })
   })
 
-  test('401: 요청 헤더 `Authorization`이 빈 문자열인 경우', async () => {
+  test('요청 헤더 `Authorization`이 빈 문자열인 경우', async () => {
     const response = await app.handle(
-      new Request('http://localhost/auth/access-token', {
+      new Request('http://localhost/auth/refresh-token', {
         method: 'POST',
         headers: { Authorization: '' },
       }),
@@ -38,11 +38,11 @@ describe('POST /auth/access-token', async () => {
     expect(await response.text()).toBe('Unauthorized')
   })
 
-  test('401: 토큰 서명이 유효하지 않은 경우', async () => {
+  test('토큰 서명이 유효하지 않은 경우', async () => {
     const invalidRefreshToken = await signJWT({ sub: invalidUserId }, TokenType.ACCESS)
 
     const response = await app.handle(
-      new Request('http://localhost/auth/access-token', {
+      new Request('http://localhost/auth/refresh-token', {
         method: 'POST',
         headers: { Authorization: `Bearer ${invalidRefreshToken}` },
       }),
@@ -52,11 +52,11 @@ describe('POST /auth/access-token', async () => {
     expect(await response.text()).toBe('Unauthorized')
   })
 
-  test('422: 토큰 payload에 `sub`가 없는 경우', async () => {
+  test('토큰 payload에 `sub`가 없는 경우', async () => {
     const invalidRefreshToken = await signJWT({}, TokenType.REFRESH)
 
     const response = await app.handle(
-      new Request('http://localhost/auth/access-token', {
+      new Request('http://localhost/auth/refresh-token', {
         method: 'POST',
         headers: { Authorization: `Bearer ${invalidRefreshToken}` },
       }),
@@ -66,11 +66,11 @@ describe('POST /auth/access-token', async () => {
     expect(await response.text()).toBe('Unprocessable Content')
   })
 
-  test('422: 토큰 payload의 `sub` 형식이 유효하지 않은 경우', async () => {
+  test('토큰 payload의 `sub` 형식이 유효하지 않은 경우', async () => {
     const invalidRefreshToken = await signJWT({ sub: 'invalid format' }, TokenType.REFRESH)
 
     const response = await app.handle(
-      new Request('http://localhost/auth/access-token', {
+      new Request('http://localhost/auth/refresh-token', {
         method: 'POST',
         headers: { Authorization: `Bearer ${invalidRefreshToken}` },
       }),
@@ -80,11 +80,11 @@ describe('POST /auth/access-token', async () => {
     expect(await response.text()).toBe('Unprocessable Content')
   })
 
-  test('401: 토큰 유효기간이 1시간 전에 만료된 경우', async () => {
+  test('토큰 유효기간이 1시간 전에 만료된 경우', async () => {
     const invalidRefreshToken = await signJWT({ sub: invalidUserId }, TokenType.REFRESH, -3600)
 
     const response = await app.handle(
-      new Request('http://localhost/auth/access-token', {
+      new Request('http://localhost/auth/refresh-token', {
         method: 'POST',
         headers: { Authorization: `Bearer ${invalidRefreshToken}` },
       }),
@@ -94,7 +94,7 @@ describe('POST /auth/access-token', async () => {
     expect(await response.text()).toBe('Unauthorized')
   })
 
-  test('200: OK', async () => {
+  test('200 OK', async () => {
     // 회원가입
     spyOn(Date, 'now').mockReturnValueOnce(1722314119989)
 
@@ -122,22 +122,22 @@ describe('POST /auth/access-token', async () => {
 
     const refreshing = await app
       .handle(
-        new Request('http://localhost/auth/access-token', {
+        new Request('http://localhost/auth/refresh-token', {
           method: 'POST',
           headers: { Authorization: `Bearer ${register.refreshToken}` },
         }),
       )
       .then((response) => response.json())
 
-    const userId = JSON.parse(atob(refreshing.accessToken.split('.')[1])).sub
+    const userId = JSON.parse(atob(refreshing.refreshToken.split('.')[1])).sub
 
-    expect(refreshing).toHaveProperty('accessToken')
-    expect(typeof refreshing.accessToken).toBe('string')
-    expect(refreshing.accessToken).not.toBe(register.accessToken)
+    expect(refreshing).toHaveProperty('refreshToken')
+    expect(typeof refreshing.refreshToken).toBe('string')
+    expect(refreshing.refreshToken).not.toBe(register.refreshToken)
     expect(userId).toBe(newUserId)
   })
 
-  test('403: 정지된 사용자가 로그인한 경우', async () => {
+  test('정지된 사용자가 로그인한 경우', async () => {
     // 로그인
     spyOn(global, 'fetch').mockResolvedValueOnce(
       new Response(JSON.stringify(validBBatonTokenResponse)),
@@ -178,7 +178,7 @@ describe('POST /auth/access-token', async () => {
 
     // 토큰 갱신
     const response = await app.handle(
-      new Request('http://localhost/auth/access-token', {
+      new Request('http://localhost/auth/refresh-token', {
         method: 'POST',
         headers: { Authorization: `Bearer ${loginResult.refreshToken}` },
       }),

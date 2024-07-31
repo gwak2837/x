@@ -18,7 +18,7 @@ export default (app: BaseElysia) =>
         const { sub: userId } = await verifyJWT(token, TokenType.REFRESH)
         if (!userId || !isNumberString(userId)) return error(422, 'Unprocessable Content')
 
-        const [user] = await sql<[Result]>`
+        const [user] = await sql<[UserRow]>`
           SELECT "suspendedType"
           FROM "User"
           WHERE id = ${userId};`
@@ -42,6 +42,6 @@ export default (app: BaseElysia) =>
     },
   )
 
-type Result = {
+type UserRow = {
   suspendedType: UserSuspendedType
 }

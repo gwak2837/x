@@ -11,7 +11,7 @@ export default (app: BaseElysia) =>
     '/post/:id/comment',
     async ({ error, params, query, sql, userId }) => {
       const { id: postId } = params
-      if (isNaN(+postId)) return error(400, 'Bad request')
+      if (isNaN(+postId)) return error(400, 'Bad Request')
 
       const { cursor = POSTGRES_MAX_BIGINT, limit = 30 } = query
 

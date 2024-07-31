@@ -8,10 +8,10 @@ export default (app: BaseElysia) =>
     '/post',
     async ({ body, error, sql, userId }) => {
       if (!userId) return error(401, 'Unauthorized')
-      if (!body.content && !body.referredPostId) return error(400, 'Bad request')
+      if (!body.content && !body.referredPostId) return error(400, 'Bad Request')
 
       const { publishAt, parentPostId, referredPostId, hashtags } = body
-      if (publishAt && new Date(publishAt) < new Date()) return error(400, 'Bad request')
+      if (publishAt && new Date(publishAt) < new Date()) return error(400, 'Bad Request')
 
       const [newPost] = await sql<[NewPost]>`
         WITH 

@@ -21,12 +21,12 @@ export default (app: BaseElysia) =>
         !nickname &&
         !birthDate
       )
-        return error(400, 'Bad request')
+        return error(400, 'Bad Request')
       if ((suspendedType && !suspendedReason) || (suspendedReason && !suspendedType))
-        return error(400, 'Bad request')
+        return error(400, 'Bad Request')
 
       const { id: userIdInParam } = params
-      if (isNaN(+userIdInParam) || !isFinite(+userIdInParam)) return error(400, 'Bad request')
+      if (isNaN(+userIdInParam) || !isFinite(+userIdInParam)) return error(400, 'Bad Request')
       if (userId !== userIdInParam) return error(401, 'Unauthorized')
 
       const [updatedUser] = await sql<[UpdatedPost]>`

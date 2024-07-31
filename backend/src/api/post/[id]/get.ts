@@ -10,7 +10,7 @@ export default (app: BaseElysia) =>
     '/post/:id',
     async ({ error, params, sql, userId }) => {
       const { id: postId } = params
-      if (isNaN(+postId)) return error(400, 'Bad request')
+      if (isNaN(+postId)) return error(400, 'Bad Request')
 
       const [post] = await sql<[PostRow]>`
         SELECT "Post".id,
