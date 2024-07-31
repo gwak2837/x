@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "scripts": {
     "lint": "eslint . --fix",
-    "postinstall": "cd backend && bun i && cd ../frontend && npm i",
+    "postinstall": "cd backend && bun i && cd ../frontend && bun i",
     "prepare": "husky"
   },
   "devDependencies": {

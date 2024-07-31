@@ -183,6 +183,7 @@ package-lock.json
 **/*.bun
 .env.*
 !.env.template
+!.env.test
 *.key
 *.csr
 *.crt
