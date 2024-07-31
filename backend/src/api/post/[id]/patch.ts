@@ -9,10 +9,20 @@ export default (app: BaseElysia) =>
     async ({ body, error, params, sql, userId }) => {
       if (!userId) return error(401, 'Unauthorized')
 
+      const { category, content, imageURLs, parentPostId, publishAt, referredPostId, status } = body
+      if (
+        !category &&
+        !content &&
+        !imageURLs &&
+        !parentPostId &&
+        !publishAt &&
+        !referredPostId &&
+        !status
+      )
+        return error(400, 'Bad request')
+
       const { id: postId } = params
       if (isNaN(+postId) || !isFinite(+postId)) return error(400, 'Bad request')
-
-      const { category, content, imageURLs, parentPostId, publishAt, referredPostId, status } = body
 
       const [updatedPost] = await sql<[UpdatedPost]>`
         UPDATE "Post"

@@ -8,6 +8,7 @@ import getPost from './api/post/[id]/get'
 import updatePost from './api/post/[id]/patch'
 import getPosts from './api/post/get'
 import createPost from './api/post/post'
+import updateUser from './api/user/[id]/patch'
 
 export default (app: BaseElysia) =>
   app
@@ -20,3 +21,4 @@ export default (app: BaseElysia) =>
     .use(updatePost)
     .use(getPosts)
     .use(createPost)
+    .use(updateUser)

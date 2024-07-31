@@ -19,3 +19,29 @@ export enum UserGrade {
   ADMIN = 2,
   SUPER_ADMIN = 3,
 }
+
+export type UserConfig = {
+  termsOfServiceAgreedAt: string
+  privacyPolicyAgreedAt: string
+  marketingAgreedAt: string
+}
+
+export function encodeConfig(config?: UserConfig) {
+  if (!config) {
+    return undefined
+  }
+  return JSON.stringify({
+    tosa: config.termsOfServiceAgreedAt,
+    ppa: config.privacyPolicyAgreedAt,
+    ma: config.marketingAgreedAt,
+  })
+}
+
+export function decodeConfig(config: string): UserConfig {
+  const obj = JSON.parse(config)
+  return {
+    termsOfServiceAgreedAt: obj.tosa,
+    privacyPolicyAgreedAt: obj.ppa,
+    marketingAgreedAt: obj.ma,
+  }
+}

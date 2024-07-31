@@ -46,3 +46,13 @@ export function deeplyRemoveNull<T>(obj: T): RecursivelyRemoveNull<T> {
 
   return result
 }
+
+export function removeUndefinedKeys<T>(obj: T) {
+  // 객체의 키와 값을 순회하며 undefined 값을 가지는 키를 삭제합니다.
+  for (const key in obj) {
+    if (obj[key] === undefined) {
+      delete obj[key]
+    }
+  }
+  return obj
+}
