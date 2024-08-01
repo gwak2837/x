@@ -94,7 +94,7 @@ describe('POST /auth/access-token', async () => {
     expect(await response.text()).toBe('Unauthorized')
   })
 
-  test('200: OK', async () => {
+  test('회원가입 후 조금 뒤 토큰을 갱신하는 경우', async () => {
     // 회원가입
     spyOn(Date, 'now').mockReturnValueOnce(1722314119989)
 

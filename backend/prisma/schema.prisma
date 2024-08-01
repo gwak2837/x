@@ -110,7 +110,7 @@ model UserBookmarkPost {
 
 model Hashtag {
   id   BigInt @id @default(autoincrement())
-  name String @unique
+  name String @unique @db.VarChar(280)
 
   posts PostHashtag[] @relation("posts")
 }

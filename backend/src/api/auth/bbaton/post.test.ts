@@ -30,7 +30,7 @@ describe('POST /auth/bbaton', () => {
     await sql`DELETE FROM "User"`
   })
 
-  test('요청 시 `code`가 없는 경우', async () => {
+  test('422: 요청 시 `code`가 없는 경우', async () => {
     const response = await app.handle(
       new Request('http://localhost/auth/bbaton', { method: 'POST' }),
     )
@@ -41,7 +41,7 @@ describe('POST /auth/bbaton', () => {
     })
   })
 
-  test('BBaton API 요청 시 `access_token`이 없는 경우', async () => {
+  test('502: BBaton API 요청 시 `access_token`이 없는 경우', async () => {
     const invalidBBatonTokenResponse: BBatonTokenResponse = {
       access_token: '',
       token_type: 'bearer',
@@ -61,7 +61,7 @@ describe('POST /auth/bbaton', () => {
     expect(await response.text()).toBe('Bad Gateway')
   })
 
-  test('BBaton API 요청 시 `access_token`에 `user_name`이 없는 경우', async () => {
+  test('502: BBaton API 요청 시 `access_token`에 `user_name`이 없는 경우', async () => {
     const invalidBBatonTokenResponse: BBatonTokenResponse = {
       access_token:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1MTYyMzkwMjJ9.tbDepxpstvGdW8TC3G8zg4B6rUYAOvfzdceoH48wgRQ',
@@ -82,7 +82,7 @@ describe('POST /auth/bbaton', () => {
     expect(await response.text()).toBe('Bad Gateway')
   })
 
-  test('BBaton API 요청 시 `user_id`가 없는 경우', async () => {
+  test('502: BBaton API 요청 시 `user_id`가 없는 경우', async () => {
     spyOn(global, 'fetch').mockResolvedValueOnce(
       new Response(JSON.stringify(validBBatonTokenResponse)),
     )
@@ -148,7 +148,7 @@ describe('POST /auth/bbaton', () => {
     expect(typeof result.refreshToken).toBe('string')
   })
 
-  test('정지된 게정으로 로그인한 경우', async () => {
+  test('403: 정지된 게정으로 로그인한 경우', async () => {
     await sql`
       UPDATE "User"
       SET 
@@ -168,7 +168,7 @@ describe('POST /auth/bbaton', () => {
     expect(await response.text()).toBe('로그인 할 수 없습니다. 이유:\n계정이 정지되었습니다.')
   })
 
-  test('회원 탈퇴 후 로그인한 경우', async () => {
+  test('403: 회원 탈퇴 후 로그인한 경우', async () => {
     await sql`
       DELETE FROM "User"
       WHERE id = ${newUserId};`

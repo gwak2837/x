@@ -8,3 +8,5 @@ export const ENV = process.env.ENV ?? ''
 export const K_SERVICE = process.env.K_SERVICE ?? ''
 export const REFRESH_JWT_SECRET = process.env.REFRESH_JWT_SECRET ?? ''
 export const PORT = +(process.env.PORT ?? '')
+
+export const MAX_HASHTAG_LENGTH = 280
