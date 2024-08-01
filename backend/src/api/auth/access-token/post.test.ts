@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, spyOn, test } from 'bun:test'
+import { beforeAll, describe, expect, spyOn, test } from 'bun:test'
 
 import { app } from '../../..'
 import { validBBatonTokenResponse, validBBatonUserResponse } from '../../../../test/mock'
@@ -186,15 +186,5 @@ describe('POST /auth/access-token', async () => {
 
     expect(response.status).toBe(403)
     expect(await response.text()).toBe('Forbidden')
-  })
-
-  afterAll(async () => {
-    await sql`
-      DELETE FROM "OAuth"
-      WHERE "userId" = ${newUserId};`
-
-    await sql`
-      DELETE FROM "User"
-      WHERE id = ${newUserId};`
   })
 })

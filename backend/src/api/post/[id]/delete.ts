@@ -11,6 +11,10 @@ export default (app: BaseElysia) =>
       const { id: postId } = params
 
       const [deletedPost] = await sql<[DeletedPost]>`
+        WITH deleted_hashtag AS (
+          DELETE FROM "PostHashtag"
+          WHERE "postId" = ${postId}
+        )
         UPDATE "Post"
         SET "deletedAt" = CURRENT_TIMESTAMP,
             content = NULL,

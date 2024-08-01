@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, spyOn, test } from 'bun:test'
+import { beforeAll, describe, expect, spyOn, test } from 'bun:test'
 
 import { app } from '../../..'
 import { sql } from '../../../../test/postgres'
@@ -185,15 +185,5 @@ describe('POST /auth/bbaton', () => {
     expect(await response.text()).toBe(
       '해당 BBaton 계정으로 이미 회원가입한 적이 있어서 다시 가입할 수 없습니다. 자세한 사항은 고객센터에 문의해주세요.',
     )
-  })
-
-  afterAll(async () => {
-    await sql`
-      DELETE FROM "OAuth"
-      WHERE "userId" = ${newUserId};`
-
-    await sql`
-      DELETE FROM "User"
-      WHERE id = ${newUserId};`
   })
 })
