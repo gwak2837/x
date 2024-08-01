@@ -1,7 +1,10 @@
 import { NotFoundError, t } from 'elysia'
 
 import { BaseElysia } from '../../..'
+import { extractHashtags } from '../../../common/post'
+import { MAX_HASHTAG_LENGTH } from '../../../constants'
 import { PostCategory, PostStatus } from '../../../model/Post'
+import { removeUndefinedKeys } from '../../../utils'
 
 export default (app: BaseElysia) =>
   app.patch(
@@ -21,22 +24,56 @@ export default (app: BaseElysia) =>
       )
         return error(400, 'Bad Request')
 
+      const hashtags = extractHashtags(content)
+      const isValidHashtags =
+        !hashtags || hashtags.every(({ name }) => name.length <= MAX_HASHTAG_LENGTH)
       const { id: postId } = params
-      if (isNaN(+postId) || !isFinite(+postId)) return error(400, 'Bad Request')
+      const isValidPostId = !isNaN(+postId) && isFinite(+postId)
+      const isValidPublishAt = !publishAt || new Date(publishAt) > new Date()
+      if (!isValidHashtags || !isValidPostId || !isValidPublishAt) return error(400, 'Bad Request')
 
       const [updatedPost] = await sql<[UpdatedPost]>`
+        ${
+          hashtags
+            ? sql`
+        WITH deleted_hashtags AS (
+          DELETE FROM "PostHashtag"
+          WHERE "postId" = ${postId}
+        ),
+        new_hashtags AS (
+          INSERT INTO "Hashtag" ${sql(hashtags)}
+          ON CONFLICT (name) DO NOTHING
+          RETURNING id
+        ),
+        existing_hashtags AS (
+          SELECT id
+          FROM "Hashtag"
+          WHERE name IN ${sql(hashtags.map(({ name }) => name))}
+        ),
+        post_x_hashtag AS (
+          INSERT INTO "PostHashtag" ("postId", "hashtagId")
+          SELECT ${postId}::bigint, new_hashtags.id
+          FROM new_hashtags
+          UNION ALL
+          SELECT ${postId}::bigint, existing_hashtags.id
+          FROM existing_hashtags
+        )`
+            : sql``
+        }
         UPDATE "Post"
         SET 
           "updatedAt" = CURRENT_TIMESTAMP,
-          ${sql({
-            category,
-            content,
-            imageURLs,
-            parentPostId,
-            publishAt,
-            referredPostId,
-            status,
-          })}
+          ${sql(
+            removeUndefinedKeys({
+              category,
+              content,
+              imageURLs,
+              parentPostId,
+              publishAt,
+              referredPostId,
+              status,
+            }),
+          )}
         WHERE id = ${postId}
           AND "authorId" = ${userId}
         RETURNING id, "updatedAt"`

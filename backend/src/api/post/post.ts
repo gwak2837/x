@@ -1,6 +1,7 @@
 import { t } from 'elysia'
 
 import { BaseElysia } from '../..'
+import { extractHashtags } from '../../common/post'
 import { MAX_HASHTAG_LENGTH } from '../../constants'
 import { PostCategory, PostStatus } from '../../model/Post'
 
@@ -15,9 +16,7 @@ export default (app: BaseElysia) =>
       const isValidPublishAt = !publishAt || new Date(publishAt) > new Date()
       const isValidReferringComment =
         !parentPostId || !referredPostId || parentPostId !== referredPostId
-      const hashtags = content
-        ?.match(/#[\p{L}\p{N}\p{M}_]+/gu)
-        ?.map((tag) => ({ name: tag.slice(1) }))
+      const hashtags = extractHashtags(content)
       const isValidHashtags =
         !hashtags || hashtags.every(({ name }) => name.length <= MAX_HASHTAG_LENGTH)
 

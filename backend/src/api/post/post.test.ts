@@ -485,7 +485,7 @@ describe('POST /post', () => {
     const hashtags = await sql<{ name: string }[]>`
       SELECT name
       FROM "Hashtag"
-      JOIN "PostHashtag" ON "hashtagId" = id
+      JOIN "PostHashtag" ON "PostHashtag"."hashtagId" = "Hashtag".id
       WHERE "postId" = ${result.id}
       ORDER BY name`
 
