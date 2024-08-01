@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 
-describe('GET /api/post/[id]/comment', () => {
+describe('GET /post/[id]/comment', () => {
   test('작성자 본인 | 글 1개 댓글 1개 작성 | 특정 글 댓글 불러오기', async () => {
     //...
   })
