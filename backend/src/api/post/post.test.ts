@@ -1,7 +1,12 @@
 import { beforeAll, describe, expect, spyOn, test } from 'bun:test'
 
 import { app } from '../..'
-import { validBBatonTokenResponse, validBBatonUserResponse } from '../../../test/mock'
+import {
+  validBBatonTokenResponse,
+  validBBatonTokenResponse2,
+  validBBatonUserResponse,
+  validBBatonUserResponse2,
+} from '../../../test/mock'
 import { sql } from '../../../test/postgres'
 import { MAX_HASHTAG_LENGTH } from '../../constants'
 import { PostCategory, PostStatus } from '../../model/Post'
@@ -492,7 +497,28 @@ describe('POST /post', () => {
     expect(hashtags.slice(0)).toEqual([{ name: 'H_ello' }, { name: 'adf' }, { name: 'sdf' }])
   })
 
-  // 오류 테스트
+  let accessToken2 = ''
+
+  test('회원가입2', async () => {
+    spyOn(global, 'fetch').mockResolvedValueOnce(
+      new Response(JSON.stringify(validBBatonTokenResponse2)),
+    )
+
+    spyOn(global, 'fetch').mockResolvedValueOnce(
+      new Response(JSON.stringify(validBBatonUserResponse2)),
+    )
+
+    const result = await app
+      .handle(new Request('http://localhost/auth/bbaton?code=1', { method: 'POST' }))
+      .then((response) => response.json())
+
+    expect(result).toHaveProperty('accessToken')
+    expect(result).toHaveProperty('refreshToken')
+    expect(typeof result.accessToken).toBe('string')
+    expect(typeof result.refreshToken).toBe('string')
+
+    accessToken2 = result.accessToken
+  })
 
   test('400: 상위 글을 볼 권한이 있고 해당 글에 댓글을 작성할 수 있는지 확인합니다.', async () => {
     // ...

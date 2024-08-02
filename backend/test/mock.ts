@@ -17,3 +17,21 @@ export const validBBatonUserResponse: BBatonUserResponse = {
   income: '',
   student: '',
 }
+
+export const validBBatonTokenResponse2: BBatonTokenResponse = {
+  // user_name: gwak9203
+  access_token:
+    'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX25hbWUiOiJnd2FrOTIwMyJ9.kodD38l-Kxp-MNc6cBpz5sxY74bpmMGkBUIUt4E0xUg',
+  token_type: 'bearer',
+  expires_in: 1,
+  scope: 'public',
+}
+
+export const validBBatonUserResponse2: BBatonUserResponse = {
+  user_id: 'gwak9203',
+  adult_flag: 'Y',
+  birth_year: '20',
+  gender: 'M',
+  income: '',
+  student: '',
+}

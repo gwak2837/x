@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-export function isNumberString(value: string) {
-  return /^\d+$/.test(value)
+export function isValidPostgresBigIntString(value: string) {
+  return !isNaN(+value) && isFinite(+value) && BigInt(value) <= 9223372036854775807n
 }
 
 type ReplaceNullWithUndefined<T> = {

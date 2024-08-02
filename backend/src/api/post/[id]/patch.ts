@@ -4,7 +4,7 @@ import { BaseElysia } from '../../..'
 import { extractHashtags } from '../../../common/post'
 import { MAX_HASHTAG_LENGTH } from '../../../constants'
 import { PostCategory, PostStatus } from '../../../model/Post'
-import { removeUndefinedKeys } from '../../../utils'
+import { isValidPostgresBigIntString, removeUndefinedKeys } from '../../../utils'
 
 export default (app: BaseElysia) =>
   app.patch(
@@ -24,13 +24,19 @@ export default (app: BaseElysia) =>
       )
         return error(400, 'Bad Request')
 
+      const { id: postId } = params
       const hashtags = extractHashtags(content)
       const isValidHashtags =
         !hashtags || hashtags.every(({ name }) => name.length <= MAX_HASHTAG_LENGTH)
-      const { id: postId } = params
-      const isValidPostId = !isNaN(+postId) && isFinite(+postId)
       const isValidPublishAt = !publishAt || new Date(publishAt) > new Date()
-      if (!isValidHashtags || !isValidPostId || !isValidPublishAt) return error(400, 'Bad Request')
+      if (
+        !isValidHashtags ||
+        !isValidPostgresBigIntString(postId) ||
+        (parentPostId && !isValidPostgresBigIntString(parentPostId)) ||
+        (referredPostId && !isValidPostgresBigIntString(referredPostId)) ||
+        !isValidPublishAt
+      )
+        return error(400, 'Bad Request')
 
       const [updatedPost] = await sql<[UpdatedPost]>`
         ${
@@ -86,7 +92,7 @@ export default (app: BaseElysia) =>
       params: t.Object({ id: t.String({ maxLength: 19 }) }),
       body: t.Object({
         category: t.Optional(t.Enum(PostCategory)),
-        content: t.Optional(t.String()),
+        content: t.Optional(t.String({ maxLength: 10000 })),
         imageURLs: t.Optional(t.Array(t.String())),
         parentPostId: t.Optional(t.String()),
         publishAt: t.Optional(t.String({ format: 'date-time' })),

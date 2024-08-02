@@ -92,7 +92,7 @@ export default (app: BaseElysia) =>
       headers: t.Object({ authorization: t.String() }),
       body: t.Object({
         category: t.Optional(t.Enum(PostCategory)),
-        content: t.Optional(t.String()),
+        content: t.Optional(t.String({ maxLength: 10000 })),
         imageURLs: t.Optional(t.Array(t.String())),
         parentPostId: t.Optional(t.String()),
         publishAt: t.Optional(t.String({ format: 'date-time' })),
