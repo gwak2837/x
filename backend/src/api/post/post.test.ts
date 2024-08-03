@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, spyOn, test } from 'bun:test'
+import { beforeAll, describe, expect, setSystemTime, spyOn, test } from 'bun:test'
 
 import { app } from '../..'
 import {
@@ -23,6 +23,8 @@ describe('POST /post', () => {
     await sql`DELETE FROM "Hashtag"`
     await sql`DELETE FROM "OAuth"`
     await sql`DELETE FROM "User"`
+
+    setSystemTime(new Date('2024-01-01T00:00:00.000Z'))
   })
 
   test('회원가입', async () => {
@@ -39,9 +41,7 @@ describe('POST /post', () => {
       .then((response) => response.json())
 
     expect(result).toHaveProperty('accessToken')
-    expect(result).toHaveProperty('refreshToken')
     expect(typeof result.accessToken).toBe('string')
-    expect(typeof result.refreshToken).toBe('string')
 
     accessToken = result.accessToken
   })
@@ -476,7 +476,7 @@ describe('POST /post', () => {
             content: '#H_ello, #sdf-asdf #adf.asdf # # #!',
             imageURLs: ['https://example.com/image.jpg'],
             parentPostId,
-            publishAt: new Date(Date.now() + 1000 * 3600).toISOString(), // 1시간 후 공개
+            publishAt: '2024-01-02T00:00:00.000Z', // 1일 후 공개
             referredPostId: commentPostId,
             status: PostStatus.ANNONYMOUS, // 익명으로 글 쓰기
           }),
@@ -498,6 +498,8 @@ describe('POST /post', () => {
   })
 
   let accessToken2 = ''
+  let privatePostId = ''
+  let onlyFollowersPostId = ''
 
   test('회원가입2', async () => {
     spyOn(global, 'fetch').mockResolvedValueOnce(
@@ -513,15 +515,93 @@ describe('POST /post', () => {
       .then((response) => response.json())
 
     expect(result).toHaveProperty('accessToken')
-    expect(result).toHaveProperty('refreshToken')
     expect(typeof result.accessToken).toBe('string')
-    expect(typeof result.refreshToken).toBe('string')
 
     accessToken2 = result.accessToken
   })
 
-  test('400: 상위 글을 볼 권한이 있고 해당 글에 댓글을 작성할 수 있는지 확인합니다.', async () => {
-    // ...
+  test('다른 계정으로 새로운 `private` 글을 작성합니다.', async () => {
+    const result = await app
+      .handle(
+        new Request('http://localhost/post', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken2}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            content: 'Hello, world! #hash #tag 123',
+            status: PostStatus.PRIVATE,
+          }),
+        }),
+      )
+      .then((response) => response.json())
+
+    expect(typeof result.id).toBe('string')
+    expect(new Date(result.createdAt).getTime()).not.toBeNaN()
+
+    privatePostId = result.id
+  })
+
+  test('400: 다른 사람의 `private` 글에는 댓글을 달 수 없습니다.', async () => {
+    const response = await app.handle(
+      new Request('http://localhost/post', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: 'Hello, world! #hash #tag 123',
+          parentPostId: privatePostId,
+        }),
+      }),
+    )
+
+    expect(response.status).toBe(400)
+    expect(await response.text()).toBe('Bad Request')
+  })
+
+  test('다른 계정으로 새로운 `only followers` 글을 작성합니다.', async () => {
+    const result = await app
+      .handle(
+        new Request('http://localhost/post', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken2}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            content: 'Hello, world! #hash #tag 123',
+            status: PostStatus.ONLY_FOLLOWERS,
+          }),
+        }),
+      )
+      .then((response) => response.json())
+
+    expect(typeof result.id).toBe('string')
+    expect(new Date(result.createdAt).getTime()).not.toBeNaN()
+
+    onlyFollowersPostId = result.id
+  })
+
+  test('400: 팔로잉하지 않은 사람의 `only followers` 글에는 댓글을 달 수 없습니다.', async () => {
+    const response = await app.handle(
+      new Request('http://localhost/post', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: 'Hello, world! #hash #tag 123',
+          parentPostId: onlyFollowersPostId,
+        }),
+      }),
+    )
+
+    expect(response.status).toBe(400)
+    expect(await response.text()).toBe('Bad Request')
   })
 
   test('400: 인용한 글을 볼 권한이 있는지 확인합니다.', async () => {

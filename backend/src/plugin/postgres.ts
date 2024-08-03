@@ -42,6 +42,7 @@ export const sql = postgres(DATABASE_URL, {
 })
 
 export enum PostgresErrorCode {
+  FOREIGN_KEY_VIOLATION = '23503',
   UNIQUE_VIOLATION = '23505',
 }
 

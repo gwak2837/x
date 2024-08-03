@@ -16,6 +16,7 @@ model User {
   bio              String?   @db.VarChar(255)
   birthDate        DateTime? @db.Date
   grade            Int       @default(0) @db.SmallInt
+  isPrivate        Boolean   @default(false)
   name             String    @unique @db.VarChar(255)
   nameLastModified DateTime?
   nickname         String    @db.VarChar(255)
@@ -37,6 +38,7 @@ model User {
 model UserFollow {
   leaderId   BigInt
   followerId BigInt
+  createdAt  DateTime @default(now())
 
   leader   User @relation("following", fields: [leaderId], references: [id])
   follower User @relation("followers", fields: [followerId], references: [id])

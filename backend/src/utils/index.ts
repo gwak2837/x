@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { POSTGRES_MAX_BIGINT } from '../plugin/postgres'
+
 export function isValidPostgresBigIntString(value: string) {
-  return !isNaN(+value) && isFinite(+value) && BigInt(value) <= 9223372036854775807n
+  return !isNaN(+value) && isFinite(+value) && BigInt(value) <= BigInt(POSTGRES_MAX_BIGINT)
 }
 
 type ReplaceNullWithUndefined<T> = {

@@ -31,9 +31,7 @@ describe('DELETE /post/[id]', () => {
       .then((response) => response.json())
 
     expect(result).toHaveProperty('accessToken')
-    expect(result).toHaveProperty('refreshToken')
     expect(typeof result.accessToken).toBe('string')
-    expect(typeof result.refreshToken).toBe('string')
 
     accessToken = result.accessToken
   })

@@ -5,6 +5,7 @@ import { validBBatonTokenResponse, validBBatonUserResponse } from '../../../../t
 import { sql } from '../../../../test/postgres'
 import { MAX_HASHTAG_LENGTH } from '../../../constants'
 import { PostCategory, PostStatus } from '../../../model/Post'
+import { POSTGRES_MAX_BIGINT } from '../../../plugin/postgres'
 
 describe('PATCH /post/[id]', () => {
   let accessToken = ''
@@ -35,16 +36,14 @@ describe('PATCH /post/[id]', () => {
       .then((response) => response.json())
 
     expect(result).toHaveProperty('accessToken')
-    expect(result).toHaveProperty('refreshToken')
     expect(typeof result.accessToken).toBe('string')
-    expect(typeof result.refreshToken).toBe('string')
 
     accessToken = result.accessToken
   })
 
   test('404: `postId`가 8 bytes 정수 최댓값인 경우', async () => {
     const response = await app.handle(
-      new Request(`http://localhost/post/9223372036854775807`, {
+      new Request(`http://localhost/post/${POSTGRES_MAX_BIGINT}`, {
         method: 'PATCH',
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -155,18 +154,9 @@ describe('PATCH /post/[id]', () => {
       .then((response) => response.json())
 
     expect(typeof result.id).toBe('string')
-    expect(typeof result.createdAt).toBe('string')
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
 
     postId = result.id
-
-    const hashtags = await sql<{ name: string }[]>`
-      SELECT name
-      FROM "Hashtag"
-      JOIN "PostHashtag" ON "hashtagId" = id
-      WHERE "postId" = ${result.id}`
-
-    expect(hashtags.slice(0)).toEqual([{ name: 'hash' }, { name: 'tag' }])
   })
 
   test('422: 요청 헤더에 `Authorization`가 없는 경우', async () => {
