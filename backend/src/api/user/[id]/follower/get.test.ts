@@ -4,7 +4,7 @@ import { app } from '../../../..'
 import { validBBatonTokenResponse, validBBatonUserResponse } from '../../../../../test/mock'
 import { sql } from '../../../../../test/postgres'
 
-describe('POST /post', () => {
+describe('GET /user/[id]/follower', () => {
   let accessToken = ''
   let accessToken2 = ''
   const invalidUserId = '0'

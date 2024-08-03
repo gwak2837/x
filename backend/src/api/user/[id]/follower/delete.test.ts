@@ -9,7 +9,7 @@ import {
 } from '../../../../../test/mock'
 import { sql } from '../../../../../test/postgres'
 
-describe('POST /user/[id]/follower', () => {
+describe('DELETE /user/[id]/follower', () => {
   let accessToken = ''
   let accessToken2 = ''
   let userId = ''
@@ -67,7 +67,7 @@ describe('POST /user/[id]/follower', () => {
   test('422: 요청에 `Authorization` 헤더가 없는 경우', async () => {
     const response = await app.handle(
       new Request(`http://localhost/user/${userId}/follower`, {
-        method: 'POST',
+        method: 'DELETE',
       }),
     )
 
@@ -77,10 +77,10 @@ describe('POST /user/[id]/follower', () => {
     })
   })
 
-  test('404: 두번째 사용자가 없는 사용자를 팔로우 요청 경우', async () => {
+  test('404: 두번째 사용자가 없는 사용자를 팔로우 취소 요청 경우', async () => {
     const response = await app.handle(
       new Request(`http://localhost/user/${invalidUserId}/follower`, {
-        method: 'POST',
+        method: 'DELETE',
         headers: { Authorization: `Bearer ${accessToken2}` },
       }),
     )
@@ -92,7 +92,7 @@ describe('POST /user/[id]/follower', () => {
   test('422: `userId`가 너무 긴 경우', async () => {
     const response = await app.handle(
       new Request(`http://localhost/user/12345678901234567890/follower`, {
-        method: 'POST',
+        method: 'DELETE',
         headers: { Authorization: `Bearer ${accessToken2}` },
       }),
     )
@@ -106,7 +106,7 @@ describe('POST /user/[id]/follower', () => {
   test('400: `userId`가 8 bytes 정수 최댓값보다 큰 경우', async () => {
     const response = await app.handle(
       new Request(`http://localhost/user/9223372036854775808/follower`, {
-        method: 'POST',
+        method: 'DELETE',
         headers: { Authorization: `Bearer ${accessToken2}` },
       }),
     )
@@ -118,7 +118,7 @@ describe('POST /user/[id]/follower', () => {
   test('400: `userId`가 숫자형 문자열이 아닌 경우', async () => {
     const response = await app.handle(
       new Request(`http://localhost/user/asdfasdf/follower`, {
-        method: 'POST',
+        method: 'DELETE',
         headers: { Authorization: `Bearer ${accessToken2}` },
       }),
     )
@@ -127,10 +127,10 @@ describe('POST /user/[id]/follower', () => {
     expect(await response.text()).toBe('Bad Request')
   })
 
-  test('400: 자기 자신을 팔로우 요청한 경우', async () => {
+  test('400: 자기 자신을 팔로우 취소 요청한 경우', async () => {
     const response = await app.handle(
       new Request(`http://localhost/user/${userId2}/follower`, {
-        method: 'POST',
+        method: 'DELETE',
         headers: { Authorization: `Bearer ${accessToken2}` },
       }),
     )
@@ -152,7 +152,7 @@ describe('POST /user/[id]/follower', () => {
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
   })
 
-  test('404: 기존 팔로워가 또 팔로우 요청한 경우', async () => {
+  test('두번째 사용자가 첫번째 사용자를 팔로우 취소 요청한 경우', async () => {
     const [result] = await sql`
       SELECT "leaderId"
       FROM "UserFollow"
@@ -160,9 +160,29 @@ describe('POST /user/[id]/follower', () => {
 
     expect(result.leaderId).toBe(userId)
 
+    const result2 = await app
+      .handle(
+        new Request(`http://localhost/user/${userId}/follower`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${accessToken2}` },
+        }),
+      )
+      .then((response) => response.json())
+
+    expect(new Date(result2.createdAt).getTime()).not.toBeNaN()
+  })
+
+  test('404: 한 번 더 팔로우 취소 요청한 경우', async () => {
+    const result = await sql`
+      SELECT "leaderId"
+      FROM "UserFollow"
+      WHERE "leaderId" = ${userId} AND "followerId" = ${userId2}`
+
+    expect(result.length).toBe(0)
+
     const response = await app.handle(
       new Request(`http://localhost/user/${userId}/follower`, {
-        method: 'POST',
+        method: 'DELETE',
         headers: { Authorization: `Bearer ${accessToken2}` },
       }),
     )

@@ -10,7 +10,8 @@ export default (app: BaseElysia) =>
       if (!userId) return error(401, 'Unauthorized')
 
       const { id: leaderId } = params
-      if (!isValidPostgresBigIntString(leaderId)) return error(400, 'Bad Request')
+      if (!isValidPostgresBigIntString(leaderId) || leaderId === userId)
+        return error(400, 'Bad Request')
 
       const [follow] = await sql<[FollowRow]>`
         DELETE FROM "UserFollow"
