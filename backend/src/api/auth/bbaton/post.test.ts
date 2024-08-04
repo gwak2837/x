@@ -131,6 +131,44 @@ describe('POST /auth/bbaton', () => {
     expect(typeof result.refreshToken).toBe('string')
   })
 
+  test('로그인: BBaton 계정 정보가 업데이트되면 해당 사항을 데이터베이스에도 반영합니다.', async () => {
+    spyOn(global, 'fetch').mockResolvedValueOnce(
+      new Response(JSON.stringify(validBBatonTokenResponse)),
+    )
+
+    const updatedBBatonUserResponse: BBatonUserResponse = {
+      user_id: 'gwak2837',
+      adult_flag: 'Y',
+      birth_year: '30',
+      gender: 'M',
+      income: '',
+      student: '',
+    }
+
+    spyOn(global, 'fetch').mockResolvedValueOnce(
+      new Response(JSON.stringify(updatedBBatonUserResponse)),
+    )
+
+    const result = await app
+      .handle(new Request('http://localhost/auth/bbaton?code=123', { method: 'POST' }))
+      .then((response) => response.json())
+
+    expect(result).toHaveProperty('accessToken')
+    expect(result).toHaveProperty('refreshToken')
+    expect(typeof result.accessToken).toBe('string')
+    expect(typeof result.refreshToken).toBe('string')
+
+    // NOTE(gwak, 2024-08-04): (확실하지 않음) fire and forget 요청을 기다리기 위해
+    await Bun.sleep(0)
+
+    const [user] = await sql`
+      SELECT "ageRange"
+      FROM "User"
+      WHERE id = ${newUserId};`
+
+    expect(user.ageRange).toBe(30)
+  })
+
   test('403: 정지된 게정으로 로그인한 경우', async () => {
     await sql`
       UPDATE "User"

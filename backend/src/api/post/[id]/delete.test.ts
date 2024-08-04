@@ -4,7 +4,7 @@ import { app } from '../../..'
 import { validBBatonTokenResponse, validBBatonUserResponse } from '../../../../test/mock'
 import { sql } from '../../../../test/postgres'
 
-describe('DELETE /post/[id]', () => {
+describe('DELETE /post/:id', () => {
   let accessToken = ''
   let postId = ''
   const invalidPostId = '0'

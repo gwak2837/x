@@ -9,7 +9,7 @@ import {
 } from '../../../../../test/mock'
 import { sql } from '../../../../../test/postgres'
 
-describe('DELETE /user/[id]/follower', () => {
+describe('DELETE /user/:id/follower', () => {
   let accessToken = ''
   let accessToken2 = ''
   let userId = ''

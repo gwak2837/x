@@ -2,7 +2,7 @@ import { NotFoundError, t } from 'elysia'
 
 import { BaseElysia } from '../../..'
 import { UserSuspendedType } from '../../../model/User'
-import { removeUndefinedKeys } from '../../../utils'
+import { isValidPostgresBigIntString, removeUndefinedKeys } from '../../../utils'
 
 export default (app: BaseElysia) =>
   app.patch(
@@ -10,9 +10,18 @@ export default (app: BaseElysia) =>
     async ({ body, error, params, sql, userId }) => {
       if (!userId) return error(401, 'Unauthorized')
 
-      const { suspendedType, suspendedReason, profileImageURLs, bio, name, nickname, birthDate } =
-        body
+      const {
+        isPrivate,
+        suspendedType,
+        suspendedReason,
+        profileImageURLs,
+        bio,
+        name,
+        nickname,
+        birthDate,
+      } = body
       if (
+        !isPrivate &&
         !suspendedType &&
         !suspendedReason &&
         !profileImageURLs &&
@@ -26,7 +35,7 @@ export default (app: BaseElysia) =>
         return error(400, 'Bad Request')
 
       const { id: userIdInParam } = params
-      if (isNaN(+userIdInParam) || !isFinite(+userIdInParam)) return error(400, 'Bad Request')
+      if (!isValidPostgresBigIntString(userIdInParam)) return error(400, 'Bad Request')
       if (userId !== userIdInParam) return error(401, 'Unauthorized')
 
       const [updatedUser] = await sql<[UpdatedPost]>`
@@ -46,6 +55,7 @@ export default (app: BaseElysia) =>
           ${suspendedType ? sql`"suspendedAt" = CURRENT_TIMESTAMP,` : sql``}
           ${sql(
             removeUndefinedKeys({
+              isPrivate,
               suspendedType,
               suspendedReason,
               bio,
@@ -65,6 +75,7 @@ export default (app: BaseElysia) =>
       headers: t.Object({ authorization: t.String() }),
       params: t.Object({ id: t.String({ maxLength: 19 }) }),
       body: t.Object({
+        isPrivate: t.Optional(t.Boolean()),
         suspendedType: t.Optional(t.Enum(UserSuspendedType)),
         suspendedReason: t.Optional(t.String()),
         bio: t.Optional(t.String()),

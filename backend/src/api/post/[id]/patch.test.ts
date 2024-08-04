@@ -7,7 +7,7 @@ import { MAX_HASHTAG_LENGTH } from '../../../constants'
 import { PostCategory, PostStatus } from '../../../model/Post'
 import { POSTGRES_MAX_BIGINT } from '../../../plugin/postgres'
 
-describe('PATCH /post/[id]', () => {
+describe('PATCH /post/:id', () => {
   let accessToken = ''
   let postId = ''
   const invalidPostId = '0'

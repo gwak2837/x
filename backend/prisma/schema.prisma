@@ -33,8 +33,6 @@ model User {
   followers       UserFollow[]       @relation("followers")
 }
 
-// invitation_code char(8) UNIQUE DEFAULT unique_random(8, 'user', 'invitation_code'),
-
 model UserFollow {
   leaderId   BigInt
   followerId BigInt

@@ -22,7 +22,7 @@ export default (app: BaseElysia) =>
           "isPrivate",
           name,
           nickname,
-          "profileImageURL"
+          "profileImageURLs"
         FROM "User"
           JOIN "UserFollow" ON "UserFollow"."followerId" = "User"."id"
         WHERE "UserFollow"."leaderId" = ${leaderId}
