@@ -1,6 +1,7 @@
 import { NotFoundError, t } from 'elysia'
 
 import { BaseElysia } from '../../../..'
+import { UserFollowStatus } from '../../../../model/User'
 import { deeplyRemoveNull, isValidPostgresBigIntString } from '../../../../utils'
 
 export default (app: BaseElysia) =>
@@ -10,12 +11,18 @@ export default (app: BaseElysia) =>
       const { id: leaderId } = params
       if (!isValidPostgresBigIntString(leaderId)) return error(400, 'Bad Request')
 
-      const followers = await sql<FollowRow[]>`
+      const isMe = leaderId === userId
+
+      const followers = await sql<FollowRow[]>`${
+        isMe
+          ? sql``
+          : sql`
         WITH leader AS (
           SELECT "isPrivate"
           FROM "User"
           WHERE "id" = ${leaderId}
-        )
+        )`
+      }
         SELECT id,
           bio,
           grade,
@@ -24,8 +31,13 @@ export default (app: BaseElysia) =>
           nickname,
           "profileImageURLs"
         FROM "User"
-          JOIN "UserFollow" ON "UserFollow"."followerId" = "User"."id"
+          JOIN "UserFollow" ON "User"."id" = "UserFollow"."followerId"
         WHERE "UserFollow"."leaderId" = ${leaderId}
+          AND "UserFollow".status = ${UserFollowStatus.ACCEPTED}
+          ${
+            isMe
+              ? sql``
+              : sql`
           AND (
             (SELECT "isPrivate" FROM leader) = FALSE
             OR EXISTS (
@@ -33,8 +45,10 @@ export default (app: BaseElysia) =>
               FROM "UserFollow"
               WHERE "leaderId" = ${leaderId}
               AND "followerId" = ${userId}
+              AND status = ${UserFollowStatus.ACCEPTED}
             )
           )`
+          }`
       if (!followers.length) throw new NotFoundError()
 
       return followers.map((follower) => deeplyRemoveNull(follower))

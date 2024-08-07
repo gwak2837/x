@@ -8,11 +8,15 @@ import {
   validBBatonUserResponse2,
 } from '../../../../../test/mock'
 import { sql } from '../../../../../test/postgres'
+import { UserFollowStatus } from '../../../../model/User'
 
 describe('POST /user/:id/follower', () => {
+  // 공개 계정
   let accessToken = ''
-  let accessToken2 = ''
   let userId = ''
+
+  // 비밀 계정
+  let accessToken2 = ''
   let userId2 = ''
   const invalidUserId = '0'
 
@@ -62,6 +66,21 @@ describe('POST /user/:id/follower', () => {
 
     accessToken2 = result.accessToken
     userId2 = JSON.parse(atob(accessToken2.split('.')[1])).sub
+
+    const result2 = await app
+      .handle(
+        new Request(`http://localhost/user/${userId2}`, {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${accessToken2}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ isPrivate: true }),
+        }),
+      )
+      .then((response) => response.json())
+
+    expect(result2.id).toBe(userId2)
   })
 
   test('422: 요청에 `Authorization` 헤더가 없는 경우', async () => {
@@ -139,7 +158,7 @@ describe('POST /user/:id/follower', () => {
     expect(await response.text()).toBe('Bad Request')
   })
 
-  test('두번째 사용자가 첫번째 사용자를 팔로우 요청한 경우', async () => {
+  test('두번째 사용자가 공개 계정인 첫번째 사용자에게 팔로우 요청한 경우', async () => {
     const result = await app
       .handle(
         new Request(`http://localhost/user/${userId}/follower`, {
@@ -150,15 +169,21 @@ describe('POST /user/:id/follower', () => {
       .then((response) => response.json())
 
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
+
+    const result2 = await app
+      .handle(new Request(`http://localhost/user/${userId}/follower`))
+      .then((response) => response.json())
+
+    expect(result2.length).toBe(1)
   })
 
   test('404: 기존 팔로워가 또 팔로우 요청한 경우', async () => {
-    const [result] = await sql`
-      SELECT "leaderId"
-      FROM "UserFollow"
-      WHERE "leaderId" = ${userId} AND "followerId" = ${userId2}`
+    const result = await app
+      .handle(new Request(`http://localhost/user/${userId}/follower`))
+      .then((response) => response.json())
 
-    expect(result.leaderId).toBe(userId)
+    expect(result.length).toBe(1)
+    expect(result[0].id).toBe(userId2)
 
     const response = await app.handle(
       new Request(`http://localhost/user/${userId}/follower`, {
@@ -169,5 +194,59 @@ describe('POST /user/:id/follower', () => {
 
     expect(response.status).toBe(404)
     expect(await response.text()).toBe('NOT_FOUND')
+  })
+
+  test('첫번째 사용자가 비밀 계정인 두번째 사용자에게 팔로우 요청한 경우', async () => {
+    // 팔로우 요청
+    const result = await app
+      .handle(
+        new Request(`http://localhost/user/${userId2}/follower`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }),
+      )
+      .then((response) => response.json())
+
+    expect(new Date(result.createdAt).getTime()).not.toBeNaN()
+
+    const result2 = await app.handle(new Request(`http://localhost/user/${userId2}/follower`))
+
+    expect(result2.status).toBe(404)
+    expect(await result2.text()).toBe('NOT_FOUND')
+
+    // 팔로우 요청 승인
+    const result3 = await app
+      .handle(
+        new Request(`http://localhost/user/${userId2}/follower`, {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${accessToken2}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userIds: [userId],
+            status: UserFollowStatus.ACCEPTED,
+          }),
+        }),
+      )
+      .then((response) => response.json())
+
+    expect(result3).toEqual([{ id: userId, createdAt: result.createdAt }])
+
+    const result4 = await app.handle(new Request(`http://localhost/user/${userId2}/follower`))
+
+    expect(result4.status).toBe(404)
+    expect(await result4.text()).toBe('NOT_FOUND')
+
+    const result5 = await app
+      .handle(
+        new Request(`http://localhost/user/${userId2}/follower`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }),
+      )
+      .then((response) => response.json())
+
+    expect(result5.length).toBe(1)
+    expect(result5[0].id).toBe(userId)
   })
 })

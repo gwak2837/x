@@ -1,6 +1,7 @@
 import { NotFoundError, t } from 'elysia'
 
 import { BaseElysia } from '../../../..'
+import { UserFollowStatus } from '../../../../model/User'
 import { PostgresErrorCode } from '../../../../plugin/postgres'
 import { isValidPostgresBigIntString } from '../../../../utils'
 
@@ -15,12 +16,29 @@ export default (app: BaseElysia) =>
         return error(400, 'Bad Request')
 
       const [follow] = await sql<[FollowRow]>`
-        INSERT INTO "UserFollow" ("leaderId", "followerId")
-        VALUES (${leaderId}, ${userId})
+        WITH leader AS (
+          SELECT "isPrivate"
+          FROM "User"
+          WHERE "id" = ${leaderId}
+        )
+        INSERT INTO "UserFollow" ("leaderId", "followerId", "status")
+        VALUES (
+          ${leaderId}, 
+          ${userId}, 
+          (
+            SELECT 
+              CASE WHEN "isPrivate" 
+                THEN ${UserFollowStatus.PENDING}::smallint 
+                ELSE ${UserFollowStatus.ACCEPTED}::smallint 
+              END 
+            FROM leader
+          )
+        )
         ON CONFLICT DO NOTHING
         RETURNING "createdAt"
       `.catch((error) => {
         if (error.code === PostgresErrorCode.FOREIGN_KEY_VIOLATION) return []
+        if (error.code === PostgresErrorCode.NOT_NULL_VIOLATION) return []
         throw error
       })
       if (!follow) throw new NotFoundError()

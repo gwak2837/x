@@ -12,6 +12,7 @@ import {
   validBBatonUserResponse4,
 } from '../../../../../test/mock'
 import { sql } from '../../../../../test/postgres'
+import { UserFollowStatus } from '../../../../model/User'
 
 describe('GET /user/:id/follower', () => {
   // 공개 계정
@@ -129,8 +130,7 @@ describe('GET /user/:id/follower', () => {
     userId4 = JSON.parse(atob(accessToken4.split('.')[1])).sub
   })
 
-  test('팔로우/팔로워 관계를 설정합니다.', async () => {
-    // 사용자2 -> 사용자1
+  test('사용자2가 사용자1을 팔로우합니다.', async () => {
     const result = await app
       .handle(
         new Request(`http://localhost/user/${userId}/follower`, {
@@ -142,8 +142,16 @@ describe('GET /user/:id/follower', () => {
 
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
 
-    // 사용자3 -> 사용자2
     const result2 = await app
+      .handle(new Request(`http://localhost/user/${userId}/follower`))
+      .then((response) => response.json())
+
+    expect(result2.length).toBe(1)
+    expect(result2[0].id).toBe(userId2)
+  })
+
+  test('사용자3이 사용자2에게 팔로우를 요청하고 사용자2가 수락합니다.', async () => {
+    const result = await app
       .handle(
         new Request(`http://localhost/user/${userId2}/follower`, {
           method: 'POST',
@@ -152,10 +160,54 @@ describe('GET /user/:id/follower', () => {
       )
       .then((response) => response.json())
 
-    expect(new Date(result2.createdAt).getTime()).not.toBeNaN()
+    expect(new Date(result.createdAt).getTime()).not.toBeNaN()
 
-    // 사용자4 -> 사용자2
-    const result3 = await app
+    const result2 = await app.handle(new Request(`http://localhost/user/${userId2}/follower`))
+
+    expect(result2.status).toBe(404)
+    expect(await result2.text()).toBe('NOT_FOUND')
+
+    const result3 = await app.handle(
+      new Request(`http://localhost/user/${userId2}/follower`, {
+        headers: { Authorization: `Bearer ${accessToken2}` },
+      }),
+    )
+
+    expect(result3.status).toBe(404)
+    expect(await result3.text()).toBe('NOT_FOUND')
+
+    const result4 = await app
+      .handle(
+        new Request(`http://localhost/user/${userId2}/follower`, {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${accessToken2}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userIds: [userId3],
+            status: UserFollowStatus.ACCEPTED,
+          }),
+        }),
+      )
+      .then((response) => response.json())
+
+    expect(result4).toEqual([{ id: userId3, createdAt: result.createdAt }])
+
+    const result5 = await app
+      .handle(
+        new Request(`http://localhost/user/${userId2}/follower`, {
+          headers: { Authorization: `Bearer ${accessToken2}` },
+        }),
+      )
+      .then((response) => response.json())
+
+    expect(result5.length).toBe(1)
+    expect(result5[0].id).toBe(userId3)
+  })
+
+  test('사용자4가 사용자2에게 팔로우를 요청하고 사용자2가 수락합니다.', async () => {
+    const result = await app
       .handle(
         new Request(`http://localhost/user/${userId2}/follower`, {
           method: 'POST',
@@ -164,10 +216,50 @@ describe('GET /user/:id/follower', () => {
       )
       .then((response) => response.json())
 
-    expect(new Date(result3.createdAt).getTime()).not.toBeNaN()
+    expect(new Date(result.createdAt).getTime()).not.toBeNaN()
+
+    const result2 = await app
+      .handle(
+        new Request(`http://localhost/user/${userId2}/follower`, {
+          headers: { Authorization: `Bearer ${accessToken2}` },
+        }),
+      )
+      .then((response) => response.json())
+
+    expect(result2.length).toBe(1)
+    expect(result2[0].id).toBe(userId3)
+
+    const result3 = await app
+      .handle(
+        new Request(`http://localhost/user/${userId2}/follower`, {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${accessToken2}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userIds: [userId4],
+            status: UserFollowStatus.ACCEPTED,
+          }),
+        }),
+      )
+      .then((response) => response.json())
+
+    expect(result3).toEqual([{ id: userId4, createdAt: result.createdAt }])
+
+    const result4 = await app
+      .handle(
+        new Request(`http://localhost/user/${userId2}/follower`, {
+          headers: { Authorization: `Bearer ${accessToken2}` },
+        }),
+      )
+      .then((response) => response.json())
+
+    expect(result4.length).toBe(2)
+    // expect(result4[0].id).toBe(userId3)
   })
 
-  test('공개 계정의 팔로워 목록은 모두에게 보여집니다.', async () => {
+  test('공개 계정의 팔로워 목록은 비로그인 사용자에게 보여집니다.', async () => {
     const result = await app
       .handle(new Request(`http://localhost/user/${userId}/follower`))
       .then((response) => response.json())
@@ -176,7 +268,7 @@ describe('GET /user/:id/follower', () => {
     expect(result[0].id).toBe(userId2)
   })
 
-  test('공개 계정의 팔로워 목록은 모두에게 보여집니다.', async () => {
+  test('공개 계정의 팔로워 목록은 로그인 사용자에게 보여집니다.', async () => {
     const result = await app
       .handle(
         new Request(`http://localhost/user/${userId}/follower`, {
@@ -219,5 +311,32 @@ describe('GET /user/:id/follower', () => {
     expect(result.length).toBe(2)
     expect(result[0].id).toBe(userId3)
     expect(result[1].id).toBe(userId4)
+  })
+
+  test('자신의 팔로워 목록은 항상 보여집니다.', async () => {
+    // 공개 계정
+    const result = await app
+      .handle(
+        new Request(`http://localhost/user/${userId}/follower`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }),
+      )
+      .then((response) => response.json())
+
+    expect(result.length).toBe(1)
+    expect(result[0].id).toBe(userId2)
+
+    // 비밀 계정
+    const result2 = await app
+      .handle(
+        new Request(`http://localhost/user/${userId2}/follower`, {
+          headers: { Authorization: `Bearer ${accessToken2}` },
+        }),
+      )
+      .then((response) => response.json())
+
+    expect(result2.length).toBe(2)
+    expect(result2[0].id).toBe(userId3)
+    expect(result2[1].id).toBe(userId4)
   })
 })

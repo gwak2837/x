@@ -4,6 +4,17 @@ export enum UserSex {
   FEMALE = 2,
 }
 
+export enum UserFollowStatus {
+  PENDING = 0,
+  ACCEPTED = 1,
+  REJECTED = 2,
+}
+
+export enum UserFollowStatusInput {
+  ACCEPTED = 1,
+  REJECTED = 2,
+}
+
 export enum UserSuspendedType {
   SELF = 0, // 스스로
   BLOCK = 1, // 차단

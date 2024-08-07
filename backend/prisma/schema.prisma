@@ -37,6 +37,7 @@ model UserFollow {
   leaderId   BigInt
   followerId BigInt
   createdAt  DateTime @default(now())
+  status     Int      @default(0) @db.SmallInt
 
   leader   User @relation("following", fields: [leaderId], references: [id])
   follower User @relation("followers", fields: [followerId], references: [id])

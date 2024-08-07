@@ -10,6 +10,7 @@ import getPosts from './api/post/get'
 import createPost from './api/post/post'
 import deleteFollowing from './api/user/[id]/follower/delete'
 import getFollowers from './api/user/[id]/follower/get'
+import updateFollowers from './api/user/[id]/follower/patch'
 import createFollowing from './api/user/[id]/follower/post'
 import updateUser from './api/user/[id]/patch'
 
@@ -26,5 +27,6 @@ export default (app: BaseElysia) =>
     .use(createPost)
     .use(deleteFollowing)
     .use(getFollowers)
+    .use(updateFollowers)
     .use(createFollowing)
     .use(updateUser)
