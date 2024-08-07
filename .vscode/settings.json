@@ -8,13 +8,7 @@
   "files.eol": "\n",
   "search.exclude": {
     "**/.git": true,
-    "**/.yarn": true,
-    "**/.pnp.*": true,
     "**/out": true
-  },
-  "sqltools.format": {
-    "linesBetweenQueries": 2,
-    "reservedWordCase": "upper"
   },
   "turboConsoleLog.includeFileNameAndLineNum": false,
   "turboConsoleLog.logMessagePrefix": "👀",

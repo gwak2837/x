@@ -1,12 +1,14 @@
 {
   "recommendations": [
-    "visualstudioexptteam.vscodeintellicode",
+    "bradlc.vscode-tailwindcss",
+    "ChakrounAnas.turbo-console-log",
     "christian-kohler.npm-intellisense",
     "christian-kohler.path-intellisense",
-    "ms-azuretools.vscode-docker",
-    "foxundermoon.shell-format",
+    "csstools.postcss",
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
-    "ChakrounAnas.turbo-console-log"
+    "foxundermoon.shell-format",
+    "ms-azuretools.vscode-docker",
+    "visualstudioexptteam.vscodeintellicode"
   ]
 }

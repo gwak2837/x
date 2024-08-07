@@ -41,6 +41,6 @@ bun run compile
 
 ```bash
 bun test:db
-bun test:migrate
+bun test:prisma
 bun test
 ```

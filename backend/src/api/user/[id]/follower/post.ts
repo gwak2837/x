@@ -27,10 +27,10 @@ export default (app: BaseElysia) =>
           ${userId}, 
           (
             SELECT 
-              CASE WHEN "isPrivate" 
-                THEN ${UserFollowStatus.PENDING}::smallint 
+              CASE 
+                WHEN "isPrivate" THEN ${UserFollowStatus.PENDING}::smallint 
                 ELSE ${UserFollowStatus.ACCEPTED}::smallint 
-              END 
+              END
             FROM leader
           )
         )

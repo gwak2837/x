@@ -13,15 +13,19 @@ model User {
   suspendedType    Int?      @db.SmallInt
   suspendedReason  String?
   ageRange         Int       @db.SmallInt
+  ageRangePublic   Boolean   @default(true)
   bio              String?   @db.VarChar(255)
   birthDate        DateTime? @db.Date
+  birthDatePublic  Boolean   @default(true)
   grade            Int       @default(0) @db.SmallInt
   isPrivate        Boolean   @default(false)
+  likedPostPublic  Boolean   @default(true)
   name             String    @unique @db.VarChar(255)
   nameLastModified DateTime?
   nickname         String    @db.VarChar(255)
   profileImageURLs String[]
   sex              Int       @default(0) @db.SmallInt
+  sexPublic        Boolean   @default(true)
   config           Json?
 
   oAuth OAuth[]

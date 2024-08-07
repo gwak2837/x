@@ -52,12 +52,3 @@ export default function PostForm() {
     </form>
   )
 }
-
-async function createPost() {
-  const response = await fetch(`${NEXT_PUBLIC_BACKEND_URL}/post`, { method: 'POST' })
-  if (response.status >= 500) throw new Error(await response.text())
-  if (response.status >= 400) return await response.text()
-
-  const posts = await response.json()
-  return posts
-}
