@@ -11,6 +11,8 @@ export default (app: BaseElysia) =>
       const { id: userIdInParam } = params
       if (!isValidPostgresBigIntString(userIdInParam)) return error(400, 'Bad Request')
 
+      const isMe = userId === userIdInParam
+
       const [user] = await sql<[UserRow]>`
         SELECT id,
           "createdAt",
@@ -26,6 +28,7 @@ export default (app: BaseElysia) =>
             WHEN "birthDatePublic" = TRUE THEN "birthDate"
             ELSE NULL
           END AS "birthDate",
+          ${isMe ? sql`config,` : sql``}
           grade,
           "isPrivate",
           name,

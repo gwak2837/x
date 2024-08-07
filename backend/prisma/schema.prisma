@@ -17,6 +17,7 @@ model User {
   bio              String?   @db.VarChar(255)
   birthDate        DateTime? @db.Date
   birthDatePublic  Boolean   @default(true)
+  config           Json?
   grade            Int       @default(0) @db.SmallInt
   isPrivate        Boolean   @default(false)
   likedPostPublic  Boolean   @default(true)
@@ -26,7 +27,6 @@ model User {
   profileImageURLs String[]
   sex              Int       @default(0) @db.SmallInt
   sexPublic        Boolean   @default(true)
-  config           Json?
 
   oAuth OAuth[]
   posts Post[]
