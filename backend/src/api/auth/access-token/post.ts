@@ -20,11 +20,18 @@ export default (app: BaseElysia) =>
           return error(422, 'Unprocessable Content')
 
         const [user] = await sql<[UserRow]>`
-          SELECT "suspendedType"
+          SELECT "suspendedType",
+            "unsuspendAt"
           FROM "User"
           WHERE id = ${userId};`
 
-        if (!user || (user.suspendedType && LoginNotAllowed.includes(user.suspendedType)))
+        if (
+          !user ||
+          (user.suspendedType &&
+            LoginNotAllowed.includes(user.suspendedType) &&
+            user.unsuspendAt &&
+            user.unsuspendAt > new Date())
+        )
           return error(403, 'Forbidden')
 
         return { accessToken: await signJWT({ sub: userId }, TokenType.ACCESS) }
@@ -44,5 +51,6 @@ export default (app: BaseElysia) =>
   )
 
 type UserRow = {
-  suspendedType: UserSuspendedType
+  suspendedType: UserSuspendedType | null
+  unsuspendAt: Date | null
 }
