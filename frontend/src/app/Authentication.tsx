@@ -1,8 +1,10 @@
 'use client'
 
+import type { AuthStore} from '@/zustand/auth';
+
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
 import { sleep } from '@/utils'
-import { AuthStore, useAuthStore } from '@/zustand/auth'
+import { useAuthStore } from '@/zustand/auth'
 import Link from 'next/link'
 import { useEffect } from 'react'
 import toast from 'react-hot-toast'

@@ -1,5 +1,6 @@
+import type { PageProps } from '@/types/nextjs'
+
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
-import { PageProps } from '@/types/nextjs'
 
 import Post from './Post'
 

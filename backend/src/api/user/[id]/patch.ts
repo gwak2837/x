@@ -1,6 +1,7 @@
 import { NotFoundError, t } from 'elysia'
 
-import { BaseElysia } from '../../..'
+import type { BaseElysia } from '../../..'
+
 import { UserSuspendedType } from '../../../model/User'
 import { isValidPostgresBigIntString, removeUndefinedKeys } from '../../../utils'
 

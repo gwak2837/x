@@ -1,4 +1,4 @@
-import { PageProps } from '@/types/nextjs'
+import type { PageProps } from '@/types/nextjs'
 
 import PostForm from './PostForm'
 

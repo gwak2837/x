@@ -1,5 +1,8 @@
 import { beforeAll, describe, expect, spyOn, test } from 'bun:test'
 
+import type { POSTAuthBbatonResponse200 } from '../bbaton/post'
+import type { GETAuthAccessTokenResponse200 } from './post'
+
 import { app } from '../../..'
 import { validBBatonTokenResponse, validBBatonUserResponse } from '../../../../test/mock'
 import { sql } from '../../../../test/postgres'
@@ -106,9 +109,9 @@ describe('POST /auth/access-token', async () => {
       new Response(JSON.stringify(validBBatonUserResponse)),
     )
 
-    const register = await app
+    const register = (await app
       .handle(new Request('http://localhost/auth/bbaton?code=123', { method: 'POST' }))
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTAuthBbatonResponse200
 
     expect(register).toHaveProperty('accessToken')
     expect(register).toHaveProperty('refreshToken')
@@ -120,14 +123,14 @@ describe('POST /auth/access-token', async () => {
     // 토큰 갱신
     spyOn(Date, 'now').mockReturnValueOnce(1722315119989)
 
-    const refreshing = await app
+    const refreshing = (await app
       .handle(
         new Request('http://localhost/auth/access-token', {
           method: 'POST',
           headers: { Authorization: `Bearer ${register.refreshToken}` },
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as GETAuthAccessTokenResponse200
 
     const userId = JSON.parse(atob(refreshing.accessToken.split('.')[1])).sub
 
@@ -147,9 +150,9 @@ describe('POST /auth/access-token', async () => {
       new Response(JSON.stringify(validBBatonUserResponse)),
     )
 
-    const loginResult = await app
+    const loginResult = (await app
       .handle(new Request('http://localhost/auth/bbaton?code=123', { method: 'POST' }))
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTAuthBbatonResponse200
 
     expect(loginResult).toHaveProperty('accessToken')
     expect(loginResult).toHaveProperty('refreshToken')

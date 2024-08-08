@@ -1,6 +1,7 @@
 import { t } from 'elysia'
 
-import { BaseElysia } from '../..'
+import type { BaseElysia } from '../..'
+
 import { extractHashtags } from '../../common/post'
 import { MAX_HASHTAG_LENGTH } from '../../constants'
 import { PostCategory, PostStatus } from '../../model/Post'

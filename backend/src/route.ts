@@ -1,4 +1,4 @@
-import { BaseElysia } from '.'
+import { type BaseElysia } from '.'
 import getAccessToken from './api/auth/access-token/post'
 import loginByBBaton from './api/auth/bbaton/post'
 import getRefreshToken from './api/auth/refresh-token/post'

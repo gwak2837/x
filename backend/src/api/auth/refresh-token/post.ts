@@ -1,7 +1,8 @@
 import { t } from 'elysia'
 
-import { BaseElysia } from '../../..'
-import { UserSuspendedType } from '../../../model/User'
+import type { BaseElysia } from '../../..'
+import type { UserSuspendedType } from '../../../model/User'
+
 import { isValidPostgresBigIntString } from '../../../utils'
 import { LoginNotAllowed } from '../../../utils/auth'
 import { TokenType, signJWT, verifyJWT } from '../../../utils/jwt'

@@ -1,6 +1,6 @@
 import { NotFoundError, t } from 'elysia'
 
-import { BaseElysia } from '..'
+import type { BaseElysia } from '..'
 
 export default (app: BaseElysia) =>
   app

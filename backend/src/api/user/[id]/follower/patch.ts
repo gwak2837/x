@@ -1,6 +1,7 @@
 import { NotFoundError, t } from 'elysia'
 
-import { BaseElysia } from '../../../..'
+import type { BaseElysia } from '../../../..'
+
 import { UserFollowStatusInput } from '../../../../model/User'
 import { isValidPostgresBigIntString } from '../../../../utils'
 

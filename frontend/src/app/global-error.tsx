@@ -1,6 +1,7 @@
 'use client'
 
-import { ErrorProps } from '@/types/nextjs'
+import type { ErrorProps } from '@/types/nextjs'
+
 import * as Sentry from '@sentry/nextjs'
 import NextError from 'next/error'
 import { useEffect } from 'react'

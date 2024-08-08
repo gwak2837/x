@@ -1,9 +1,10 @@
 import { beforeAll, describe, expect, spyOn, test } from 'bun:test'
 
+import type { BBatonTokenResponse, BBatonUserResponse } from './post'
+
 import { app } from '../../..'
 import { validBBatonTokenResponse, validBBatonUserResponse } from '../../../../test/mock'
 import { sql } from '../../../../test/postgres'
-import { BBatonTokenResponse, BBatonUserResponse } from './post'
 
 describe('POST /auth/bbaton', () => {
   let newUserId = ''

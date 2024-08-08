@@ -1,6 +1,9 @@
-import { NotFoundError, Static, t } from 'elysia'
+import type { Static} from 'elysia';
 
-import { BaseElysia } from '../../..'
+import { NotFoundError, t } from 'elysia'
+
+import type { BaseElysia } from '../../..'
+
 import { PostCategory, PostStatus } from '../../../model/Post'
 import { deeplyRemoveNull } from '../../../utils'
 import { removeZero } from '../../../utils/type'

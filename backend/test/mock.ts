@@ -1,4 +1,4 @@
-import { BBatonTokenResponse, BBatonUserResponse } from '../src/api/auth/bbaton/post'
+import type { BBatonTokenResponse, BBatonUserResponse } from '../src/api/auth/bbaton/post'
 
 export const validBBatonTokenResponse: BBatonTokenResponse = {
   // user_name: gwak2837

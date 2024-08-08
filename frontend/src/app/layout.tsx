@@ -1,7 +1,7 @@
+import type { LayoutProps } from '@/types/nextjs'
 import type { Metadata } from 'next'
 
 import ReactQueryProvider from '@/components/ReactQueryProvider'
-import { LayoutProps } from '@/types/nextjs'
 import localFont from 'next/font/local'
 import { Toaster } from 'react-hot-toast'
 

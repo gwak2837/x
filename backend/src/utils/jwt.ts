@@ -1,4 +1,6 @@
-import { JWTPayload, SignJWT, jwtVerify } from 'jose'
+import type { JWTPayload} from 'jose';
+
+import { SignJWT, jwtVerify } from 'jose'
 
 import { ACCESS_JWT_SECRET, DOMAIN_NAME, REFRESH_JWT_SECRET } from '../constants'
 

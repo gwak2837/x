@@ -1,6 +1,7 @@
 import { t } from 'elysia'
 
-import { BaseElysia } from '../..'
+import type { BaseElysia } from '../..'
+
 import { PostCategory, PostStatus } from '../../model/Post'
 import { POSTGRES_MAX_BIGINT } from '../../plugin/postgres'
 import { deeplyRemoveNull } from '../../utils'
