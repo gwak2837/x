@@ -1,6 +1,8 @@
 {
   "name": "backend",
   "version": "0.1.0",
+  "module": "src/index.ts",
+  "type": "module",
   "scripts": {
     "dev": "NODE_ENV=development bun --env-file=.env.development.local run --watch src/index.ts",
     "build": "NODE_ENV=production bun build src/index.ts --target bun --minify --outdir ./out",
@@ -21,10 +23,10 @@
     "postgres": "^3.4.4"
   },
   "devDependencies": {
+    "@types/bun": "latest",
     "bun-types": "latest",
     "dotenv-cli": "^7.4.2",
     "prisma": "^5.17.0",
     "typescript": "^5.5.4"
-  },
-  "module": "src/index.js"
+  }
 }
