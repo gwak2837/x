@@ -1,7 +1,8 @@
-import { t } from 'elysia'
+import { type Static, t } from 'elysia'
 
-import { BaseElysia } from '../../..'
-import { UserSuspendedType } from '../../../model/User'
+import type { BaseElysia } from '../../..'
+import type { UserSuspendedType } from '../../../model/User'
+
 import { isValidPostgresBigIntString } from '../../../utils'
 import { LoginNotAllowed } from '../../../utils/auth'
 import { TokenType, signJWT, verifyJWT } from '../../../utils/jwt'
@@ -42,13 +43,17 @@ export default (app: BaseElysia) =>
     {
       headers: t.Object({ authorization: t.String() }),
       response: {
-        200: t.Object({ accessToken: t.String() }),
+        200: response200Schema,
         401: t.String(),
         403: t.String(),
         422: t.String(),
       },
     },
   )
+
+export type GETAuthAccessTokenResponse200 = Static<typeof response200Schema>
+
+const response200Schema = t.Object({ accessToken: t.String() })
 
 type UserRow = {
   suspendedType: UserSuspendedType | null

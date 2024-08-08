@@ -1,7 +1,9 @@
-import { t } from 'elysia'
-import { PostgresError } from 'postgres'
+import type { PostgresError } from 'postgres'
 
-import { BaseElysia } from '../../..'
+import { type Static, t } from 'elysia'
+
+import type { BaseElysia } from '../../..'
+
 import { BBATON_CLIENT_ID, BBATON_CLIENT_SECRET, BBATON_REDIRECT_URI } from '../../../constants'
 import { OAuthProvider } from '../../../model/OAuth'
 import { PostgresErrorCode } from '../../../plugin/postgres'
@@ -26,7 +28,7 @@ export default (app: BaseElysia) =>
         }),
       })
 
-      const token: BBatonTokenResponse = await tokenResponse.json()
+      const token = (await tokenResponse.json()) as BBatonTokenResponse
       if (!token.access_token) return error(502, 'Bad Gateway')
 
       const bbatonUsername: string = JSON.parse(atob(token.access_token.split('.')[1])).user_name
@@ -49,7 +51,7 @@ export default (app: BaseElysia) =>
         const init = { headers: { Authorization: `Bearer ${token.access_token}` } }
         const bbatonUserResponse = await fetch('https://bauth.bbaton.com/v2/user/me', init)
 
-        const bbatonUser: BBatonUserResponse = await bbatonUserResponse.json()
+        const bbatonUser = (await bbatonUserResponse.json()) as BBatonUserResponse
         if (!bbatonUser.user_id) return error(502, 'Bad Gateway')
 
         const [user] = await sql<[RegisteredUserRow]>`
@@ -96,8 +98,8 @@ export default (app: BaseElysia) =>
       fetch('https://bauth.bbaton.com/v2/user/me', {
         headers: { Authorization: `Bearer ${token.access_token}` },
       })
-        .then(async (bbatonUserResponse) => await bbatonUserResponse.json())
-        .then((bbatonUser: BBatonUserResponse) => {
+        .then(async (bbatonUserResponse) => (await bbatonUserResponse.json()) as BBatonUserResponse)
+        .then((bbatonUser) => {
           if (!bbatonUser.user_id) throw new Error(JSON.stringify(bbatonUser))
 
           return sql`
@@ -120,16 +122,20 @@ export default (app: BaseElysia) =>
     {
       query: t.Object({ code: t.String() }),
       response: {
-        200: t.Object({
-          accessToken: t.String(),
-          refreshToken: t.String(),
-        }),
+        200: response200Schema,
         400: t.String(),
         403: t.String(),
         502: t.String(),
       },
     },
   )
+
+export type POSTAuthBbatonResponse200 = Static<typeof response200Schema>
+
+const response200Schema = t.Object({
+  accessToken: t.String(),
+  refreshToken: t.String(),
+})
 
 const base64Token = btoa(`${BBATON_CLIENT_ID}:${BBATON_CLIENT_SECRET}`)
 
