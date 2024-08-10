@@ -1,5 +1,10 @@
 import { beforeAll, describe, expect, setSystemTime, spyOn, test } from 'bun:test'
 
+import type { POSTAuthBBatonResponse200 } from '../../../auth/bbaton/post'
+import type { PATCHUserIdResponse200 } from '../patch'
+import type { GETUserIdFollowerResponse200 } from './get'
+import type { POSTUserIdFollowerResponse200 } from './post'
+
 import { app } from '../../../..'
 import {
   validBBatonTokenResponse,
@@ -37,9 +42,9 @@ describe('POST /user/:id/follower', () => {
       new Response(JSON.stringify(validBBatonUserResponse)),
     )
 
-    const result = await app
+    const result = (await app
       .handle(new Request('http://localhost/auth/bbaton?code=123', { method: 'POST' }))
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTAuthBBatonResponse200
 
     expect(result).toHaveProperty('accessToken')
     expect(typeof result.accessToken).toBe('string')
@@ -57,9 +62,9 @@ describe('POST /user/:id/follower', () => {
       new Response(JSON.stringify(validBBatonUserResponse2)),
     )
 
-    const result = await app
+    const result = (await app
       .handle(new Request('http://localhost/auth/bbaton?code=123', { method: 'POST' }))
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTAuthBBatonResponse200
 
     expect(result).toHaveProperty('accessToken')
     expect(typeof result.accessToken).toBe('string')
@@ -67,7 +72,7 @@ describe('POST /user/:id/follower', () => {
     accessToken2 = result.accessToken
     userId2 = JSON.parse(atob(accessToken2.split('.')[1])).sub
 
-    const result2 = await app
+    const result2 = (await app
       .handle(
         new Request(`http://localhost/user/${userId2}`, {
           method: 'PATCH',
@@ -78,7 +83,7 @@ describe('POST /user/:id/follower', () => {
           body: JSON.stringify({ isPrivate: true }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as PATCHUserIdResponse200
 
     expect(result2.id).toBe(userId2)
   })
@@ -159,28 +164,28 @@ describe('POST /user/:id/follower', () => {
   })
 
   test('두번째 사용자가 공개 계정인 첫번째 사용자에게 팔로우 요청한 경우', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request(`http://localhost/user/${userId}/follower`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${accessToken2}` },
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTUserIdFollowerResponse200
 
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
 
-    const result2 = await app
+    const result2 = (await app
       .handle(new Request(`http://localhost/user/${userId}/follower`))
-      .then((response) => response.json())
+      .then((response) => response.json())) as GETUserIdFollowerResponse200
 
     expect(result2.length).toBe(1)
   })
 
   test('404: 기존 팔로워가 또 팔로우 요청한 경우', async () => {
-    const result = await app
+    const result = (await app
       .handle(new Request(`http://localhost/user/${userId}/follower`))
-      .then((response) => response.json())
+      .then((response) => response.json())) as GETUserIdFollowerResponse200
 
     expect(result.length).toBe(1)
     expect(result[0].id).toBe(userId2)
@@ -198,14 +203,14 @@ describe('POST /user/:id/follower', () => {
 
   test('첫번째 사용자가 비밀 계정인 두번째 사용자에게 팔로우 요청한 경우', async () => {
     // 팔로우 요청
-    const result = await app
+    const result = (await app
       .handle(
         new Request(`http://localhost/user/${userId2}/follower`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${accessToken}` },
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTUserIdFollowerResponse200
 
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
 
@@ -238,13 +243,13 @@ describe('POST /user/:id/follower', () => {
     expect(result4.status).toBe(404)
     expect(await result4.text()).toBe('NOT_FOUND')
 
-    const result5 = await app
+    const result5 = (await app
       .handle(
         new Request(`http://localhost/user/${userId2}/follower`, {
           headers: { Authorization: `Bearer ${accessToken}` },
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as GETUserIdFollowerResponse200
 
     expect(result5.length).toBe(1)
     expect(result5[0].id).toBe(userId)

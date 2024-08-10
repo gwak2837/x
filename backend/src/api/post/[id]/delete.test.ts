@@ -1,5 +1,9 @@
 import { beforeAll, describe, expect, spyOn, test } from 'bun:test'
 
+import type { POSTAuthBBatonResponse200 } from '../../auth/bbaton/post'
+import type { POSTPostResponse200 } from '../post'
+import type { DELETEPostIdResponse200 } from './delete'
+
 import { app } from '../../..'
 import { validBBatonTokenResponse, validBBatonUserResponse } from '../../../../test/mock'
 import { sql } from '../../../../test/postgres'
@@ -26,9 +30,9 @@ describe('DELETE /post/:id', () => {
       new Response(JSON.stringify(validBBatonUserResponse)),
     )
 
-    const result = await app
+    const result = (await app
       .handle(new Request('http://localhost/auth/bbaton?code=123', { method: 'POST' }))
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTAuthBBatonResponse200
 
     expect(result).toHaveProperty('accessToken')
     expect(typeof result.accessToken).toBe('string')
@@ -37,7 +41,7 @@ describe('DELETE /post/:id', () => {
   })
 
   test('새로운 글을 작성합니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request('http://localhost/post', {
           method: 'POST',
@@ -48,7 +52,7 @@ describe('DELETE /post/:id', () => {
           body: JSON.stringify({ content: 'Hello, world! #hash #tag 123' }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTPostResponse200
 
     expect(typeof result.id).toBe('string')
     expect(typeof result.createdAt).toBe('string')
@@ -101,14 +105,14 @@ describe('DELETE /post/:id', () => {
   })
 
   test('게시글을 삭제합니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request(`http://localhost/post/${postId}`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${accessToken}` },
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as DELETEPostIdResponse200
 
     expect(typeof result.id).toBe('string')
     expect(typeof result.deletedAt).toBe('string')

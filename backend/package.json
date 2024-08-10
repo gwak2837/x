@@ -23,6 +23,7 @@
     "postgres": "^3.4.4"
   },
   "devDependencies": {
+    "@types/bun": "^1.1.6",
     "bun-types": "latest",
     "dotenv-cli": "^7.4.2",
     "prisma": "^5.17.0",

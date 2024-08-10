@@ -1,6 +1,6 @@
 'use client'
 
-import type { AuthStore} from '@/zustand/auth';
+import type { AuthStore } from '@/zustand/auth'
 
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
 import { sleep } from '@/utils'

@@ -1,10 +1,11 @@
-import { beforeAll, describe, expect, spyOn, test } from 'bun:test'
+import { beforeAll, describe, expect, setSystemTime, spyOn, test } from 'bun:test'
 
-import type { BBatonTokenResponse, BBatonUserResponse } from './post'
+import type { BBatonTokenResponse, BBatonUserResponse, POSTAuthBBatonResponse200 } from './post'
 
 import { app } from '../../..'
 import { validBBatonTokenResponse, validBBatonUserResponse } from '../../../../test/mock'
 import { sql } from '../../../../test/postgres'
+import { UserSuspendedType } from '../../../model/User'
 
 describe('POST /auth/bbaton', () => {
   let newUserId = ''
@@ -12,6 +13,8 @@ describe('POST /auth/bbaton', () => {
   beforeAll(async () => {
     await sql`DELETE FROM "OAuth"`
     await sql`DELETE FROM "User"`
+
+    setSystemTime(new Date('2024-01-01T00:00:00.000Z'))
   })
 
   test('422: 요청 시 `code`가 없는 경우', async () => {
@@ -101,9 +104,9 @@ describe('POST /auth/bbaton', () => {
       new Response(JSON.stringify(validBBatonUserResponse)),
     )
 
-    const result = await app
+    const result = (await app
       .handle(new Request('http://localhost/auth/bbaton?code=123', { method: 'POST' }))
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTAuthBBatonResponse200
 
     expect(result).toHaveProperty('accessToken')
     expect(result).toHaveProperty('refreshToken')
@@ -122,9 +125,9 @@ describe('POST /auth/bbaton', () => {
       new Response(JSON.stringify(validBBatonUserResponse)),
     )
 
-    const result = await app
+    const result = (await app
       .handle(new Request('http://localhost/auth/bbaton?code=123', { method: 'POST' }))
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTAuthBBatonResponse200
 
     expect(result).toHaveProperty('accessToken')
     expect(result).toHaveProperty('refreshToken')
@@ -150,9 +153,9 @@ describe('POST /auth/bbaton', () => {
       new Response(JSON.stringify(updatedBBatonUserResponse)),
     )
 
-    const result = await app
+    const result = (await app
       .handle(new Request('http://localhost/auth/bbaton?code=123', { method: 'POST' }))
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTAuthBBatonResponse200
 
     expect(result).toHaveProperty('accessToken')
     expect(result).toHaveProperty('refreshToken')
@@ -171,12 +174,20 @@ describe('POST /auth/bbaton', () => {
   })
 
   test('403: 정지된 게정으로 로그인한 경우', async () => {
-    await sql`
+    const suspendedReason = '계정 정지 테스트'
+
+    // 사용자 1년 정지
+    const [result] = await sql`
       UPDATE "User"
-      SET 
-        "suspendedType" = 1, 
-        "suspendedReason" = '계정이 정지되었습니다.'
-      WHERE id = ${newUserId};`
+      SET "updatedAt" = CURRENT_TIMESTAMP,
+      "suspendedType" = ${UserSuspendedType.BLOCK},
+      "suspendedReason" = ${suspendedReason},
+      "unsuspendAt" = '2025-01-01T00:00:00.000Z'
+      WHERE id = ${newUserId}
+      RETURNING id, "updatedAt"`
+
+    expect(result.id).toBe(newUserId)
+    expect(new Date(result.updatedAt).getTime()).not.toBeNaN()
 
     spyOn(global, 'fetch').mockResolvedValueOnce(
       new Response(JSON.stringify(validBBatonTokenResponse)),
@@ -187,7 +198,7 @@ describe('POST /auth/bbaton', () => {
     )
 
     expect(response.status).toBe(403)
-    expect(await response.text()).toBe('로그인 할 수 없습니다. 이유:\n계정이 정지되었습니다.')
+    expect(await response.text()).toBe(`로그인 할 수 없습니다. 이유:\n${suspendedReason}`)
   })
 
   test('403: 회원 탈퇴 후 로그인한 경우', async () => {

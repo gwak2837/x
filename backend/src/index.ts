@@ -1,7 +1,7 @@
 import cors from '@elysiajs/cors'
 import serverTiming from '@elysiajs/server-timing'
 import swagger from '@elysiajs/swagger'
-import { Elysia, t } from 'elysia'
+import { Elysia, type Static, t } from 'elysia'
 import { networkInterfaces } from 'os'
 
 import { ENV, PORT } from './constants'
@@ -12,6 +12,10 @@ import route from './route'
 
 // TODO: Rate limit, Logger
 export type BaseElysia = typeof app
+
+export type GETReadyResponse200 = Static<typeof response200Schema>
+
+const response200Schema = t.Object({ current_timestamp: t.Date() })
 
 export const app = new Elysia()
   .on('start', () => {
@@ -70,7 +74,7 @@ export const app = new Elysia()
     },
     {
       response: {
-        200: t.Object({ current_timestamp: t.Date() }),
+        200: response200Schema,
         502: t.String(),
       },
     },

@@ -22,6 +22,12 @@ export enum UserSuspendedType {
   DELETE = 3, // 삭제 유예 기간
 }
 
+export enum UserSuspendedTypeInput {
+  SELF = 0, // 스스로
+  SLEEP = 2, // 휴면 계정
+  DELETE = 3, // 삭제 유예 기간
+}
+
 export const USER_NAME_MAX_LENGTH = 255
 
 export enum UserGrade {

@@ -1,4 +1,7 @@
-import { beforeAll, describe, expect, spyOn, test } from 'bun:test'
+import { beforeAll, describe, expect, setSystemTime, spyOn, test } from 'bun:test'
+
+import type { POSTAuthBBatonResponse200 } from '../bbaton/post'
+import type { GETAuthRefreshTokenResponse200 } from './post'
 
 import { app } from '../../..'
 import { validBBatonTokenResponse, validBBatonUserResponse } from '../../../../test/mock'
@@ -13,6 +16,8 @@ describe('POST /auth/refresh-token', async () => {
   beforeAll(async () => {
     await sql`DELETE FROM "OAuth"`
     await sql`DELETE FROM "User"`
+
+    setSystemTime(new Date('2024-01-01T00:00:00.000Z'))
   })
 
   test('422: 요청 헤더에 `Authorization`가 없는 경우', async () => {
@@ -106,9 +111,9 @@ describe('POST /auth/refresh-token', async () => {
       new Response(JSON.stringify(validBBatonUserResponse)),
     )
 
-    const register = await app
+    const register = (await app
       .handle(new Request('http://localhost/auth/bbaton?code=123', { method: 'POST' }))
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTAuthBBatonResponse200
 
     expect(register).toHaveProperty('accessToken')
     expect(register).toHaveProperty('refreshToken')
@@ -120,14 +125,14 @@ describe('POST /auth/refresh-token', async () => {
     // 토큰 갱신
     spyOn(Date, 'now').mockReturnValueOnce(1722315119989)
 
-    const refreshing = await app
+    const refreshing = (await app
       .handle(
         new Request('http://localhost/auth/refresh-token', {
           method: 'POST',
           headers: { Authorization: `Bearer ${register.refreshToken}` },
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as GETAuthRefreshTokenResponse200
 
     const userId = JSON.parse(atob(refreshing.refreshToken.split('.')[1])).sub
 
@@ -147,34 +152,27 @@ describe('POST /auth/refresh-token', async () => {
       new Response(JSON.stringify(validBBatonUserResponse)),
     )
 
-    const loginResult = await app
+    const loginResult = (await app
       .handle(new Request('http://localhost/auth/bbaton?code=123', { method: 'POST' }))
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTAuthBBatonResponse200
 
     expect(loginResult).toHaveProperty('accessToken')
     expect(loginResult).toHaveProperty('refreshToken')
     expect(typeof loginResult.accessToken).toBe('string')
     expect(typeof loginResult.refreshToken).toBe('string')
 
-    // 사용자 정지
-    const suspendingResult = await app
-      .handle(
-        new Request(`http://localhost/user/${newUserId}`, {
-          method: 'PATCH',
-          headers: {
-            Authorization: `Bearer ${loginResult.accessToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            suspendedType: UserSuspendedType.BLOCK,
-            suspendedReason: '계정 정지 테스트',
-          }),
-        }),
-      )
-      .then((response) => response.json())
+    // 사용자 1년 정지
+    const [result] = await sql`
+      UPDATE "User"
+      SET "updatedAt" = CURRENT_TIMESTAMP,
+      "suspendedType" = ${UserSuspendedType.BLOCK},
+      "suspendedReason" = '계정 정지 테스트',
+      "unsuspendAt" = '2025-01-01T00:00:00.000Z'
+      WHERE id = ${newUserId}
+      RETURNING id, "updatedAt"`
 
-    expect(suspendingResult.id).toBe(newUserId)
-    expect(new Date(suspendingResult.updatedAt).getTime()).not.toBeNaN()
+    expect(result.id).toBe(newUserId)
+    expect(new Date(result.updatedAt).getTime()).not.toBeNaN()
 
     // 토큰 갱신
     const response = await app.handle(
@@ -186,5 +184,27 @@ describe('POST /auth/refresh-token', async () => {
 
     expect(response.status).toBe(403)
     expect(await response.text()).toBe('Forbidden')
+  })
+
+  test('정지 기간이 지난 후 사용자가 로그인한 경우', async () => {
+    // 정지일로부터 2년 후
+    setSystemTime(new Date('2026-01-01T00:00:00.000Z'))
+
+    spyOn(global, 'fetch').mockResolvedValueOnce(
+      new Response(JSON.stringify(validBBatonTokenResponse)),
+    )
+
+    spyOn(global, 'fetch').mockResolvedValueOnce(
+      new Response(JSON.stringify(validBBatonUserResponse)),
+    )
+
+    const result = (await app
+      .handle(new Request('http://localhost/auth/bbaton?code=123', { method: 'POST' }))
+      .then((response) => response.json())) as POSTAuthBBatonResponse200
+
+    expect(result).toHaveProperty('accessToken')
+    expect(result).toHaveProperty('refreshToken')
+    expect(typeof result.accessToken).toBe('string')
+    expect(typeof result.refreshToken).toBe('string')
   })
 })

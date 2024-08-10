@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 const myFont = localFont({
   src: './PretendardVariable.woff2',
   display: 'swap',
-  weight: '100 900',
+  weight: '400 700',
 })
 
 export default function RootLayout({ children }: LayoutProps) {

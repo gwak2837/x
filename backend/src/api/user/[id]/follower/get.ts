@@ -1,4 +1,4 @@
-import { NotFoundError, t } from 'elysia'
+import { NotFoundError, type Static, t } from 'elysia'
 
 import type { BaseElysia } from '../../../..'
 
@@ -57,22 +57,26 @@ export default (app: BaseElysia) =>
     {
       params: t.Object({ id: t.String({ maxLength: 19 }) }),
       response: {
-        200: t.Array(
-          t.Object({
-            id: t.String(),
-            bio: t.Optional(t.String()),
-            grade: t.Number(),
-            isPrivate: t.Boolean(),
-            name: t.String(),
-            nickname: t.String(),
-            profileImageURL: t.Optional(t.Array(t.String())),
-          }),
-        ),
+        200: response200Schema,
         400: t.String(),
         404: t.String(),
       },
     },
   )
+
+export type GETUserIdFollowerResponse200 = Static<typeof response200Schema>
+
+const response200Schema = t.Array(
+  t.Object({
+    id: t.String(),
+    bio: t.Optional(t.String()),
+    grade: t.Number(),
+    isPrivate: t.Boolean(),
+    name: t.String(),
+    nickname: t.String(),
+    profileImageURL: t.Optional(t.Array(t.String())),
+  }),
+)
 
 type FollowRow = {
   id: string

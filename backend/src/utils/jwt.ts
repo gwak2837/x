@@ -1,4 +1,4 @@
-import type { JWTPayload} from 'jose';
+import type { JWTPayload } from 'jose'
 
 import { SignJWT, jwtVerify } from 'jose'
 

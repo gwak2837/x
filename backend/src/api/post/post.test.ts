@@ -1,5 +1,8 @@
 import { beforeAll, describe, expect, setSystemTime, spyOn, test } from 'bun:test'
 
+import type { POSTAuthBBatonResponse200 } from '../auth/bbaton/post'
+import type { POSTPostResponse200 } from './post'
+
 import { app } from '../..'
 import {
   validBBatonTokenResponse,
@@ -36,9 +39,9 @@ describe('POST /post', () => {
       new Response(JSON.stringify(validBBatonUserResponse)),
     )
 
-    const result = await app
+    const result = (await app
       .handle(new Request('http://localhost/auth/bbaton?code=123', { method: 'POST' }))
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTAuthBBatonResponse200
 
     expect(result).toHaveProperty('accessToken')
     expect(typeof result.accessToken).toBe('string')
@@ -121,7 +124,7 @@ describe('POST /post', () => {
   })
 
   test('새로운 글을 작성합니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request('http://localhost/post', {
           method: 'POST',
@@ -132,7 +135,7 @@ describe('POST /post', () => {
           body: JSON.stringify({ content: 'Hello, world!' }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTPostResponse200
 
     expect(typeof result.id).toBe('string')
     expect(typeof result.createdAt).toBe('string')
@@ -161,7 +164,7 @@ describe('POST /post', () => {
   })
 
   test('새로운 댓글을 작성합니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request('http://localhost/post', {
           method: 'POST',
@@ -175,7 +178,7 @@ describe('POST /post', () => {
           }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTPostResponse200
 
     expect(typeof result.id).toBe('string')
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
@@ -203,7 +206,7 @@ describe('POST /post', () => {
   })
 
   test('다른 사람의 글을 인용합니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request('http://localhost/post', {
           method: 'POST',
@@ -217,14 +220,14 @@ describe('POST /post', () => {
           }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTPostResponse200
 
     expect(typeof result.id).toBe('string')
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
   })
 
   test('다른 사람의 댓글을 인용합니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request('http://localhost/post', {
           method: 'POST',
@@ -238,7 +241,7 @@ describe('POST /post', () => {
           }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTPostResponse200
 
     expect(typeof result.id).toBe('string')
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
@@ -261,7 +264,7 @@ describe('POST /post', () => {
   })
 
   test('다른 사람의 글을 공유합니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request('http://localhost/post', {
           method: 'POST',
@@ -272,14 +275,14 @@ describe('POST /post', () => {
           body: JSON.stringify({ referredPostId: parentPostId }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTPostResponse200
 
     expect(typeof result.id).toBe('string')
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
   })
 
   test('다른 사람의 댓글을 공유합니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request('http://localhost/post', {
           method: 'POST',
@@ -290,7 +293,7 @@ describe('POST /post', () => {
           body: JSON.stringify({ referredPostId: commentPostId }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTPostResponse200
 
     expect(typeof result.id).toBe('string')
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
@@ -316,7 +319,7 @@ describe('POST /post', () => {
   })
 
   test('다른 사람의 댓글을 공유하는 댓글을 다른 글에 작성합니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request('http://localhost/post', {
           method: 'POST',
@@ -330,14 +333,14 @@ describe('POST /post', () => {
           }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTPostResponse200
 
     expect(typeof result.id).toBe('string')
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
   })
 
   test('어떤 글에 다른 사람의 댓글을 공유하는 댓글을 작성합니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request('http://localhost/post', {
           method: 'POST',
@@ -351,7 +354,7 @@ describe('POST /post', () => {
           }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTPostResponse200
 
     expect(typeof result.id).toBe('string')
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
@@ -376,7 +379,7 @@ describe('POST /post', () => {
   })
 
   test('해시태그를 넣은 글을 작성합니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request('http://localhost/post', {
           method: 'POST',
@@ -389,7 +392,7 @@ describe('POST /post', () => {
           }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTPostResponse200
 
     expect(typeof result.id).toBe('string')
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
@@ -405,7 +408,7 @@ describe('POST /post', () => {
   })
 
   test('해시태그를 넣고 다른 사람의 글을 공유하는 댓글을 작성합니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request('http://localhost/post', {
           method: 'POST',
@@ -420,7 +423,7 @@ describe('POST /post', () => {
           }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTPostResponse200
 
     expect(typeof result.id).toBe('string')
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
@@ -436,7 +439,7 @@ describe('POST /post', () => {
   })
 
   test('유효하지 않은 해시태그는 데이터베이스에 저장하지 않습니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request('http://localhost/post', {
           method: 'POST',
@@ -447,7 +450,7 @@ describe('POST /post', () => {
           body: JSON.stringify({ content: '#H_ello, #sdf-asdf #adf.asdf # # #!' }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTPostResponse200
 
     expect(typeof result.id).toBe('string')
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
@@ -463,7 +466,7 @@ describe('POST /post', () => {
   })
 
   test('body의 모든 값을 채워서 요청합니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request('http://localhost/post', {
           method: 'POST',
@@ -482,7 +485,7 @@ describe('POST /post', () => {
           }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTPostResponse200
 
     expect(typeof result.id).toBe('string')
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
@@ -510,9 +513,9 @@ describe('POST /post', () => {
       new Response(JSON.stringify(validBBatonUserResponse2)),
     )
 
-    const result = await app
+    const result = (await app
       .handle(new Request('http://localhost/auth/bbaton?code=1', { method: 'POST' }))
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTAuthBBatonResponse200
 
     expect(result).toHaveProperty('accessToken')
     expect(typeof result.accessToken).toBe('string')
@@ -521,7 +524,7 @@ describe('POST /post', () => {
   })
 
   test('다른 계정으로 새로운 `private` 글을 작성합니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request('http://localhost/post', {
           method: 'POST',
@@ -535,7 +538,7 @@ describe('POST /post', () => {
           }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTPostResponse200
 
     expect(typeof result.id).toBe('string')
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
@@ -563,7 +566,7 @@ describe('POST /post', () => {
   })
 
   test('다른 계정으로 새로운 `only followers` 글을 작성합니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request('http://localhost/post', {
           method: 'POST',
@@ -577,7 +580,7 @@ describe('POST /post', () => {
           }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTPostResponse200
 
     expect(typeof result.id).toBe('string')
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()

@@ -1,4 +1,4 @@
-import { NotFoundError, t } from 'elysia'
+import { NotFoundError, type Static, t } from 'elysia'
 
 import type { BaseElysia } from '../../../..'
 
@@ -50,7 +50,7 @@ export default (app: BaseElysia) =>
       headers: t.Object({ authorization: t.String() }),
       params: t.Object({ id: t.String({ maxLength: 19 }) }),
       response: {
-        200: t.Object({ createdAt: t.Date() }),
+        200: response200Schema,
         400: t.String(),
         401: t.String(),
         403: t.String(),
@@ -58,6 +58,10 @@ export default (app: BaseElysia) =>
     },
   )
 
-type FollowRow = {
+export type POSTUserIdFollowerResponse200 = Static<typeof response200Schema>
+
+const response200Schema = t.Object({ createdAt: t.Date() })
+
+export type FollowRow = {
   createdAt: Date
 }

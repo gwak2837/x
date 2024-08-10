@@ -1,8 +1,8 @@
-import { NotFoundError, t } from 'elysia'
+import { NotFoundError, type Static, t } from 'elysia'
 
 import type { BaseElysia } from '../../..'
 
-import { UserSuspendedType } from '../../../model/User'
+import { UserSuspendedTypeInput } from '../../../model/User'
 import { isValidPostgresBigIntString, removeUndefinedKeys } from '../../../utils'
 
 export default (app: BaseElysia) =>
@@ -77,7 +77,7 @@ export default (app: BaseElysia) =>
       params: t.Object({ id: t.String({ maxLength: 19 }) }),
       body: t.Object({
         isPrivate: t.Optional(t.Boolean()),
-        suspendedType: t.Optional(t.Enum(UserSuspendedType)),
+        suspendedType: t.Optional(t.Enum(UserSuspendedTypeInput)),
         suspendedReason: t.Optional(t.String()),
         bio: t.Optional(t.String()),
         birthDate: t.Optional(t.String({ format: 'date' })),
@@ -93,16 +93,20 @@ export default (app: BaseElysia) =>
         ),
       }),
       response: {
-        200: t.Object({
-          id: t.String(),
-          updatedAt: t.Date(),
-        }),
+        200: response200Schema,
         400: t.String(),
         401: t.String(),
         404: t.String(),
       },
     },
   )
+
+export type PATCHUserIdResponse200 = Static<typeof response200Schema>
+
+const response200Schema = t.Object({
+  id: t.String(),
+  updatedAt: t.Date(),
+})
 
 type UpdatedPost = {
   id: string

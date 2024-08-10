@@ -90,8 +90,12 @@ export default (app: BaseElysia) =>
           403,
           '해당 BBaton 계정으로 이미 회원가입한 적이 있어서 다시 가입할 수 없습니다. 자세한 사항은 고객센터에 문의해주세요.',
         )
-      } else if (oauth.user_suspendedType) {
-        const msg = `로그인 할 수 없습니다. 이유:\n${oauth.user_suspendedReason}`
+      } else if (
+        oauth.user_suspendedType &&
+        oauth.user_unsuspendAt &&
+        oauth.user_unsuspendAt > new Date()
+      ) {
+        const msg = `로그인 할 수 없습니다. 이유:\n${oauth.user_suspendedReason ?? ''}`
         return error(403, msg)
       }
 
@@ -130,7 +134,7 @@ export default (app: BaseElysia) =>
     },
   )
 
-export type POSTAuthBbatonResponse200 = Static<typeof response200Schema>
+export type POSTAuthBBatonResponse200 = Static<typeof response200Schema>
 
 const response200Schema = t.Object({
   accessToken: t.String(),
@@ -157,11 +161,11 @@ export type BBatonUserResponse = {
 
 type OAuthUserRow = {
   id: string
-  user_id: string
-  user_suspendedAt: string
-  user_unsuspendAt: string
-  user_suspendedType: string
-  user_suspendedReason: string
+  user_id: string | null
+  user_suspendedAt: Date | null
+  user_unsuspendAt: Date | null
+  user_suspendedType: string | null
+  user_suspendedReason: string | null
 }
 
 type RegisteredUserRow = {

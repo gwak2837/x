@@ -1,4 +1,4 @@
-import { t } from 'elysia'
+import { type Static, t } from 'elysia'
 
 import type { BaseElysia } from '../..'
 
@@ -101,16 +101,20 @@ export default (app: BaseElysia) =>
         status: t.Optional(t.Enum(PostStatus)),
       }),
       response: {
-        200: t.Object({
-          id: t.String(),
-          createdAt: t.Date(),
-        }),
+        200: response200Schema,
         400: t.String(),
         401: t.String(),
         403: t.String(),
       },
     },
   )
+
+export type POSTPostResponse200 = Static<typeof response200Schema>
+
+const response200Schema = t.Object({
+  id: t.String(),
+  createdAt: t.Date(),
+})
 
 type NewPost = {
   id: string

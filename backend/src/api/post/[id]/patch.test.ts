@@ -1,5 +1,9 @@
 import { beforeAll, describe, expect, setSystemTime, spyOn, test } from 'bun:test'
 
+import type { POSTAuthBBatonResponse200 } from '../../auth/bbaton/post'
+import type { POSTPostResponse200 } from '../post'
+import type { PATCHPostIdResponse200 } from './patch'
+
 import { app } from '../../..'
 import { validBBatonTokenResponse, validBBatonUserResponse } from '../../../../test/mock'
 import { sql } from '../../../../test/postgres'
@@ -31,9 +35,9 @@ describe('PATCH /post/:id', () => {
       new Response(JSON.stringify(validBBatonUserResponse)),
     )
 
-    const result = await app
+    const result = (await app
       .handle(new Request('http://localhost/auth/bbaton?code=123', { method: 'POST' }))
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTAuthBBatonResponse200
 
     expect(result).toHaveProperty('accessToken')
     expect(typeof result.accessToken).toBe('string')
@@ -140,7 +144,7 @@ describe('PATCH /post/:id', () => {
   })
 
   test('새로운 글을 작성합니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request('http://localhost/post', {
           method: 'POST',
@@ -151,7 +155,7 @@ describe('PATCH /post/:id', () => {
           body: JSON.stringify({ content: 'Hello, world! #hash #tag 123' }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTPostResponse200
 
     expect(typeof result.id).toBe('string')
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
@@ -209,7 +213,7 @@ describe('PATCH /post/:id', () => {
 
     expect(prevHashtags.length).toBe(2)
 
-    const result = await app
+    const result = (await app
       .handle(
         new Request(`http://localhost/post/${postId}`, {
           method: 'PATCH',
@@ -220,7 +224,7 @@ describe('PATCH /post/:id', () => {
           body: JSON.stringify({ content: 'Hello, world! #apple #banana' }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as PATCHPostIdResponse200
 
     expect(result.id).toBe(postId)
     expect(new Date(result.updatedAt).getTime()).not.toBeNaN()
@@ -245,7 +249,7 @@ describe('PATCH /post/:id', () => {
   let postId2 = ''
 
   test('새로운 글을 하나 더 작성합니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request('http://localhost/post', {
           method: 'POST',
@@ -256,7 +260,7 @@ describe('PATCH /post/:id', () => {
           body: JSON.stringify({ content: 'Hello, world! 2' }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTPostResponse200
 
     expect(typeof result.id).toBe('string')
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
@@ -267,7 +271,7 @@ describe('PATCH /post/:id', () => {
   let postId3 = ''
 
   test('새로운 글을 하나 더 작성합니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request('http://localhost/post', {
           method: 'POST',
@@ -278,7 +282,7 @@ describe('PATCH /post/:id', () => {
           body: JSON.stringify({ content: 'Hello, world! 2' }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTPostResponse200
 
     expect(typeof result.id).toBe('string')
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
@@ -287,7 +291,7 @@ describe('PATCH /post/:id', () => {
   })
 
   test('기존 글의 여러 값을 수정합니다.', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request(`http://localhost/post/${postId}`, {
           method: 'PATCH',
@@ -305,7 +309,7 @@ describe('PATCH /post/:id', () => {
           }),
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as PATCHPostIdResponse200
 
     expect(result.id).toBe(postId)
     expect(new Date(result.updatedAt).getTime()).not.toBeNaN()

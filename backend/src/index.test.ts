@@ -1,6 +1,6 @@
 import { describe, expect, spyOn, test } from 'bun:test'
 
-import { app } from './index'
+import { type GETReadyResponse200, app } from './index'
 
 describe('backend/src/index.ts', () => {
   test('GET /', async () => {
@@ -18,13 +18,13 @@ describe('backend/src/index.ts', () => {
 
     const result = await app.handle(new Request('http://localhost/live')).then((res) => res.json())
 
-    expect(result).toEqual({
-      uptime: mockValue,
-    })
+    expect(result).toEqual({ uptime: mockValue })
   })
 
   test('GET /ready', async () => {
-    const result = await app.handle(new Request('http://localhost/ready')).then((res) => res.json())
+    const result = (await app
+      .handle(new Request('http://localhost/ready'))
+      .then((res) => res.json())) as GETReadyResponse200
 
     expect(new Date(result.current_timestamp).getTime()).not.toBeNaN()
   })

@@ -1,4 +1,4 @@
-import type { Static} from 'elysia';
+import type { Static } from 'elysia'
 
 import { NotFoundError, t } from 'elysia'
 

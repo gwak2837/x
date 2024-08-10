@@ -1,5 +1,9 @@
 import { beforeAll, describe, expect, setSystemTime, spyOn, test } from 'bun:test'
 
+import type { POSTAuthBBatonResponse200 } from '../../../auth/bbaton/post'
+import type { DELETEUserIdFollowerResponse200 } from './delete'
+import type { POSTUserIdFollowerResponse200 } from './post'
+
 import { app } from '../../../..'
 import {
   validBBatonTokenResponse,
@@ -33,9 +37,9 @@ describe('DELETE /user/:id/follower', () => {
       new Response(JSON.stringify(validBBatonUserResponse)),
     )
 
-    const result = await app
+    const result = (await app
       .handle(new Request('http://localhost/auth/bbaton?code=123', { method: 'POST' }))
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTAuthBBatonResponse200
 
     expect(result).toHaveProperty('accessToken')
     expect(typeof result.accessToken).toBe('string')
@@ -53,9 +57,9 @@ describe('DELETE /user/:id/follower', () => {
       new Response(JSON.stringify(validBBatonUserResponse2)),
     )
 
-    const result = await app
+    const result = (await app
       .handle(new Request('http://localhost/auth/bbaton?code=123', { method: 'POST' }))
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTAuthBBatonResponse200
 
     expect(result).toHaveProperty('accessToken')
     expect(typeof result.accessToken).toBe('string')
@@ -140,14 +144,14 @@ describe('DELETE /user/:id/follower', () => {
   })
 
   test('두번째 사용자가 첫번째 사용자를 팔로우 요청한 경우', async () => {
-    const result = await app
+    const result = (await app
       .handle(
         new Request(`http://localhost/user/${userId}/follower`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${accessToken2}` },
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as POSTUserIdFollowerResponse200
 
     expect(new Date(result.createdAt).getTime()).not.toBeNaN()
   })
@@ -160,14 +164,14 @@ describe('DELETE /user/:id/follower', () => {
 
     expect(result.leaderId).toBe(userId)
 
-    const result2 = await app
+    const result2 = (await app
       .handle(
         new Request(`http://localhost/user/${userId}/follower`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${accessToken2}` },
         }),
       )
-      .then((response) => response.json())
+      .then((response) => response.json())) as DELETEUserIdFollowerResponse200
 
     expect(new Date(result2.createdAt).getTime()).not.toBeNaN()
   })

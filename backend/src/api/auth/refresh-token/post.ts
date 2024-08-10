@@ -1,4 +1,4 @@
-import { t } from 'elysia'
+import { type Static, t } from 'elysia'
 
 import type { BaseElysia } from '../../..'
 import type { UserSuspendedType } from '../../../model/User'
@@ -21,11 +21,18 @@ export default (app: BaseElysia) =>
           return error(422, 'Unprocessable Content')
 
         const [user] = await sql<[UserRow]>`
-          SELECT "suspendedType"
+          SELECT "suspendedType",
+            "unsuspendAt"
           FROM "User"
           WHERE id = ${userId};`
 
-        if (!user || (user.suspendedType && LoginNotAllowed.includes(user.suspendedType)))
+        if (
+          !user ||
+          (user.suspendedType &&
+            LoginNotAllowed.includes(user.suspendedType) &&
+            user.unsuspendAt &&
+            user.unsuspendAt > new Date())
+        )
           return error(403, 'Forbidden')
 
         return { refreshToken: await signJWT({ sub: userId }, TokenType.REFRESH) }
@@ -36,7 +43,7 @@ export default (app: BaseElysia) =>
     {
       headers: t.Object({ authorization: t.String() }),
       response: {
-        200: t.Object({ refreshToken: t.String() }),
+        200: response200Schema,
         401: t.String(),
         403: t.String(),
         422: t.String(),
@@ -44,6 +51,11 @@ export default (app: BaseElysia) =>
     },
   )
 
+export type GETAuthRefreshTokenResponse200 = Static<typeof response200Schema>
+
+const response200Schema = t.Object({ refreshToken: t.String() })
+
 type UserRow = {
-  suspendedType: UserSuspendedType
+  suspendedType: UserSuspendedType | null
+  unsuspendAt: Date | null
 }
