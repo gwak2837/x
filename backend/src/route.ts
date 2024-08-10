@@ -1,6 +1,7 @@
 import { type BaseElysia } from '.'
 import getAccessToken from './api/auth/access-token/post'
 import loginByBBaton from './api/auth/bbaton/post'
+import logout from './api/auth/logout/delete'
 import getRefreshToken from './api/auth/refresh-token/post'
 import getComments from './api/post/[id]/comment/get'
 import deletePost from './api/post/[id]/delete'
@@ -19,6 +20,7 @@ export default (app: BaseElysia) =>
   app
     .use(getAccessToken)
     .use(loginByBBaton)
+    .use(logout)
     .use(getRefreshToken)
     .use(getComments)
     .use(deletePost)

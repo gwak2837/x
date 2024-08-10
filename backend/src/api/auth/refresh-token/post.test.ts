@@ -1,7 +1,8 @@
 import { beforeAll, describe, expect, setSystemTime, spyOn, test } from 'bun:test'
 
 import type { POSTAuthBBatonResponse200 } from '../bbaton/post'
-import type { GETAuthRefreshTokenResponse200 } from './post'
+import type { DELETEAuthLogoutResponse200 } from '../logout/delete'
+import type { POSTAuthRefreshTokenResponse200 } from './post'
 
 import { app } from '../../..'
 import { validBBatonTokenResponse, validBBatonUserResponse } from '../../../../test/mock'
@@ -12,6 +13,8 @@ import { TokenType, signJWT } from '../../../utils/jwt'
 describe('POST /auth/refresh-token', async () => {
   const invalidUserId = '0'
   let newUserId = ''
+  let accessToken = ''
+  let refreshToken = ''
 
   beforeAll(async () => {
     await sql`DELETE FROM "OAuth"`
@@ -85,24 +88,8 @@ describe('POST /auth/refresh-token', async () => {
     expect(await response.text()).toBe('Unprocessable Content')
   })
 
-  test('401: 토큰 유효기간이 1시간 전에 만료된 경우', async () => {
-    const invalidRefreshToken = await signJWT({ sub: invalidUserId }, TokenType.REFRESH, -3600)
-
-    const response = await app.handle(
-      new Request('http://localhost/auth/refresh-token', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${invalidRefreshToken}` },
-      }),
-    )
-
-    expect(response.status).toBe(401)
-    expect(await response.text()).toBe('Unauthorized')
-  })
-
-  test('회원가입 후 잠시 뒤 토큰을 갱신하는 경우', async () => {
+  test('회원가입 후 하루 뒤 토큰을 갱신하는 경우', async () => {
     // 회원가입
-    spyOn(Date, 'now').mockReturnValueOnce(1722314119989)
-
     spyOn(global, 'fetch').mockResolvedValueOnce(
       new Response(JSON.stringify(validBBatonTokenResponse)),
     )
@@ -121,10 +108,13 @@ describe('POST /auth/refresh-token', async () => {
     expect(typeof register.refreshToken).toBe('string')
 
     newUserId = JSON.parse(atob(register.accessToken.split('.')[1])).sub
+    accessToken = register.accessToken
+    refreshToken = register.refreshToken
+
+    // 하루 뒤
+    setSystemTime(new Date('2024-01-02T00:00:00.000Z'))
 
     // 토큰 갱신
-    spyOn(Date, 'now').mockReturnValueOnce(1722315119989)
-
     const refreshing = (await app
       .handle(
         new Request('http://localhost/auth/refresh-token', {
@@ -132,7 +122,7 @@ describe('POST /auth/refresh-token', async () => {
           headers: { Authorization: `Bearer ${register.refreshToken}` },
         }),
       )
-      .then((response) => response.json())) as GETAuthRefreshTokenResponse200
+      .then((response) => response.json())) as POSTAuthRefreshTokenResponse200
 
     const userId = JSON.parse(atob(refreshing.refreshToken.split('.')[1])).sub
 
@@ -140,6 +130,54 @@ describe('POST /auth/refresh-token', async () => {
     expect(typeof refreshing.refreshToken).toBe('string')
     expect(refreshing.refreshToken).not.toBe(register.refreshToken)
     expect(userId).toBe(newUserId)
+
+    // 복원
+    setSystemTime(new Date('2024-01-01T00:00:00.000Z'))
+  })
+
+  test('401: refresh 토큰 유효기간이 만료된 경우', async () => {
+    // 31일 후
+    setSystemTime(new Date('2024-01-31T00:00:00.000Z'))
+
+    const response = await app.handle(
+      new Request('http://localhost/auth/refresh-token', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${refreshToken}` },
+      }),
+    )
+
+    expect(response.status).toBe(401)
+    expect(await response.text()).toBe('Unauthorized')
+
+    // 복원
+    setSystemTime(new Date('2024-01-01T00:00:00.000Z'))
+  })
+
+  test('403: 로그아웃한 사용자가 로그아웃 전 refresh 토큰으로 갱신을 요청한 경우', async () => {
+    const result = (await app
+      .handle(
+        new Request('http://localhost/auth/logout', {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }),
+      )
+      .then((response) => response.json())) as DELETEAuthLogoutResponse200
+
+    expect(result.id).toBe(newUserId)
+    expect(new Date(result.logoutAt).getTime()).not.toBeNaN()
+
+    const response = await app.handle(
+      new Request('http://localhost/auth/refresh-token', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${refreshToken}` },
+      }),
+    )
+
+    expect(response.status).toBe(403)
+    expect(await response.text()).toBe('Forbidden')
+
+    accessToken = ''
+    refreshToken = ''
   })
 
   test('403: 정지된 사용자가 로그인한 경우', async () => {
@@ -187,7 +225,7 @@ describe('POST /auth/refresh-token', async () => {
   })
 
   test('정지 기간이 지난 후 사용자가 로그인한 경우', async () => {
-    // 정지일로부터 2년 후
+    // 정지일(2024-01-01)로부터 2년 후
     setSystemTime(new Date('2026-01-01T00:00:00.000Z'))
 
     spyOn(global, 'fetch').mockResolvedValueOnce(
@@ -206,5 +244,20 @@ describe('POST /auth/refresh-token', async () => {
     expect(result).toHaveProperty('refreshToken')
     expect(typeof result.accessToken).toBe('string')
     expect(typeof result.refreshToken).toBe('string')
+
+    const result2 = (await app
+      .handle(
+        new Request('http://localhost/auth/refresh-token', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${result.refreshToken}` },
+        }),
+      )
+      .then((response) => response.json())) as POSTAuthRefreshTokenResponse200
+
+    expect(result2).toHaveProperty('refreshToken')
+    expect(typeof result2.refreshToken).toBe('string')
+
+    // 복원
+    setSystemTime(new Date('2024-01-01T00:00:00.000Z'))
   })
 })

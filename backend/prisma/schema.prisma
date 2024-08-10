@@ -8,6 +8,7 @@ model User {
   id               BigInt    @id @default(autoincrement())
   createdAt        DateTime  @default(now())
   updatedAt        DateTime? @updatedAt
+  logoutAt         DateTime?
   suspendedAt      DateTime?
   unsuspendAt      DateTime?
   suspendedType    Int?      @db.SmallInt

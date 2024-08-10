@@ -16,22 +16,24 @@ export default (app: BaseElysia) =>
       if (!token) return error(401, 'Unauthorized')
 
       try {
-        const { sub: userId } = await verifyJWT(token, TokenType.REFRESH)
-        if (!userId || !isValidPostgresBigIntString(userId))
+        const { iat, sub: userId } = await verifyJWT(token, TokenType.REFRESH)
+        if (!iat || !userId || !isValidPostgresBigIntString(userId))
           return error(422, 'Unprocessable Content')
 
         const [user] = await sql<[UserRow]>`
-          SELECT "suspendedType",
+          SELECT "logoutAt",
+            "suspendedType",
             "unsuspendAt"
           FROM "User"
-          WHERE id = ${userId};`
+          WHERE id = ${userId}`
 
         if (
           !user ||
           (user.suspendedType &&
             LoginNotAllowed.includes(user.suspendedType) &&
             user.unsuspendAt &&
-            user.unsuspendAt > new Date())
+            user.unsuspendAt > new Date()) ||
+          (user.logoutAt && user.logoutAt > new Date(iat * 1000))
         )
           return error(403, 'Forbidden')
 
@@ -51,11 +53,12 @@ export default (app: BaseElysia) =>
     },
   )
 
-export type GETAuthRefreshTokenResponse200 = Static<typeof response200Schema>
+export type POSTAuthRefreshTokenResponse200 = Static<typeof response200Schema>
 
 const response200Schema = t.Object({ refreshToken: t.String() })
 
 type UserRow = {
+  logoutAt: Date | null
   suspendedType: UserSuspendedType | null
   unsuspendAt: Date | null
 }
