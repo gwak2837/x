@@ -2,7 +2,7 @@ import { NotFoundError, type Static, t } from 'elysia'
 
 import type { BaseElysia } from '../../../..'
 
-import { isValidPostgresBigIntString } from '../../../../utils'
+import { isValidPostgresBigInt } from '../../../../utils'
 
 export default (app: BaseElysia) =>
   app.delete(
@@ -11,7 +11,7 @@ export default (app: BaseElysia) =>
       if (!userId) return error(401, 'Unauthorized')
 
       const { id: leaderId } = params
-      if (!isValidPostgresBigIntString(leaderId)) return error(400, 'Bad Request')
+      if (!isValidPostgresBigInt(leaderId)) return error(400, 'Bad Request')
 
       if (leaderId === userId) return error(403, 'Forbidden')
 

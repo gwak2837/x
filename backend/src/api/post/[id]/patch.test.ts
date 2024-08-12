@@ -9,7 +9,7 @@ import { validBBatonTokenResponse, validBBatonUserResponse } from '../../../../t
 import { sql } from '../../../../test/postgres'
 import { MAX_HASHTAG_LENGTH } from '../../../constants'
 import { PostCategory, PostStatus } from '../../../model/Post'
-import { POSTGRES_MAX_BIGINT } from '../../../plugin/postgres'
+import { POSTGRES_MAX_BIGINT_STRING } from '../../../plugin/postgres'
 
 describe('PATCH /post/:id', () => {
   let accessToken = ''
@@ -47,7 +47,7 @@ describe('PATCH /post/:id', () => {
 
   test('404: `postId`가 8 bytes 정수 최댓값인 경우', async () => {
     const response = await app.handle(
-      new Request(`http://localhost/post/${POSTGRES_MAX_BIGINT}`, {
+      new Request(`http://localhost/post/${POSTGRES_MAX_BIGINT_STRING}`, {
         method: 'PATCH',
         headers: {
           Authorization: `Bearer ${accessToken}`,

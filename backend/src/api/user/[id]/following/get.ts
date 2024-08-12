@@ -3,14 +3,14 @@ import { NotFoundError, type Static, t } from 'elysia'
 import type { BaseElysia } from '../../../..'
 
 import { UserFollowStatus } from '../../../../model/User'
-import { deeplyRemoveNull, isValidPostgresBigIntString } from '../../../../utils'
+import { deeplyRemoveNull, isValidPostgresBigInt } from '../../../../utils'
 
 export default (app: BaseElysia) =>
   app.get(
     '/user/:id/following',
     async ({ error, params, sql, userId }) => {
       const { id: followerId } = params
-      if (!isValidPostgresBigIntString(followerId)) return error(400, 'Bad Request')
+      if (!isValidPostgresBigInt(followerId)) return error(400, 'Bad Request')
 
       const isMe = followerId === userId
 
@@ -30,7 +30,8 @@ export default (app: BaseElysia) =>
           "isPrivate",
           name,
           nickname,
-          "profileImageURLs"
+          "profileImageURLs",
+          status
         FROM "User"
           JOIN "UserFollow" ON "User"."id" = "UserFollow"."leaderId"
         WHERE "UserFollow"."followerId" = ${followerId}
@@ -45,8 +46,8 @@ export default (app: BaseElysia) =>
               SELECT 1
               FROM "UserFollow"
               WHERE "leaderId" = ${followerId}
-              AND "followerId" = ${userId}
-              AND status = ${UserFollowStatus.ACCEPTED}
+                AND "followerId" = ${userId}
+                AND status = ${UserFollowStatus.ACCEPTED}
             )
           )`
         }`

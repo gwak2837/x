@@ -3,7 +3,7 @@ import { t } from 'elysia'
 import type { BaseElysia } from '../..'
 
 import { PostCategory, PostStatus } from '../../model/Post'
-import { POSTGRES_MAX_BIGINT } from '../../plugin/postgres'
+import { POSTGRES_MAX_BIGINT_STRING } from '../../plugin/postgres'
 import { deeplyRemoveNull } from '../../utils'
 import { removeZero } from '../../utils/type'
 
@@ -13,13 +13,19 @@ export default (app: BaseElysia) =>
     async ({ error, query, sql, userId }) => {
       const {
         category,
-        cursor = POSTGRES_MAX_BIGINT,
+        cursor = POSTGRES_MAX_BIGINT_STRING,
         hashtags,
         limit = 30,
         only = PostsOnly.OTHERS,
       } = query
 
-      if (!userId && (only === PostsOnly.MINE || only === PostsOnly.FOLLOWING))
+      if (
+        !userId &&
+        (only === PostsOnly.MINE ||
+          only === PostsOnly.FOLLOWING ||
+          only === PostsOnly.LIKED ||
+          only === PostsOnly.BOOKMARKED)
+      )
         return error(400, 'Bad Request')
 
       const posts = await sql<PostRow[]>`
@@ -54,6 +60,8 @@ export default (app: BaseElysia) =>
           COUNT("Repost".id) AS "repostCount"
         FROM "Post"
           JOIN "User" AS "Author" ON  "Author".id = "Post"."authorId"
+          ${only === PostsOnly.LIKED ? sql`JOIN "UserLikePost" ON "Post".id = "UserLikePost"."postId"` : sql``}
+          ${only === PostsOnly.BOOKMARKED ? sql`JOIN "UserBookmarkPost" ON "Post".id = "UserBookmarkPost"."postId"` : sql``}
           LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author"."id" AND "UserFollow"."followerId" = ${userId}
           LEFT JOIN "Post" AS "ReferredPost" ON "ReferredPost".id = (
             SELECT "ReferredPost".id
@@ -81,13 +89,16 @@ export default (app: BaseElysia) =>
           LEFT JOIN "Hashtag" ON "Hashtag".id = "PostHashtag"."hashtagId"`
               : sql``
           }
-        WHERE "Post".id < ${cursor} AND 
-          ${hashtags ? sql`"Hashtag".name IN ${sql(hashtags)} AND` : sql``}
-          ${category !== undefined ? sql`"Post".category = ${category} AND` : sql``}
-          "Post"."deletedAt" IS NULL AND
-          "Post"."publishAt" <= CURRENT_TIMESTAMP AND (
-            ${userId && only === PostsOnly.MINE ? sql`"Post"."authorId" = ${userId}` : sql``}
-            ${userId && only === PostsOnly.FOLLOWING ? sql`"UserFollow"."followerId" = ${userId}` : sql``}
+        WHERE "Post".id < ${cursor}
+          AND "Post"."deletedAt" IS NULL
+          AND "Post"."publishAt" <= CURRENT_TIMESTAMP 
+          ${only === PostsOnly.LIKED ? sql`AND "UserLikePost"."userId" = ${userId}` : sql``}
+          ${only === PostsOnly.BOOKMARKED ? sql`AND "UserBookmarkPost"."userId" = ${userId}` : sql``}
+          ${hashtags ? sql`AND "Hashtag".name IN ${sql(hashtags)}` : sql``}
+          ${category !== undefined ? sql`AND "Post".category = ${category}` : sql``}
+          AND (
+            ${only === PostsOnly.MINE ? sql`"Post"."authorId" = ${userId!}` : sql``}
+            ${only === PostsOnly.FOLLOWING ? sql`"UserFollow"."followerId" = ${userId!}` : sql``}
             ${userId && only === PostsOnly.OTHERS ? sql`"Post"."authorId" != ${userId}` : sql``}
             ${!userId && only === PostsOnly.OTHERS ? sql`TRUE` : sql``}
           ) AND (
@@ -142,7 +153,6 @@ export default (app: BaseElysia) =>
                 }),
             },
           }),
-
           likedByMe: post.likedByMe === 1 || undefined,
           likeCount: removeZero(post.likeCount),
           commentCount: removeZero(post.commentCount),
@@ -171,6 +181,8 @@ export enum PostsOnly {
   OTHERS = 'others',
   FOLLOWING = 'following',
   MINE = 'mine',
+  LIKED = 'liked',
+  BOOKMARKED = 'bookmarked',
 }
 
 type PostRow = {

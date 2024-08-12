@@ -2,8 +2,8 @@
 
 import { POSTGRES_MAX_BIGINT } from '../plugin/postgres'
 
-export function isValidPostgresBigIntString(value: string) {
-  return !isNaN(+value) && isFinite(+value) && BigInt(value) <= BigInt(POSTGRES_MAX_BIGINT)
+export function isValidPostgresBigInt(value: string) {
+  return !isNaN(+value) && isFinite(+value) && BigInt(value) <= POSTGRES_MAX_BIGINT
 }
 
 type ReplaceNullWithUndefined<T> = {

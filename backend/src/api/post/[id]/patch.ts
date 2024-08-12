@@ -5,7 +5,7 @@ import type { BaseElysia } from '../../..'
 import { extractHashtags } from '../../../common/post'
 import { MAX_HASHTAG_LENGTH } from '../../../constants'
 import { PostCategory, PostStatus } from '../../../model/Post'
-import { isValidPostgresBigIntString, removeUndefinedKeys } from '../../../utils'
+import { isValidPostgresBigInt, removeUndefinedKeys } from '../../../utils'
 
 export default (app: BaseElysia) =>
   app.patch(
@@ -32,9 +32,9 @@ export default (app: BaseElysia) =>
       const isValidPublishAt = !publishAt || new Date(publishAt) > new Date()
       if (
         !isValidHashtags ||
-        !isValidPostgresBigIntString(postId) ||
-        (parentPostId && !isValidPostgresBigIntString(parentPostId)) ||
-        (referredPostId && !isValidPostgresBigIntString(referredPostId)) ||
+        !isValidPostgresBigInt(postId) ||
+        (parentPostId && !isValidPostgresBigInt(parentPostId)) ||
+        (referredPostId && !isValidPostgresBigInt(referredPostId)) ||
         !isValidPublishAt
       )
         return error(400, 'Bad Request')

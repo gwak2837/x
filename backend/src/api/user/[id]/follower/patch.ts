@@ -3,7 +3,7 @@ import { NotFoundError, t } from 'elysia'
 import type { BaseElysia } from '../../../..'
 
 import { UserFollowStatusInput } from '../../../../model/User'
-import { isValidPostgresBigIntString } from '../../../../utils'
+import { isValidPostgresBigInt } from '../../../../utils'
 
 export default (app: BaseElysia) =>
   app.patch(
@@ -14,10 +14,7 @@ export default (app: BaseElysia) =>
       const { id: leaderId } = params
       const { userIds, status } = body
 
-      if (
-        !isValidPostgresBigIntString(leaderId) ||
-        !userIds.every((id) => isValidPostgresBigIntString(id))
-      )
+      if (!isValidPostgresBigInt(leaderId) || !userIds.every((id) => isValidPostgresBigInt(id)))
         return error(400, 'Bad Request')
 
       if (leaderId !== userId) return error(403, 'Forbidden')

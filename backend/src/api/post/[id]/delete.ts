@@ -2,7 +2,7 @@ import { NotFoundError, type Static, t } from 'elysia'
 
 import type { BaseElysia } from '../../..'
 
-import { isValidPostgresBigIntString } from '../../../utils'
+import { isValidPostgresBigInt } from '../../../utils'
 
 export default (app: BaseElysia) =>
   app.delete(
@@ -11,7 +11,7 @@ export default (app: BaseElysia) =>
       if (!userId) return error(401, 'Unauthorized')
 
       const { id: postId } = params
-      if (!isValidPostgresBigIntString(postId)) return error(400, 'Bad Request')
+      if (!isValidPostgresBigInt(postId)) return error(400, 'Bad Request')
 
       const [deletedPost] = await sql<[DeletedPost]>`
         WITH deleted_hashtag AS (

@@ -3,7 +3,7 @@ import { NotFoundError, type Static, t } from 'elysia'
 import type { BaseElysia } from '../../..'
 
 import { UserSuspendedTypeInput } from '../../../model/User'
-import { isValidPostgresBigIntString, removeUndefinedKeys } from '../../../utils'
+import { isValidPostgresBigInt, removeUndefinedKeys } from '../../../utils'
 
 export default (app: BaseElysia) =>
   app.patch(
@@ -36,7 +36,7 @@ export default (app: BaseElysia) =>
         return error(400, 'Bad Request')
 
       const { id: userIdInParam } = params
-      if (!isValidPostgresBigIntString(userIdInParam)) return error(400, 'Bad Request')
+      if (!isValidPostgresBigInt(userIdInParam)) return error(400, 'Bad Request')
       if (userId !== userIdInParam) return error(401, 'Unauthorized')
 
       const [updatedUser] = await sql<[UpdatedPost]>`

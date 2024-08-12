@@ -3,8 +3,8 @@ import { t } from 'elysia'
 import type { BaseElysia } from '../../../..'
 
 import { PostCategory, PostStatus } from '../../../../model/Post'
-import { POSTGRES_MAX_BIGINT } from '../../../../plugin/postgres'
-import { deeplyRemoveNull, isValidPostgresBigIntString } from '../../../../utils'
+import { POSTGRES_MAX_BIGINT_STRING } from '../../../../plugin/postgres'
+import { deeplyRemoveNull, isValidPostgresBigInt } from '../../../../utils'
 import { removeZero } from '../../../../utils/type'
 
 export default (app: BaseElysia) =>
@@ -12,8 +12,8 @@ export default (app: BaseElysia) =>
     '/post/:id/comment',
     async ({ error, params, query, sql, userId }) => {
       const { id: postId } = params
-      const { cursor = POSTGRES_MAX_BIGINT, limit = 30 } = query
-      if (!isValidPostgresBigIntString(postId) || !isValidPostgresBigIntString(cursor))
+      const { cursor = POSTGRES_MAX_BIGINT_STRING, limit = 30 } = query
+      if (!isValidPostgresBigInt(postId) || !isValidPostgresBigInt(cursor))
         return error(400, 'Bad Request')
 
       const comments = await sql<CommentRow[]>`

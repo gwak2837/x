@@ -3,7 +3,7 @@ import { type Static, t } from 'elysia'
 import type { BaseElysia } from '../../..'
 import type { UserSuspendedType } from '../../../model/User'
 
-import { isValidPostgresBigIntString } from '../../../utils'
+import { isValidPostgresBigInt } from '../../../utils'
 import { LoginNotAllowed } from '../../../utils/auth'
 import { TokenType, signJWT, verifyJWT } from '../../../utils/jwt'
 
@@ -17,7 +17,7 @@ export default (app: BaseElysia) =>
 
       try {
         const { iat, sub: userId } = await verifyJWT(token, TokenType.REFRESH)
-        if (!iat || !userId || !isValidPostgresBigIntString(userId))
+        if (!iat || !userId || !isValidPostgresBigInt(userId))
           return error(422, 'Unprocessable Content')
 
         const [user] = await sql<[UserRow]>`

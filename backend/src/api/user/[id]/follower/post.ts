@@ -4,7 +4,7 @@ import type { BaseElysia } from '../../../..'
 
 import { UserFollowStatus } from '../../../../model/User'
 import { PostgresErrorCode } from '../../../../plugin/postgres'
-import { isValidPostgresBigIntString } from '../../../../utils'
+import { isValidPostgresBigInt } from '../../../../utils'
 
 export default (app: BaseElysia) =>
   app.post(
@@ -13,8 +13,7 @@ export default (app: BaseElysia) =>
       if (!userId) return error(401, 'Unauthorized')
 
       const { id: leaderId } = params
-      if (!isValidPostgresBigIntString(leaderId) || leaderId === userId)
-        return error(400, 'Bad Request')
+      if (!isValidPostgresBigInt(leaderId) || leaderId === userId) return error(400, 'Bad Request')
 
       const [follow] = await sql<[FollowRow]>`
         WITH leader AS (

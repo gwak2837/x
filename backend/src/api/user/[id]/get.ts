@@ -3,14 +3,14 @@ import { NotFoundError, t } from 'elysia'
 import type { BaseElysia } from '../../..'
 
 import { UserGrade, UserSex, UserSuspendedType } from '../../../model/User'
-import { deeplyRemoveNull, isValidPostgresBigIntString } from '../../../utils'
+import { deeplyRemoveNull, isValidPostgresBigInt } from '../../../utils'
 
 export default (app: BaseElysia) =>
   app.get(
     '/user/:id',
     async ({ error, params, sql, userId }) => {
       const { id: userIdInParam } = params
-      if (!isValidPostgresBigIntString(userIdInParam)) return error(400, 'Bad Request')
+      if (!isValidPostgresBigInt(userIdInParam)) return error(400, 'Bad Request')
 
       const isMe = userId === userIdInParam
 
