@@ -139,8 +139,8 @@ describe('DELETE /user/:id/follower', () => {
       }),
     )
 
-    expect(response.status).toBe(400)
-    expect(await response.text()).toBe('Bad Request')
+    expect(response.status).toBe(403)
+    expect(await response.text()).toBe('Forbidden')
   })
 
   test('두번째 사용자가 첫번째 사용자를 팔로우 요청한 경우', async () => {

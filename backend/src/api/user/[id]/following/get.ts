@@ -7,21 +7,21 @@ import { deeplyRemoveNull, isValidPostgresBigIntString } from '../../../../utils
 
 export default (app: BaseElysia) =>
   app.get(
-    '/user/:id/follower',
+    '/user/:id/following',
     async ({ error, params, sql, userId }) => {
-      const { id: leaderId } = params
-      if (!isValidPostgresBigIntString(leaderId)) return error(400, 'Bad Request')
+      const { id: followerId } = params
+      if (!isValidPostgresBigIntString(followerId)) return error(400, 'Bad Request')
 
-      const isMe = leaderId === userId
+      const isMe = followerId === userId
 
-      const followers = await sql<FollowRow[]>`${
+      const followings = await sql<FollowRow[]>`${
         isMe
           ? sql``
           : sql`
-        WITH leader AS (
+        WITH follower AS (
           SELECT "isPrivate"
           FROM "User"
-          WHERE "id" = ${leaderId}
+          WHERE "id" = ${followerId}
         )`
       }
         SELECT id,
@@ -30,30 +30,29 @@ export default (app: BaseElysia) =>
           "isPrivate",
           name,
           nickname,
-          "profileImageURLs",
-          status
+          "profileImageURLs"
         FROM "User"
-          JOIN "UserFollow" ON "User"."id" = "UserFollow"."followerId"
-        WHERE "UserFollow"."leaderId" = ${leaderId}
+          JOIN "UserFollow" ON "User"."id" = "UserFollow"."leaderId"
+        WHERE "UserFollow"."followerId" = ${followerId}
         ${
           isMe
             ? sql``
             : sql`
           AND "UserFollow".status = ${UserFollowStatus.ACCEPTED}
           AND (
-            (SELECT "isPrivate" FROM leader) = FALSE
+            (SELECT "isPrivate" FROM follower) = FALSE
             OR EXISTS (
               SELECT 1
               FROM "UserFollow"
-              WHERE "leaderId" = ${leaderId}
+              WHERE "leaderId" = ${followerId}
               AND "followerId" = ${userId}
               AND status = ${UserFollowStatus.ACCEPTED}
             )
           )`
         }`
-      if (!followers.length) throw new NotFoundError()
+      if (!followings.length) throw new NotFoundError()
 
-      return followers.map((follower) => deeplyRemoveNull(follower))
+      return followings.map((follower) => deeplyRemoveNull(follower))
     },
     {
       params: t.Object({ id: t.String({ maxLength: 19 }) }),
@@ -76,7 +75,6 @@ const response200Schema = t.Array(
     name: t.String(),
     nickname: t.String(),
     profileImageURL: t.Optional(t.Array(t.String())),
-    status: t.Enum(UserFollowStatus),
   }),
 )
 
@@ -88,5 +86,4 @@ type FollowRow = {
   name: string
   nickname: string
   profileImageURL: string[] | null
-  status: UserFollowStatus
 }

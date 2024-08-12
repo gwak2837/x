@@ -6,18 +6,18 @@ import { isValidPostgresBigIntString } from '../../../../utils'
 
 export default (app: BaseElysia) =>
   app.delete(
-    '/user/:id/follower',
+    '/user/:id/following',
     async ({ error, params, sql, userId }) => {
       if (!userId) return error(401, 'Unauthorized')
 
-      const { id: leaderId } = params
-      if (!isValidPostgresBigIntString(leaderId)) return error(400, 'Bad Request')
+      const { id: followerId } = params
+      if (!isValidPostgresBigIntString(followerId)) return error(400, 'Bad Request')
 
-      if (leaderId === userId) return error(403, 'Forbidden')
+      if (followerId === userId) return error(403, 'Forbidden')
 
       const [follow] = await sql<[FollowRow]>`
         DELETE FROM "UserFollow"
-        WHERE "leaderId" = ${leaderId} AND "followerId" = ${userId}
+        WHERE "leaderId" = ${userId} AND "followerId" = ${followerId}
         RETURNING "createdAt"`
       if (!follow) throw new NotFoundError()
 
