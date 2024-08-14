@@ -7,8 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "pre-push": "echo .",
-    "prepare": "cd .. && husky frontend/.husky"
+    "pre-push": "echo ."
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.4",
