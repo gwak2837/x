@@ -7,7 +7,7 @@ import PostItem from './PostItem'
 async function fetchPosts() {
   const response = await fetch(`${NEXT_PUBLIC_BACKEND_URL}/post`)
   if (response.status >= 500) throw new Error(await response.text())
-  if (response.status >= 400) return await response.text()
+  if (response.status >= 400) return []
 
   const posts = await response.json()
   return posts

@@ -1,4 +1,4 @@
-import { t } from 'elysia'
+import { NotFoundError, t } from 'elysia'
 
 import type { BaseElysia } from '../..'
 
@@ -110,7 +110,7 @@ export default (app: BaseElysia) =>
         GROUP BY "Post".id, "Author".id, "ReferredPost".id, "ReferredAuthor".id
         ORDER BY "Post".id DESC
         LIMIT ${limit};`
-      if (!posts.length) return error(404, 'Not Found')
+      if (!posts.length) throw new NotFoundError()
 
       return posts.map((post) =>
         deeplyRemoveNull({
