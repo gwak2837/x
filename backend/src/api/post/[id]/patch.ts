@@ -82,6 +82,7 @@ export default (app: BaseElysia) =>
             }),
           )}
         WHERE id = ${postId}
+          AND "deletedAt" IS NULL
           AND "authorId" = ${userId}
         RETURNING id, "updatedAt"`
       if (!updatedPost) throw new NotFoundError()

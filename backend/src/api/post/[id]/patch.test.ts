@@ -2,6 +2,7 @@ import { beforeAll, describe, expect, setSystemTime, spyOn, test } from 'bun:tes
 
 import type { POSTAuthBBatonResponse200 } from '../../auth/bbaton/post'
 import type { POSTPostResponse200 } from '../post'
+import type { DELETEPostIdResponse200 } from './delete'
 import type { PATCHPostIdResponse200 } from './patch'
 
 import { app } from '../../..'
@@ -313,5 +314,33 @@ describe('PATCH /post/:id', () => {
 
     expect(result.id).toBe(postId)
     expect(new Date(result.updatedAt).getTime()).not.toBeNaN()
+  })
+
+  test('삭제 상태인 글은 수정할 수 없습니다.', async () => {
+    const result = (await app
+      .handle(
+        new Request(`http://localhost/post/${postId}`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }),
+      )
+      .then((response) => response.json())) as DELETEPostIdResponse200
+
+    expect(result.id).toBe(postId)
+    expect(new Date(result.deletedAt).getTime()).not.toBeNaN()
+
+    const response = await app.handle(
+      new Request(`http://localhost/post/${postId}`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content: 'Hello, world!' }),
+      }),
+    )
+
+    expect(response.status).toBe(404)
+    expect(await response.text()).toBe('NOT_FOUND')
   })
 })

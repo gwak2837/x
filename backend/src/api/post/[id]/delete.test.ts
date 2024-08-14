@@ -114,8 +114,7 @@ describe('DELETE /post/:id', () => {
       )
       .then((response) => response.json())) as DELETEPostIdResponse200
 
-    expect(typeof result.id).toBe('string')
-    expect(typeof result.deletedAt).toBe('string')
+    expect(result.id).toBe(postId)
     expect(new Date(result.deletedAt).getTime()).not.toBeNaN()
   })
 

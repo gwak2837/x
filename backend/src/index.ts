@@ -21,7 +21,7 @@ export const app = new Elysia()
   .on('start', () => {
     console.log(`🦊 Elysia is running at: ${app.server?.url}`)
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV === 'development') {
       const nets = networkInterfaces()
       if (nets.en0) {
         console.log(`   On Your Network:      http://${nets.en0[1].address}:${PORT}`)

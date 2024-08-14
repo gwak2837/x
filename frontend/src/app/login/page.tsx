@@ -1,6 +1,7 @@
 import type { PageProps } from '@/types/nextjs'
 
 import { NEXT_PUBLIC_BBATON_CLIENT_ID, NEXT_PUBLIC_BBATON_REDIRECT_URI } from '@/common/constants'
+import getDeviceType from '@/utils/getDeviceType'
 import Image from 'next/image'
 
 import Login from './Login'
@@ -22,7 +23,10 @@ export default async function Page({ params, searchParams }: PageProps) {
       </a>
       <Login />
       <Test />
-      <pre className="overflow-x-scroll">{JSON.stringify({ params, searchParams }, null, 2)}</pre>
+
+      <pre className="overflow-x-scroll">
+        {JSON.stringify({ deviceType: getDeviceType(), params, searchParams }, null, 2)}
+      </pre>
     </main>
   )
 }
