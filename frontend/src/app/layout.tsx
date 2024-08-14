@@ -20,11 +20,15 @@ const myFont = localFont({
   weight: '400 700',
 })
 
-export default function RootLayout({ children }: LayoutProps) {
+export async function generateStaticParams() {
+  return [{ locale: 'ko' }, { locale: 'en' }]
+}
+
+export default function RootLayout({ children, params }: LayoutProps) {
   return (
-    <html lang="en">
+    <html lang={params.locale}>
       <body className={myFont.className}>
-        <Navigation />
+        <Navigation locale={params.locale} />
         <ReactQueryProvider>{children}</ReactQueryProvider>
         <Authentication />
         <Toaster toastOptions={{ error: { duration: 6000 } }} />

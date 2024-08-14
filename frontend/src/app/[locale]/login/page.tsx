@@ -8,6 +8,8 @@ import Login from './Login'
 import Test from './Test'
 
 export default async function Page({ params, searchParams }: PageProps) {
+  const deviceType = (await getDeviceType()) ?? 'desktop'
+
   return (
     <main className="min-h-[100dvh] p-4 sm:p-8 md:p-16 lg:p-24">
       <a
@@ -25,7 +27,7 @@ export default async function Page({ params, searchParams }: PageProps) {
       <Test />
 
       <pre className="overflow-x-scroll">
-        {JSON.stringify({ deviceType: getDeviceType(), params, searchParams }, null, 2)}
+        {JSON.stringify({ deviceType, params, searchParams }, null, 2)}
       </pre>
     </main>
   )

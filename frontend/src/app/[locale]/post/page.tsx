@@ -13,7 +13,7 @@ async function fetchPosts() {
   return posts
 }
 
-export default async function Page({}: PageProps) {
+export default async function Page({ params }: PageProps) {
   const posts = await fetchPosts()
 
   return (

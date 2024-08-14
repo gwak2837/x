@@ -11,13 +11,17 @@
     "prepare": "cd .. && husky frontend/.husky"
   },
   "dependencies": {
+    "@formatjs/intl-localematcher": "^0.5.4",
     "@sentry/nextjs": "^8.26.0",
     "@tanstack/react-query": "^5.51.23",
+    "@types/negotiator": "^0.6.3",
     "@types/ua-parser-js": "^0.7.39",
+    "negotiator": "^0.6.3",
     "next": "14.2.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.4.1",
+    "sanitize.css": "^13.0.0",
     "ua-parser-js": "^1.0.38",
     "zustand": "^4.5.4"
   },
