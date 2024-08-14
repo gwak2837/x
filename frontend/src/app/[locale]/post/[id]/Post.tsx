@@ -1,6 +1,6 @@
 'use client'
 
-import { fetchWithToken } from '@/app/Authentication'
+import { fetchWithToken } from '@/app/[locale]/Authentication'
 import { useAuthStore } from '@/zustand/auth'
 import { useQuery } from '@tanstack/react-query'
 
