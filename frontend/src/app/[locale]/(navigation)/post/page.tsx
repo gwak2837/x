@@ -25,7 +25,7 @@ export default async function Page({ params }: PageProps) {
   const posts = await fetchPosts()
 
   return (
-    <main className="min-h-[100dvh] p-4 sm:p-8 md:p-16 lg:p-24">
+    <main className="h-full p-4 sm:p-8 md:p-16 lg:p-24">
       {posts.map((post: any) => (
         <PostItem key={post.id} post={post} />
       ))}

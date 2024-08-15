@@ -5,8 +5,8 @@ export const NEXT_PUBLIC_BBATON_REDIRECT_URI = process.env.NEXT_PUBLIC_BBATON_RE
 export const NEXT_PUBLIC_VERCEL_URL = process.env.NEXT_PUBLIC_VERCEL_URL ?? ''
 const NEXT_PUBLIC_VERCEL_ENV = process.env.NEXT_PUBLIC_VERCEL_ENV ?? ''
 
-export const APPLICATION_NAME = 'BDSM 고사'
-export const APPLICATION_SHORT_NAME = 'BDSM 고사'
+export const APPLICATION_NAME = '자유담 - 자유로운 이야기'
+export const APPLICATION_SHORT_NAME = '자유담'
 export const DESCRIPTION =
   'BDSM 고사를 통해 깊이 있는 BDSM 지식을 검증해보세요. BDSM에 대한 폭넓고 심층적인 지식을 확인하고 향상할 수 있는 기회를 제공합니다.'
 export const CATEGORY = 'BDSM'

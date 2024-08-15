@@ -86,7 +86,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
   },
   verification: {
-    google: 'google',
+    google: 'google', // https://search.google.com/search-console/welcome
     yahoo: 'yahoo',
     yandex: 'yandex',
     me: 'me',
@@ -194,7 +194,7 @@ export async function generateStaticParams() {
 
 export default function RootLayout({ children, params }: LayoutProps) {
   return (
-    <html lang={params.locale}>
+    <html className="h-full" lang={params.locale}>
       <link color={THEME_COLOR} href="/safari-pinned-tab.svg" rel="mask-icon" />
       <meta content={THEME_COLOR} name="msapplication-TileColor" />
 
@@ -202,7 +202,7 @@ export default function RootLayout({ children, params }: LayoutProps) {
       <meta content={DESCRIPTION} name="subject" />
       <meta content="general" name="rating" />
 
-      <body className={`min-h-svh ${myFont.className}`}>
+      <body className={`h-full ${myFont.className}`}>
         <ReactQueryProvider>{children}</ReactQueryProvider>
         <Authentication />
         <Toaster toastOptions={{ error: { duration: 6000 } }} />
