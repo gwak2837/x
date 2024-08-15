@@ -4,7 +4,7 @@ import type { BaseElysia } from '..'
 
 export default (app: BaseElysia) =>
   app
-    .get('/', ({ query }) => ({ message: `Hello ${query.name || 'world'}!` }), {
+    .get('/test', ({ query }) => ({ message: `Hello ${query.name || 'world'}!` }), {
       query: t.Object({ name: t.Optional(t.String()) }),
       response: { 200: t.Object({ message: t.String() }) },
     })

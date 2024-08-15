@@ -8,7 +8,7 @@ export type LayoutProps<T extends Record<string, unknown> = Record<string, strin
 }
 
 export type PageProps<T extends Record<string, unknown> = Record<string, string>> = {
-  params: T
+  params: { locale: Locale } & T
   searchParams: Record<string, string | string[] | undefined>
 }
 
@@ -24,7 +24,7 @@ export type RouteProps = {
 }
 
 export type Params = {
-  lang: 'en' | 'ko'
+  lang: Locale
   postId: string
   questionCount: string
 }
