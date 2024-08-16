@@ -41,5 +41,6 @@ export const config = {
     // '/((?!_next).*)',
     // Optional: only run on root (/) URL
     '/',
+    '/login',
   ],
 }

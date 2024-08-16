@@ -10,6 +10,9 @@
   .text-balance {
     text-wrap: balance;
   }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
 
 :root {
@@ -38,4 +41,8 @@ button {
 
 button:disabled {
   cursor: not-allowed;
+}
+
+*:focus {
+  outline: none;
 }

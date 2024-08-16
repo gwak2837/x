@@ -23,8 +23,11 @@ export type RouteProps = {
   params: Record<string, string>
 }
 
-export type Params = {
-  lang: Locale
+export type BaseParams = {
+  locale: Locale
+}
+
+export type PostParams = {
   postId: string
   questionCount: string
-}
+} & BaseParams

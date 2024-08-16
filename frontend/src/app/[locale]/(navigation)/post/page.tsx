@@ -1,6 +1,7 @@
 import type { PageProps } from '@/types/nextjs'
 
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
+import { headers } from 'next/headers'
 
 import PostItem from './PostItem'
 
@@ -25,7 +26,7 @@ export default async function Page({ params }: PageProps) {
   const posts = await fetchPosts()
 
   return (
-    <main className="h-full p-4 sm:p-8 md:p-16 lg:p-24">
+    <main className="h-full p-4 sm:p-6 md:p-8">
       {posts.map((post: any) => (
         <PostItem key={post.id} post={post} />
       ))}
