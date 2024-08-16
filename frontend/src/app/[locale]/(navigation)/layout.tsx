@@ -1,7 +1,6 @@
-import type { Locale } from '@/middleware'
 import type { LayoutProps } from '@/types/nextjs'
-import type { ReactNode } from 'react'
 
+import BellIcon from '@/svg/BellIcon'
 import Dolphin from '@/svg/Dolphin'
 import HomeIcon from '@/svg/HomeIcon'
 import PostIcon from '@/svg/PostIcon'
@@ -10,6 +9,7 @@ import Link from 'next/link'
 
 import NavigationLink from './NavigationLink'
 import ProfileLink from './ProfileButton'
+import PublishButton from './PublishButton'
 
 export default function Layout({ children, params }: LayoutProps) {
   const locale = params.locale
@@ -17,11 +17,11 @@ export default function Layout({ children, params }: LayoutProps) {
   return (
     <div className="mx-auto h-full max-w-screen-xl grid-cols-[auto_1fr] gap-2 sm:grid">
       <header
-        className="pb-safe fixed bottom-0 grid w-full grid-cols-[4fr_1fr] border-t border-gray-300 backdrop-blur sm:left-0 sm:flex sm:h-full sm:w-20 sm:flex-col sm:justify-between sm:border-r-2 sm:border-t-0 sm:p-2 lg:inset-auto lg:w-72 lg:max-w-screen-xl dark:border-gray-700"
+        className="pb-safe fixed bottom-0 grid w-full grid-cols-[4fr_1fr] overflow-y-auto border-t border-gray-300 backdrop-blur sm:left-0 sm:flex sm:h-full sm:w-20 sm:flex-col sm:justify-between sm:gap-8 sm:border-r-2 sm:border-t-0 sm:p-2 xl:inset-auto xl:w-72 xl:max-w-screen-xl dark:border-gray-700"
         role="banner"
       >
         <nav
-          className="grid grid-cols-4 whitespace-nowrap sm:grid-cols-none sm:gap-2 lg:text-xl lg:leading-6"
+          className="grid grid-cols-4 whitespace-nowrap sm:grid-cols-none sm:gap-2 xl:text-xl xl:leading-6"
           role="navigation"
         >
           <Link className="hidden p-2 sm:block" href={`/${locale}/exam`}>
@@ -36,7 +36,7 @@ export default function Layout({ children, params }: LayoutProps) {
           <NavigationLink Icon={PostIcon} href={`/${locale}/post`}>
             {dict.글[locale]}
           </NavigationLink>
-          <NavigationLink Icon={HomeIcon} href={`/${locale}/notification`}>
+          <NavigationLink Icon={BellIcon} href={`/${locale}/notification`}>
             {dict.알림[locale]}
           </NavigationLink>
           <NavigationLink
@@ -46,14 +46,11 @@ export default function Layout({ children, params }: LayoutProps) {
           >
             {dict.북마크[locale]}
           </NavigationLink>
-          <button className="bg-midnight-500 focus-visible:border-midnight-200 my-4 hidden w-11/12 rounded-full border-2 border-transparent p-4 text-center text-lg leading-5 text-white transition-opacity hover:opacity-80 lg:block">
-            {dict.게시하기[locale]}
-          </button>
-          <Link className="group hidden p-2 sm:block sm:p-0" href={`/${locale}/post/create`}></Link>
+          <PublishButton />
         </nav>
         <ProfileLink />
       </header>
-      <div className="w-0 sm:w-20 lg:w-72" />
+      <div className="w-0 sm:w-20 xl:w-72" />
       {children}
     </div>
   )
@@ -83,9 +80,5 @@ const dict = {
   로그인: {
     ko: '로그인',
     en: 'Login',
-  },
-  게시하기: {
-    ko: '게시하기',
-    en: 'Create',
   },
 } as const

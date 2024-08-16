@@ -5,16 +5,16 @@ type Props = {
 export default function PenIcon({ className }: Props) {
   return (
     <svg
+      aria-label="글쓰기"
       className={className}
       fill="none"
-      stroke="white"
+      stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth="2"
-      viewBox="-4 -4 32 32"
+      viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <circle cx="12" cy="12" fill="currentColor" r="16" stroke="black" strokeWidth="0" />
       <line x1="4" x2="4" y1="3" y2="7" />
       <line x1="2" x2="6" y1="5" y2="5" />
       <path d="M11 20h11" />

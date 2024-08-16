@@ -15,18 +15,21 @@ export default function ProfileLink() {
   const { locale } = useParams<BaseParams>()
 
   return accessToken ? (
-    <Link className="flex gap-2" href={`/${locale}/@${/* user.name */ 123}`}>
+    <Link
+      className="flex items-center justify-center gap-2 sm:py-4"
+      href={`/${locale}/@${/* user.name */ 123}`}
+    >
       <Squircle
         fill={/* toHexColor(user?.nickname) ??  */ '#fae100'}
         // href={user?.profileImageURLs?.[0]}
-        wrapperClassName="w-7 sm:w-9"
+        wrapperClassName="w-8 flex-shrink-0 sm:w-10"
       >
         {/* {user?.nickname?.slice(0, 2) ?? 'DS'} */}
       </Squircle>
-      <div className="hidden overflow-hidden text-ellipsis whitespace-nowrap lg:block">
+      <div className="hidden overflow-hidden text-ellipsis whitespace-nowrap xl:block">
         sadfasdfasdfasdfasdfsdfasdfsasafdsaf
       </div>
-      <div className="hidden lg:block">...</div>
+      <div className="hidden xl:block">...</div>
     </Link>
   ) : (
     <Link className="text-center" href={`/${locale}/login`}>
