@@ -17,7 +17,7 @@ export default function Layout({ children, params }: LayoutProps) {
   return (
     <div className="mx-auto h-full max-w-screen-xl grid-cols-[auto_1fr] gap-2 sm:grid">
       <header
-        className="pb-safe fixed bottom-0 grid w-full grid-cols-[4fr_1fr] border-t border-gray-300 backdrop-blur sm:left-0 sm:flex sm:h-full sm:w-20 sm:flex-col sm:justify-between sm:border-r-2 sm:border-t-0 sm:p-2 lg:w-72 dark:border-gray-700"
+        className="pb-safe fixed bottom-0 grid w-full grid-cols-[4fr_1fr] border-t border-gray-300 backdrop-blur sm:left-0 sm:flex sm:h-full sm:w-20 sm:flex-col sm:justify-between sm:border-r-2 sm:border-t-0 sm:p-2 lg:inset-auto lg:w-72 lg:max-w-screen-xl dark:border-gray-700"
         role="banner"
       >
         <nav
