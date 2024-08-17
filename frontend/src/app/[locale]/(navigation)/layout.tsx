@@ -1,6 +1,7 @@
 import type { LayoutProps } from '@/types/nextjs'
 
 import BellIcon from '@/svg/BellIcon'
+import BookmarkIcon from '@/svg/BookmarkIcon'
 import Dolphin from '@/svg/Dolphin'
 import HomeIcon from '@/svg/HomeIcon'
 import PostIcon from '@/svg/PostIcon'
@@ -8,7 +9,7 @@ import SearchIcon from '@/svg/SearchIcon'
 import Link from 'next/link'
 
 import NavigationLink from './NavigationLink'
-import ProfileLink from './ProfileButton'
+import ProfileLink from './ProfileLink'
 import PublishButton from './PublishButton'
 
 export default function Layout({ children, params }: LayoutProps) {
@@ -24,8 +25,8 @@ export default function Layout({ children, params }: LayoutProps) {
           className="grid grid-cols-4 whitespace-nowrap sm:grid-cols-none sm:gap-2 xl:text-xl xl:leading-6"
           role="navigation"
         >
-          <Link className="hidden p-2 sm:block" href={`/${locale}/exam`}>
-            <Dolphin className="text-midnight-500 h-12 w-12 rounded" />
+          <Link className="group hidden p-2 focus:outline-none sm:block" href={`/${locale}/exam`}>
+            <Dolphin className="text-midnight-500 outline-midnight-500 dark:outline-midnight-200 h-12 w-12 rounded border border-transparent group-focus-visible:outline" />
           </Link>
           <NavigationLink Icon={HomeIcon} href={`/${locale}/exam`}>
             {dict.홈[locale]}
@@ -40,7 +41,7 @@ export default function Layout({ children, params }: LayoutProps) {
             {dict.알림[locale]}
           </NavigationLink>
           <NavigationLink
-            Icon={SearchIcon}
+            Icon={BookmarkIcon}
             className="hidden sm:block"
             href={`/${locale}/bookmark`}
           >

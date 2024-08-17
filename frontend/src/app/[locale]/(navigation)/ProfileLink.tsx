@@ -2,8 +2,9 @@
 
 import type { BaseParams } from '@/types/nextjs'
 
+import { THEME_COLOR } from '@/common/constants'
 import Squircle from '@/components/Squircle'
-import { toHexColor } from '@/util'
+import LoginIcon from '@/svg/LoginIcon'
 import { useAuthStore } from '@/zustand/auth'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
@@ -20,7 +21,7 @@ export default function ProfileLink() {
       href={`/${locale}/@${/* user.name */ 123}`}
     >
       <Squircle
-        fill={/* toHexColor(user?.nickname) ??  */ '#fae100'}
+        fill={/* toHexColor(user?.nickname) ??  */ THEME_COLOR}
         // href={user?.profileImageURLs?.[0]}
         wrapperClassName="w-8 flex-shrink-0 sm:w-10"
       >
@@ -29,11 +30,14 @@ export default function ProfileLink() {
       <div className="hidden overflow-hidden text-ellipsis whitespace-nowrap xl:block">
         sadfasdfasdfasdfasdfsdfasdfsasafdsaf
       </div>
+      <div className="hidden overflow-hidden text-ellipsis whitespace-nowrap xl:block">
+        sadfasdfasdfasdfasdfsdfasdfsasafdsaf
+      </div>
       <div className="hidden xl:block">...</div>
     </Link>
   ) : (
-    <Link className="text-center" href={`/${locale}/login`}>
+    <NavigationLink Icon={LoginIcon} className="sm:py-2" href={`/${locale}/login`}>
       로그인
-    </Link>
+    </NavigationLink>
   )
 }
