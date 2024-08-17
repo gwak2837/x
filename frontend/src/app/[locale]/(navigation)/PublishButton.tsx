@@ -17,7 +17,7 @@ export default function PublishButton() {
     <>
       <div className="mx-auto my-4 hidden sm:block xl:mx-0">
         <button
-          className="bg-midnight-500 focus-visible:outline-midnight-500 focus-visible:dark:outline-midnight-200 rounded-full p-3 outline-2 outline-transparent focus:outline-none disabled:opacity-50 xl:hidden"
+          className="bg-midnight-500 focus-visible:outline-midnight-500 focus-visible:dark:outline-midnight-200 rounded-full p-3 outline-2 outline-transparent transition-opacity hover:opacity-80 focus:outline-none disabled:opacity-50 xl:hidden"
           onClick={() => setIsOpened(true)}
         >
           <PenIcon className="w-6 text-white" />
