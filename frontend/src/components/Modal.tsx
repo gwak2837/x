@@ -109,7 +109,7 @@ export default function Modal({
     )
   }
 
-  const modalBackground = `fixed inset-0 z-20 flex items-center justify-center bg-black/20 dark:bg-black/80 transition duration-300 ${
+  const modalBackground = `fixed inset-0 z-40 flex items-center justify-center bg-black/20 dark:bg-black/80 transition duration-300 ${
     open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
   }`
 
@@ -127,21 +127,21 @@ export default function Modal({
       {showCloseButton && (
         <Image
           alt="x"
-          className="absolute right-0 top-0 z-10 cursor-pointer p-3"
+          className="absolute right-0 top-0 z-50 cursor-pointer p-3"
           height="48"
           onClick={closeModal}
-          src="/images/x.svg"
+          src="/assets/x.svg"
           width="48"
         />
       )}
       <div
-        className={`absolute transition duration-300 ${open ? 'scale-100' : 'scale-90'} ${className}`}
+        className={`absolute z-50 transition duration-300 ${open ? 'scale-100' : 'scale-90'} ${className}`}
         onClick={(e) => e.stopPropagation()}
         ref={showDragButton ? modalRef : null}
       >
         {showDragButton && (
           <div
-            className="absolute left-0 right-0 top-0 z-10 flex h-4 cursor-move justify-center p-2 pb-6"
+            className="absolute left-0 right-0 top-0 z-50 flex h-4 cursor-move justify-center p-2 pb-6"
             onDragStart={(e) => e.preventDefault()}
             onMouseDown={dragModalMouse}
             onTouchStart={dragModalTouch}

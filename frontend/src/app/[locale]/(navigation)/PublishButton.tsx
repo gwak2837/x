@@ -30,7 +30,7 @@ export default function PublishButton() {
         </button>
       </div>
       <Modal onClose={() => setIsOpened(false)} open={isOpened} showCloseButton showDragButton>
-        <form className="rounded-2xl bg-white px-4 pb-4 pt-5 shadow-xl">
+        <form className="dark:bg-midnight-900 rounded-2xl bg-white px-4 pb-4 pt-5 shadow-xl dark:border">
           <button disabled={!accessToken}>{dict.게시하기[locale]}</button>
           무슨 일이 일어나고 있나요?
         </form>
