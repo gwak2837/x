@@ -1,4 +1,4 @@
-name: bike-infra
+name: jayudam-infra
 
 services:
   postgres:

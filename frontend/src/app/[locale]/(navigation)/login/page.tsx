@@ -1,27 +1,29 @@
 import type { PageProps } from '@/types/nextjs'
 
 import { NEXT_PUBLIC_BBATON_CLIENT_ID, NEXT_PUBLIC_BBATON_REDIRECT_URI } from '@/common/constants'
+import { Suspense } from 'react'
 
 import Login from './Login'
+import Redirection from './Redirection'
 
 export default async function Page({ params }: PageProps) {
   const locale = params.locale
 
   return (
     <main className="flex h-full items-center justify-center p-4 sm:p-6 md:p-8 lg:p-10">
-      <main className="flex w-full max-w-lg flex-col items-center justify-center rounded-lg bg-white px-6 py-12 shadow-lg dark:bg-gray-800">
+      <div className="flex w-full max-w-lg flex-col items-center justify-center rounded-lg bg-white px-6 py-12 shadow-lg dark:bg-gray-800">
         <h1 className="mb-8 text-2xl font-semibold text-gray-700 dark:text-gray-200">
           {dict.자유담_로그인[locale]}
         </h1>
         <div className="grid w-full gap-4 text-center sm:text-lg">
           <a
-            className="flex w-full items-center justify-center gap-2 rounded border border-transparent bg-[#0070BC] px-4 py-2 font-medium text-white hover:saturate-150"
+            className="flex w-full items-center justify-center gap-2 rounded border border-transparent bg-[#0070BC] px-4 py-2 font-medium text-white transition-transform active:scale-95"
             href={`https://bauth.bbaton.com/oauth/authorize?client_id=${NEXT_PUBLIC_BBATON_CLIENT_ID}&redirect_uri=${NEXT_PUBLIC_BBATON_REDIRECT_URI}&response_type=code&scope=read_profile`}
           >
             <span className="text-2xl font-bold leading-5">B</span>
             {dict.비바톤_익명인증[locale]}
           </a>
-          <button className="flex w-full items-center justify-center gap-2 rounded border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 hover:bg-gray-100 dark:border-transparent dark:bg-white dark:text-gray-700 dark:hover:bg-gray-200">
+          <button className="flex w-full items-center justify-center gap-2 rounded border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 transition-transform hover:bg-gray-100 active:scale-95 dark:border-transparent dark:bg-white dark:text-gray-700 dark:hover:bg-gray-200">
             <svg className="h-5 w-5" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M47.5 24.5c0-1.5-.1-2.9-.3-4.3H24v8.1h13.2c-.5 2.9-2.1 5.4-4.4 7.1v5.9h7.2c4.2-3.9 6.5-9.7 6.5-16.8z"
@@ -42,7 +44,9 @@ export default async function Page({ params }: PageProps) {
             </svg>
             {dict.구글_로그인[locale]}
           </button>
-          <Login />
+          <Suspense>
+            <Login />
+          </Suspense>
         </div>
         <p className="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
           {dict.본_서비스에_로그인하는_것으로[locale]}{' '}
@@ -55,7 +59,8 @@ export default async function Page({ params }: PageProps) {
           </a>
           {dict.에_동의한_것으로_간주합니다[locale]}
         </p>
-      </main>
+      </div>
+      <Redirection />
     </main>
   )
 }
