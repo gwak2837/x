@@ -55,5 +55,5 @@ export default function Login() {
     })
   }, [code])
 
-  return <div>{reason}</div>
+  return reason ? <div className="text-sm text-red-500 sm:text-base">{reason}</div> : null
 }

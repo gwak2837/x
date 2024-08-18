@@ -9,7 +9,7 @@ import { useAuthStore } from '@/zustand/auth'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
-import NavigationLink from './NavigationLink'
+import NavigLink from './NavigLink'
 
 export default function ProfileLink() {
   const accessToken = useAuthStore((state) => state.accessToken)
@@ -36,8 +36,8 @@ export default function ProfileLink() {
       <div className="hidden xl:block">...</div>
     </Link>
   ) : (
-    <NavigationLink Icon={LoginIcon} className="sm:py-2" href={`/${locale}/login`}>
+    <NavigLink Icon={LoginIcon} className="sm:py-2" href={`/${locale}/login`}>
       로그인
-    </NavigationLink>
+    </NavigLink>
   )
 }

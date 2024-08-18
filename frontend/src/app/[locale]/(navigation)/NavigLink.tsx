@@ -13,7 +13,7 @@ type Props = {
   Icon: (props: { className: string; selected: boolean }) => ReactNode
 }
 
-export default function NavigationLink({
+export default function NavigLink({
   className = '',
   iconClassName = '',
   href,
@@ -24,10 +24,10 @@ export default function NavigationLink({
   const isSelected = pathname === href
 
   return (
-    <Link className={`group flex p-2 focus:outline-none sm:block sm:p-0 ${className}`} href={href}>
-      <div className="group-hover:bg-midnight-500/20 group-hover:dark:bg-midnight-500/50 group-focus-visible:outline-midnight-500 group-focus:dark:outline-midnight-200 mx-auto flex w-fit items-center gap-5 rounded-full p-3 transition group-focus-visible:outline group-active:scale-95 xl:m-0">
+    <Link className={`group flex p-1 focus:outline-none sm:block sm:p-0 ${className}`} href={href}>
+      <div className="group-hover:bg-midnight-500/20 group-hover:dark:bg-midnight-500/50 group-focus-visible:outline-midnight-500 group-focus:dark:outline-midnight-200 mx-auto flex w-fit items-center gap-5 rounded-full p-3 transition group-focus-visible:outline group-active:scale-90 xl:m-0">
         <Icon
-          className={`w-6 transition-transform group-hover:scale-105 ${iconClassName}`}
+          className={`w-6 transition-transform group-hover:scale-110 ${iconClassName}`}
           selected={isSelected}
         />
         <span

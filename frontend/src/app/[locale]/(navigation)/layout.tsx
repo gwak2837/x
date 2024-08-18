@@ -8,7 +8,7 @@ import PostIcon from '@/svg/PostIcon'
 import SearchIcon from '@/svg/SearchIcon'
 import Link from 'next/link'
 
-import NavigationLink from './NavigationLink'
+import NavigLink from './NavigLink'
 import ProfileLink from './ProfileLink'
 import PublishButton from './PublishButton'
 
@@ -28,25 +28,21 @@ export default function Layout({ children, params }: LayoutProps) {
           <Link className="group hidden p-2 focus:outline-none sm:block" href={`/${locale}/exam`}>
             <Dolphin className="text-midnight-500 outline-midnight-500 dark:outline-midnight-200 h-12 w-12 rounded border border-transparent group-focus-visible:outline" />
           </Link>
-          <NavigationLink Icon={HomeIcon} href={`/${locale}/exam`}>
+          <NavigLink Icon={HomeIcon} href={`/${locale}/exam`}>
             {dict.홈[locale]}
-          </NavigationLink>
-          <NavigationLink Icon={SearchIcon} href={`/${locale}/search`}>
+          </NavigLink>
+          <NavigLink Icon={SearchIcon} href={`/${locale}/search`}>
             {dict.검색[locale]}
-          </NavigationLink>
-          <NavigationLink Icon={PostIcon} href={`/${locale}/post`}>
+          </NavigLink>
+          <NavigLink Icon={PostIcon} href={`/${locale}/post`}>
             {dict.글[locale]}
-          </NavigationLink>
-          <NavigationLink Icon={BellIcon} href={`/${locale}/notification`}>
+          </NavigLink>
+          <NavigLink Icon={BellIcon} href={`/${locale}/notification`}>
             {dict.알림[locale]}
-          </NavigationLink>
-          <NavigationLink
-            Icon={BookmarkIcon}
-            className="hidden sm:block"
-            href={`/${locale}/bookmark`}
-          >
+          </NavigLink>
+          <NavigLink Icon={BookmarkIcon} className="hidden sm:block" href={`/${locale}/bookmark`}>
             {dict.북마크[locale]}
-          </NavigationLink>
+          </NavigLink>
           <PublishButton />
         </nav>
         <ProfileLink />
