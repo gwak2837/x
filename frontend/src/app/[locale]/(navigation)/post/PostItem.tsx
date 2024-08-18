@@ -9,7 +9,7 @@ type Props = {
 
 export default function PostItem({ post }: Props) {
   return (
-    <Link className="grid grid-cols-[auto_1fr] gap-2 p-4" href={`/post/${post.id}`}>
+    <Link className="grid grid-cols-[auto_1fr] gap-2 px-4 py-3" href={`/post/${post.id}`}>
       <Squircle
         className="text-white"
         fill={THEME_COLOR}
@@ -29,7 +29,7 @@ export default function PostItem({ post }: Props) {
           </div>
           <div>...</div>
         </div>
-        <p>{post.content}</p>
+        <p className="max-w-prose">{post.content}</p>
         <div className="grid overflow-hidden rounded">
           <Image
             alt="post-image"
@@ -58,7 +58,7 @@ export default function PostItem({ post }: Props) {
             </div>
             <div>...</div>
           </div>
-          <p>referredPost.content</p>
+          <p className="max-w-prose">referredPost.content</p>
         </div>
       </div>
     </Link>

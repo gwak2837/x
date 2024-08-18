@@ -11,6 +11,7 @@ type Props = {
   href: string
   children: ReactNode
   Icon: (props: { className: string; selected: boolean }) => ReactNode
+  onClick?: () => void
 }
 
 export default function NavigLink({
@@ -19,12 +20,17 @@ export default function NavigLink({
   href,
   children,
   Icon,
+  onClick,
 }: Props) {
   const pathname = usePathname()
   const isSelected = pathname === href
 
   return (
-    <Link className={`group flex p-1 focus:outline-none sm:block sm:p-0 ${className}`} href={href}>
+    <Link
+      className={`group flex p-1 focus:outline-none sm:block sm:p-0 ${className}`}
+      href={href}
+      onClick={onClick}
+    >
       <div className="group-hover:bg-midnight-500/20 group-hover:dark:bg-midnight-500/50 group-focus-visible:outline-midnight-500 group-focus:dark:outline-midnight-200 mx-auto flex w-fit items-center gap-5 rounded-full p-3 transition group-focus-visible:outline group-active:scale-90 xl:m-0">
         <Icon
           className={`w-6 transition-transform group-hover:scale-110 ${iconClassName}`}

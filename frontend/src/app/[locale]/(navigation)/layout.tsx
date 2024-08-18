@@ -16,9 +16,9 @@ export default function Layout({ children, params }: LayoutProps) {
   const locale = params.locale
 
   return (
-    <div className="mx-auto h-full max-w-screen-lg grid-cols-[auto_1fr] gap-2 sm:grid xl:max-w-screen-xl">
+    <div className="mx-auto h-full max-w-screen-md grid-cols-[auto_1fr] sm:grid lg:max-w-screen-lg xl:max-w-screen-xl">
       <header
-        className="pb-safe fixed bottom-0 grid w-full max-w-screen-lg grid-cols-[4fr_1fr] overflow-y-auto border-t border-gray-300 backdrop-blur sm:inset-auto sm:flex sm:h-full sm:w-20 sm:flex-col sm:justify-between sm:gap-8 sm:border-r-2 sm:border-t-0 sm:p-2 xl:w-72 xl:max-w-screen-xl dark:border-gray-700"
+        className="pb-safe fixed bottom-0 grid w-full max-w-screen-md grid-cols-[4fr_1fr] overflow-y-auto border-t border-gray-300 backdrop-blur sm:inset-auto sm:flex sm:h-full sm:w-20 sm:flex-col sm:justify-between sm:gap-8 sm:border-r-2 sm:border-t-0 sm:p-2 lg:max-w-screen-lg xl:w-72 xl:max-w-screen-xl dark:border-gray-700"
         role="banner"
       >
         <nav

@@ -8,6 +8,14 @@ const config: Config = {
   plugins: [],
   theme: {
     extend: {
+      animation: {
+        'fade-out-down': 'fade-out-down linear forwards',
+        'make-it-bigger': 'make-it-bigger linear forwards',
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      },
       colors: {
         midnight: {
           '100': '#CFD4D8',
@@ -21,9 +29,36 @@ const config: Config = {
           '900': '#12111F',
         },
       },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      keyframes: {
+        'fade-out-down': {
+          from: {
+            opacity: '1',
+            transform: 'translateY(0)',
+          },
+          to: {
+            opacity: '0',
+            transform: 'translateY(40%)',
+          },
+        },
+        'make-it-bigger': {
+          '0%': {
+            transform: 'translateY(0%)',
+          },
+          '80%': {
+            transform: 'translateY(-30%)',
+          },
+          '90%': {
+            transform: 'translateY(-10%) scale(1.75)',
+          },
+          '100%': {
+            transform: 'translateY(0%) scale(2)',
+            opacity: '0.3',
+            zIndex: '-1',
+          },
+        },
+      },
+      supports: {
+        'no-scroll-driven-animations': 'not(animation-timeline: scroll())',
       },
     },
   },
