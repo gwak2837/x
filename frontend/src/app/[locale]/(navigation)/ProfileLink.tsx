@@ -21,8 +21,10 @@ export default function ProfileLink() {
       href={`/${locale}/@${/* user.name */ 123}`}
     >
       <Squircle
-        fill={/* toHexColor(user?.nickname) ??  */ THEME_COLOR}
         // href={user?.profileImageURLs?.[0]}
+        className="text-white"
+        fill={THEME_COLOR}
+        src="https://pbs.twimg.com/profile_images/1699716066455506944/z9gfVj-__x96.jpg"
         wrapperClassName="w-8 flex-shrink-0 sm:w-10"
       >
         {/* {user?.nickname?.slice(0, 2) ?? 'DS'} */}
