@@ -1,3 +1,5 @@
+import type { Locale } from '@/middleware'
+
 import { THEME_COLOR } from '@/common/constants'
 import Squircle from '@/components/Squircle'
 import Image from 'next/image'
@@ -5,9 +7,11 @@ import Link from 'next/link'
 
 type Props = {
   post: Record<string, any>
+  locale: Locale
 }
 
-export default function PostItem({ post }: Props) {
+export default function PostItem({ post, locale }: Props) {
+  const referredPost = post.referredPost
   return (
     <Link className="grid grid-cols-[auto_1fr] gap-2 px-4 py-3" href={`/post/${post.id}`}>
       <Squircle
@@ -16,16 +20,16 @@ export default function PostItem({ post }: Props) {
         src="https://pbs.twimg.com/profile_images/1699716066455506944/z9gfVj-__x96.jpg"
         wrapperClassName="w-10"
       >
-        {/* {user?.nickname?.slice(0, 2) ?? 'DS'} */}
+        {'user.nickname'.slice(0, 2)}
       </Squircle>
       <div className="grid gap-2">
-        <div className="flex justify-between gap-1">
-          <div className="flex gap-1">
-            <div>user.nickname</div>
-            <div>@user.name</div>
+        <div className="flex min-w-0 justify-between gap-1">
+          <div className="flex min-w-0 gap-1 whitespace-nowrap">
+            <div className="min-w-10 max-w-40 overflow-hidden">user.nicknamenic name</div>
+            <div className="min-w-10 max-w-40 overflow-hidden">@user.name</div>
             <span>·</span>
             <div>post.createdAt</div>
-            <div>post.updatedAt</div>
+            {post.updatedAt && <div>({dict.수정됨[locale]})</div>}
           </div>
           <div>...</div>
         </div>
@@ -39,28 +43,37 @@ export default function PostItem({ post }: Props) {
             width={400}
           />
         </div>
-        <div className="rounded border">
-          <div className="flex justify-between gap-1">
-            <div className="flex gap-1">
-              <Squircle
-                className="text-white"
-                fill={THEME_COLOR}
-                src="https://pbs.twimg.com/profile_images/1699716066455506944/z9gfVj-__x96.jpg"
-                wrapperClassName="w-6"
-              >
-                {/* {user?.nickname?.slice(0, 2) ?? 'DS'} */}
-              </Squircle>
-              <div>user.nickname</div>
-              <div>@user.name</div>
-              <span>·</span>
-              <div>post.createdAt</div>
-              <div>post.updatedAt</div>
+        {referredPost && (
+          <div className="min-w-0 overflow-hidden rounded border">
+            <div className="flex min-w-0 justify-between gap-1">
+              <div className="flex min-w-0 gap-1 whitespace-nowrap">
+                <Squircle
+                  className="text-white"
+                  fill={THEME_COLOR}
+                  src="https://pbs.twimg.com/profile_images/1699716066455506944/z9gfVj-__x96.jpg"
+                  wrapperClassName="w-6 flex-shrink-0"
+                >
+                  {'user.nickname'.slice(0, 2)}
+                </Squircle>
+                <div className="min-w-10 max-w-40 overflow-hidden">user.nicknamenic name</div>
+                <div className="min-w-10 max-w-40 overflow-hidden">@user.name</div>
+                <span>·</span>
+                <div>post.createdAt</div>
+                {referredPost.updatedAt && <div>{dict.수정됨[locale]}</div>}
+              </div>
+              <div>...</div>
             </div>
-            <div>...</div>
+            <p className="max-w-prose">referredPost.content</p>
           </div>
-          <p className="max-w-prose">referredPost.content</p>
-        </div>
+        )}
       </div>
     </Link>
   )
 }
+
+const dict = {
+  수정됨: {
+    en: 'Edited',
+    ko: '수정됨',
+  },
+} as const

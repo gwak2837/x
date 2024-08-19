@@ -27,17 +27,18 @@ export default async function Page({ params }: PageProps) {
   const locale = params.locale
 
   return (
-    <main className="grid h-full grid-cols-[auto_1fr]">
-      <div className="border-r-2 border-gray-300 dark:border-gray-700">
-        <div className="animate-fade-out-down supports-no-scroll-driven-animations:animate-none grid grid-cols-2 items-center border-b-2 border-gray-300 [animation-range:0px_30px] [animation-timeline:scroll()] dark:border-gray-700">
+    <main className="grid h-full lg:grid-cols-[auto_1fr]">
+      <div className="border-gray-300 md:border-r-2 dark:border-gray-700">
+        <nav className="animate-fade-out-down supports-no-scroll-driven-animations:animate-none top-0 z-10 grid grid-cols-2 items-center border-b border-gray-300 backdrop-blur [animation-range:0px_30px] [animation-timeline:scroll()] sm:sticky sm:animate-none sm:border-b-2 dark:border-gray-700">
           <div className="p-2 text-center">{dict.추천[locale]}</div>
           <div className="p-2 text-center">{dict.팔로우_중[locale]}</div>
-        </div>
+        </nav>
         <PostCreationForm className="" />
         <ul>
           {posts.map((post: any) => (
-            <PostItem key={post.id} post={post} />
+            <PostItem key={post.id} locale={locale} post={post} />
           ))}
+          <div className="h-40" />
         </ul>
       </div>
       <div className="hidden lg:block">검색</div>
