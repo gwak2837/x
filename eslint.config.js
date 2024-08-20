@@ -25,7 +25,7 @@ export default [
     languageOptions: { globals: globals.node },
   },
   {
-    ignores: [...includeIgnoreFile(gitignorePath).ignores, 'eslint.config.mjs'],
+    ignores: [...includeIgnoreFile(gitignorePath).ignores, 'eslint.config.js'],
   },
   {
     rules: {
