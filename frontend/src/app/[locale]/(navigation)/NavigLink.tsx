@@ -27,7 +27,7 @@ export default function NavigLink({
 
   return (
     <Link
-      className={`group flex p-1 focus:outline-none sm:block sm:p-0 ${className}`}
+      className={`callout-none group flex p-1 focus:outline-none sm:block sm:p-0 ${className}`}
       href={href}
       onClick={onClick}
     >
