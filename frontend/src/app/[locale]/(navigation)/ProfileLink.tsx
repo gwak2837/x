@@ -36,21 +36,26 @@ export default function ProfileLink() {
       <Squircle
         className="text-white"
         fill={THEME_COLOR}
-        src={
-          user?.profileImageURLs?.[0] ??
-          'https://pbs.twimg.com/profile_images/1699716066455506944/z9gfVj-__x96.jpg'
-        }
+        src={user?.profileImageURLs?.[0]}
         wrapperClassName="w-8 flex-shrink-0 sm:w-10"
       >
         {userNickname.slice(0, 2)}
       </Squircle>
-      <div className="grid min-w-0 gap-1">
-        <div className="hidden overflow-hidden text-ellipsis whitespace-nowrap leading-5 xl:block">
-          {userNickname}
-        </div>
-        <div className="dark:text-midnight-400 text-midnight-300 hidden overflow-hidden text-ellipsis whitespace-nowrap leading-5 xl:block">
-          @{userName}
-        </div>
+      <div className="hidden w-full min-w-0 gap-1 xl:grid">
+        {userNickname ? (
+          <div className="hidden overflow-hidden whitespace-nowrap leading-5 xl:block">
+            {userNickname}
+          </div>
+        ) : (
+          <div className="hidden h-5 animate-pulse rounded-full bg-gray-300 xl:block dark:bg-gray-700" />
+        )}
+        {userName ? (
+          <div className="dark:text-midnight-400 text-midnight-300 hidden overflow-hidden text-ellipsis whitespace-nowrap leading-5 xl:block">
+            @{userName}
+          </div>
+        ) : (
+          <div className="hidden h-5 w-3/4 animate-pulse rounded-full bg-gray-300 xl:block dark:bg-gray-700" />
+        )}
       </div>
       <MoreIcon className="hidden w-5 xl:block" />
     </Link>
