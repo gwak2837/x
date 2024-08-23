@@ -4,7 +4,6 @@ import { NEXT_PUBLIC_BBATON_CLIENT_ID, NEXT_PUBLIC_BBATON_REDIRECT_URI } from '@
 import { Suspense } from 'react'
 
 import Login from './Login'
-import Redirection from './Redirection'
 
 export default async function Page({ params }: PageProps) {
   const locale = params.locale
@@ -61,7 +60,6 @@ export default async function Page({ params }: PageProps) {
           {dict.에_동의한_것으로_간주합니다[locale]}
         </p>
       </div>
-      <Redirection />
     </main>
   )
 }

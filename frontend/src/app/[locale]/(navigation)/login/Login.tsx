@@ -35,14 +35,14 @@ export default function Login() {
         const result = await response.json()
         setAccessToken(result.accessToken)
         localStorage.setItem('refreshToken', result.refreshToken)
+        resolve()
 
-        const loginRedirection = sessionStorage.getItem('login-redirection') ?? ''
+        const loginRedirection = sessionStorage.getItem('login-redirection') ?? '/'
 
         const deletedSearchParams = new URLSearchParams(searchParams)
         deletedSearchParams.delete('code')
         deletedSearchParams.delete('provider')
         router.replace(`${loginRedirection}?${deletedSearchParams}`)
-        resolve()
       } catch (error) {
         reject(error)
       }
