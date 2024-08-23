@@ -19,6 +19,8 @@ export function toHexColor(str?: string) {
 
 export function parseJWT(token: string) {
   const base64Url = token.split('.')[1]
+  if (!base64Url) return null
+
   const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
   const jsonPayload = decodeURIComponent(
     window
@@ -28,5 +30,5 @@ export function parseJWT(token: string) {
       .join(''),
   )
 
-  return JSON.parse(jsonPayload)
+  return JSON.parse(jsonPayload) as Record<string, unknown>
 }

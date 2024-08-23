@@ -16,7 +16,7 @@ import NavigLink from './NavigLink'
 
 export default function ProfileLink() {
   const accessToken = useAuthStore((state) => state.accessToken)
-  const userId: string = parseJWT(accessToken).sub
+  const userId = (parseJWT(accessToken)?.sub ?? '') as string
   const { data: user } = useUserQuery({ id: userId })
   const userNickname = user?.nickname ?? ''
   const userName = user?.name ?? ''

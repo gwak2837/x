@@ -12,6 +12,7 @@ export default function useUserQuery({ id }: Params) {
     queryKey: getUserQueryKey({ id }),
     queryFn: () =>
       fetchWithAuth<{ name: string; nickname: string; profileImageURLs: string[] }>(`/user/${id}`),
+    enabled: Boolean(id),
   })
 }
 
