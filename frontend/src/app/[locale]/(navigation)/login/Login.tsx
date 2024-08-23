@@ -34,7 +34,7 @@ export default function Login() {
 
         const result = await response.json()
         setAccessToken(result.accessToken)
-        localStorage.setItem('refreshToken', result.refreshToken)
+        localStorage.setItem('refresh-token', result.refreshToken)
         resolve()
 
         const loginRedirection = sessionStorage.getItem('login-redirection') ?? '/'
