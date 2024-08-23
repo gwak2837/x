@@ -1,4 +1,4 @@
-import { NotFoundError, t } from 'elysia'
+import { NotFoundError, t, type Static } from 'elysia'
 
 import type { BaseElysia } from '../../..'
 
@@ -49,27 +49,31 @@ export default (app: BaseElysia) =>
       headers: t.Object({ authorization: t.Optional(t.String()) }),
       params: t.Object({ id: t.String({ maxLength: 19 }) }),
       response: {
-        200: t.Object({
-          id: t.String(),
-          createdAt: t.Date(),
-          suspendedAt: t.Optional(t.Date()),
-          unsuspendAt: t.Optional(t.Date()),
-          suspendedType: t.Optional(t.Enum(UserSuspendedType)),
-          ageRange: t.Optional(t.Number()),
-          bio: t.Optional(t.String()),
-          birthDate: t.Optional(t.Date()),
-          grade: t.Enum(UserGrade),
-          isPrivate: t.Boolean(),
-          name: t.String(),
-          nickname: t.String(),
-          profileImageURL: t.Optional(t.Array(t.String())),
-          sex: t.Optional(t.Enum(UserSex)),
-        }),
+        200: response200Schema,
         400: t.String(),
         404: t.String(),
       },
     },
   )
+
+export type GETUserIdResponse200 = Static<typeof response200Schema>
+
+const response200Schema = t.Object({
+  id: t.String(),
+  createdAt: t.Date(),
+  suspendedAt: t.Optional(t.Date()),
+  unsuspendAt: t.Optional(t.Date()),
+  suspendedType: t.Optional(t.Enum(UserSuspendedType)),
+  ageRange: t.Optional(t.Number()),
+  bio: t.Optional(t.String()),
+  birthDate: t.Optional(t.Date()),
+  grade: t.Enum(UserGrade),
+  isPrivate: t.Boolean(),
+  name: t.String(),
+  nickname: t.String(),
+  profileImageURL: t.Optional(t.Array(t.String())),
+  sex: t.Optional(t.Enum(UserSex)),
+})
 
 type UserRow = {
   id: string

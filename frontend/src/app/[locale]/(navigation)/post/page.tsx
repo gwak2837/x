@@ -2,6 +2,7 @@ import type { PageProps } from '@/types/nextjs'
 
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
 
+import TopNavigation from '../TopNavigation'
 import PostCreationForm from './PostCreationForm'
 import PostItem from './PostItem'
 
@@ -28,11 +29,16 @@ export default async function Page({ params }: PageProps) {
 
   return (
     <main className="grid h-full lg:grid-cols-[auto_1fr]">
-      <div className="border-gray-300 md:border-r dark:border-gray-700">
-        <nav className="animate-fade-out-down supports-no-scroll-driven-animations:animate-none top-0 z-10 grid grid-cols-2 items-center border-b border-gray-300 backdrop-blur [animation-range:0px_30px] [animation-timeline:scroll()] sm:sticky sm:animate-none dark:border-gray-700">
+      <TopNavigation
+        className="animate-fade-out-down supports-no-scroll-driven-animations:animate-none border-b border-gray-300 [animation-range:0px_30px] [animation-timeline:scroll()] sm:sticky sm:animate-none dark:border-gray-700"
+        locale={locale}
+      >
+        <div className="grid grid-cols-2 items-center">
           <div className="p-2 text-center">{dict.추천[locale]}</div>
           <div className="p-2 text-center">{dict.팔로우_중[locale]}</div>
-        </nav>
+        </div>
+      </TopNavigation>
+      <div className="border-gray-300 md:border-r dark:border-gray-700">
         <PostCreationForm className="" />
         <ul>
           {posts.map((post: any) => (
