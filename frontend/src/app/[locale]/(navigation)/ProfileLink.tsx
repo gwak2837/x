@@ -3,7 +3,7 @@
 import type { BaseParams } from '@/types/nextjs'
 import type { MouseEvent } from 'react'
 
-import { NEXT_PUBLIC_BACKEND_URL, THEME_COLOR } from '@/common/constants'
+import { THEME_COLOR } from '@/common/constants'
 import Squircle from '@/components/Squircle'
 import useFetchWithAuth from '@/hook/useFetchWithAuth'
 import useUserQuery from '@/query/useUserQuery'
@@ -41,7 +41,13 @@ export default function ProfileLink() {
 
   async function handleLogoutClick(e: MouseEvent) {
     e.preventDefault()
-    await logout()
+
+    await toast.promise(logout(), {
+      loading: '로그아웃 중이에요',
+      success: '로그아웃 했어요',
+      error: '로그아웃에 실패했어요',
+    })
+
     setAccessToken('')
     localStorage.removeItem('refresh-token')
   }
