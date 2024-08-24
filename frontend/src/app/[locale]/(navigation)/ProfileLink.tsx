@@ -5,14 +5,13 @@ import type { MouseEvent } from 'react'
 
 import { THEME_COLOR } from '@/common/constants'
 import Squircle from '@/components/Squircle'
-import useFetchWithAuth from '@/hook/useFetchWithAuth'
+import useLogoutMutation from '@/query/useLogoutMutation'
 import useUserQuery from '@/query/useUserQuery'
 import LoginIcon from '@/svg/LoginIcon'
 import LogoutIcon from '@/svg/LogoutIcon'
 import MoreIcon from '@/svg/MoreIcon'
 import { parseJWT } from '@/util'
 import { useAuthStore } from '@/zustand/auth'
-import { useMutation } from '@tanstack/react-query'
 import Link from 'next/link'
 import { useParams, usePathname } from 'next/navigation'
 import toast from 'react-hot-toast'
@@ -33,18 +32,14 @@ export default function ProfileLink() {
     sessionStorage.setItem('login-redirection', pathname)
   }
 
-  const fetchWithAuth = useFetchWithAuth()
-  const { mutateAsync: logout, isPending } = useMutation({
-    mutationFn: () => fetchWithAuth(`/auth/logout`, { method: 'DELETE' }),
-    onError: (error) => toast.error(error.message),
-  })
+  const { mutateAsync: logout, isPending } = useLogoutMutation()
 
   async function handleLogoutClick(e: MouseEvent) {
     e.preventDefault()
 
     await toast.promise(logout(), {
       loading: '로그아웃 중이에요',
-      success: '로그아웃 했어요',
+      success: '로그아웃했어요',
       error: '로그아웃에 실패했어요',
     })
 

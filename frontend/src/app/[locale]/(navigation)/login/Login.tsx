@@ -50,7 +50,7 @@ export default function Login() {
 
     toast.promise(loginPromise, {
       loading: '로그인 중이에요',
-      success: '로그인에 성공했어요',
+      success: '로그인했어요',
       error: '로그인에 실패했어요',
     })
   }, [code])

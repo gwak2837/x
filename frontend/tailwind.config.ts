@@ -10,6 +10,7 @@ const config: Config = {
     extend: {
       animation: {
         'fade-out-down': 'fade-out-down linear forwards',
+        'fade-out-up': 'fade-out-up linear forwards',
         'make-it-bigger': 'make-it-bigger linear forwards',
       },
       backgroundImage: {
@@ -38,6 +39,16 @@ const config: Config = {
           to: {
             opacity: '0',
             transform: 'translateY(40%)',
+          },
+        },
+        'fade-out-up': {
+          from: {
+            opacity: '1',
+            transform: 'translateY(0)',
+          },
+          to: {
+            opacity: '0',
+            transform: 'translateY(-100%)',
           },
         },
         'make-it-bigger': {
