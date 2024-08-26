@@ -3,10 +3,18 @@ import type { PageProps } from '@/types/nextjs'
 import Image from 'next/image'
 import Link from 'next/link'
 
+import TopNavigation from '../TopNavigation'
+
 export default async function Page({ params, searchParams }: PageProps) {
+  const locale = params.locale
+
   return (
-    <main className="p-4 sm:p-8 md:p-16 lg:p-24">
-      <pre className="overflow-x-scroll">{JSON.stringify({ params, searchParams }, null, 2)}</pre>
-    </main>
+    <>
+      <main className="h-full">
+        <TopNavigation className="border-b border-gray-300 dark:border-gray-700" locale={locale} />
+        <div className="h-12" />
+        <pre className="overflow-x-scroll">{JSON.stringify({ params, searchParams }, null, 2)}</pre>
+      </main>
+    </>
   )
 }

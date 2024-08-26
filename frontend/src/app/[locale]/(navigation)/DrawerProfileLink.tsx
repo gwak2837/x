@@ -15,7 +15,11 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 
-export default function ProfileLink() {
+type Props = {
+  className?: string
+}
+
+export default function DrawerProfileLink({ className }: Props) {
   const { locale } = useParams<BaseParams>()
 
   const { accessToken, setAccessToken } = useAuthStore()

@@ -6,6 +6,7 @@ import MenuIcon from '@/svg/MenuIcon'
 import Link from 'next/link'
 
 import Drawer from '../../../components/Drawer'
+import DrawerProfileLink from './DrawerProfileLink'
 
 type Props = {
   children?: ReactNode
@@ -15,11 +16,15 @@ type Props = {
 
 export default function TopNavigation({ children, className, locale }: Props) {
   return (
-    <nav className={`fixed top-0 z-50 w-full bg-white dark:bg-black ${className}`}>
+    <nav
+      className={`fixed top-0 z-50 w-full bg-white dark:bg-black ${className}`}
+      role="navigation"
+    >
       <div className="flex items-center justify-between gap-2 px-2 sm:hidden">
         <Drawer>
           <MenuIcon className="relative h-10 w-10 cursor-pointer p-2" />
           <div className="h-full overflow-x-auto border-r border-gray-300 p-4 dark:border-gray-700">
+            <DrawerProfileLink />
             <div>df</div>
             <div>df</div>
             <div>df</div>

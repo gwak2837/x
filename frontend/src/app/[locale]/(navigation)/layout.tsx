@@ -8,8 +8,8 @@ import PostIcon from '@/svg/PostIcon'
 import SearchIcon from '@/svg/SearchIcon'
 import Link from 'next/link'
 
+import LoginLink from './LoginLink'
 import NavigLink from './NavigLink'
-import ProfileLink from './ProfileLink'
 import PublishButton from './PublishButton'
 
 export default function Layout({ children, params }: LayoutProps) {
@@ -45,7 +45,7 @@ export default function Layout({ children, params }: LayoutProps) {
           </NavigLink>
           <PublishButton />
         </nav>
-        <ProfileLink />
+        <LoginLink />
       </header>
       <div className="w-0 sm:w-20 xl:w-72" />
       {children}
