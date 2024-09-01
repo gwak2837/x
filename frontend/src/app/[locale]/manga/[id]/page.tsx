@@ -1,5 +1,6 @@
 import type { PageProps } from '@/types/nextjs'
 
+import { HASHA_CDN_DOMAIN } from '@/common/constants'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -20,7 +21,7 @@ export default async function Page({ params, searchParams }: PageProps) {
               className={`h-lvh object-contain ${j === 0 ? '' : 'hidden'}`}
               height={1536}
               priority
-              src={`/api/${id}/${String(i + j).padStart(maxLength, '0')}`}
+              src={`${HASHA_CDN_DOMAIN}/${id}/${String(i + j).padStart(maxLength, '0')}.webp`}
               width={1536}
             />
           ),

@@ -13,7 +13,7 @@ const nextConfig = {
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'pbs.twimg.com' },
-      { protocol: 'https', hostname: 'losy.vercel.app' },
+      { protocol: 'https', hostname: 'cdn-nl-01.hasha.in' },
     ],
   },
   poweredByHeader: false,
