@@ -16,11 +16,10 @@ export default async function Page({ params, searchParams }: PageProps) {
       {[-2, -1, 0, 1, 2].map(
         (j) =>
           i + j > 0 && (
-            <Image
+            <img
               alt="manga-image"
               className={`h-lvh object-contain ${j === 0 ? '' : 'hidden'}`}
               height={1536}
-              priority
               src={`${HASHA_CDN_DOMAIN}/${id}/${String(i + j).padStart(maxLength, '0')}.webp`}
               width={1536}
             />
