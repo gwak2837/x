@@ -1,7 +1,6 @@
 import type { PageProps } from '@/types/nextjs'
 
 import { HASHA_CDN_DOMAIN } from '@/common/constants'
-import Image from 'next/image'
 import Link from 'next/link'
 
 export default async function Page({ params, searchParams }: PageProps) {
@@ -20,6 +19,7 @@ export default async function Page({ params, searchParams }: PageProps) {
               alt="manga-image"
               className={`h-lvh object-contain ${j === 0 ? '' : 'hidden'}`}
               height={1536}
+              referrerPolicy="no-referrer"
               src={`${HASHA_CDN_DOMAIN}/${id}/${String(i + j).padStart(maxLength, '0')}.webp`}
               width={1536}
             />
