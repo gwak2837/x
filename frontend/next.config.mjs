@@ -9,7 +9,10 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    remotePatterns: [{ protocol: 'https', hostname: 'pbs.twimg.com' }],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'pbs.twimg.com' },
+      { protocol: 'https', hostname: 'losy.vercel.app' },
+    ],
   },
   poweredByHeader: false,
 }
