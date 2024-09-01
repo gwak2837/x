@@ -3,7 +3,9 @@ import { withSentryConfig } from '@sentry/nextjs'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   compiler: {
-    ...(process.env.NEXT_PUBLIC_VERCEL_ENV === 'production' && { removeConsole: true }),
+    ...(process.env.NEXT_PUBLIC_VERCEL_ENV === 'production' && {
+      removeConsole: { exclude: ['error'] },
+    }),
   },
   eslint: {
     ignoreDuringBuilds: true,
