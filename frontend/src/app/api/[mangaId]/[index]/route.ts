@@ -13,6 +13,7 @@ type Params = {
 export const GET = async (_: NextRequest, { params }: Params) => {
   const { mangaId, index } = params
   const res = await fetch(`${HASHA_CDN_DOMAIN}/${mangaId}/${index}.webp`)
+  console.log('👀 ~ res:', res.status, res.statusText, res)
 
   const blob = await res.arrayBuffer()
 
