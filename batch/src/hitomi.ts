@@ -9,17 +9,53 @@ export const driver = await new Builder()
   .setChromeOptions(new chrome.Options())
   .build()
 
-export async function get작품Pathes() {
-  await driver.get(`${HITOMI_DOMAIN}/index-korean.html`)
+type Params = {
+  page?: number
+}
 
-  const 작품PathesSelector = 'body > div.container > div.gallery-content > div > a'
-  await driver.wait(until.elementLocated(By.css(작품PathesSelector)), 10000)
+export async function get작품Infos({ page = 1 }: Params = {}) {
+  await driver.get(`${HITOMI_DOMAIN}/index-korean.html${page > 1 ? `?page=${page}` : ''}`)
+
+  const 작품TitleSelector = 'body > div > div.gallery-content > div'
+  await driver.wait(until.elementLocated(By.css(작품TitleSelector)), 10000)
 
   const pageSource = await driver.getPageSource()
 
   const $ = cheerio.load(pageSource)
-  return $(작품PathesSelector)
-    .map((_, element) => $(element).attr('href'))
+  const mangas = $('body > div > div.gallery-content > div')
+
+  return mangas
+    .map((_, manga) => ({
+      hitomiId:
+        $(manga)
+          .find('div > a')
+          .attr('href')
+          ?.match(/(\d+)\.html$/)?.[1] ?? '',
+      title: $(manga).find('div > h1 > a').text(),
+      artists: $(manga)
+        .find('div > div.artist-list > ul > li > a')
+        .map((_, artist) => $(artist).text())
+        .get(),
+      series: $(manga)
+        .find(
+          'div > div.dj-content > table > tbody > tr:nth-child(1) > td.series-list > ul > li > a',
+        )
+        .map((_, series) => $(series).text())
+        .get(),
+      type: $(manga)
+        .find('div > div.dj-content > table > tbody > tr:nth-child(2) > td:nth-child(2) > a')
+        .text(),
+      group: [],
+      characters: [],
+      tags: $(manga)
+        .find(
+          'div > div.dj-content > table > tbody > tr:nth-child(4) > td.relatedtags > ul > li > a',
+        )
+        .map((_, series) => $(series).text())
+        .get()
+        .filter((tag) => tag !== '...'),
+      createdAt: $(manga).find('div > div.dj-content > p').attr('data-posted') ?? '',
+    }))
     .get()
 }
 

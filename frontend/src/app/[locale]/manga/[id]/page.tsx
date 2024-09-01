@@ -3,6 +3,8 @@ import type { PageProps } from '@/types/nextjs'
 import { HASHA_CDN_DOMAIN } from '@/common/constants'
 import Link from 'next/link'
 
+import ArrowKeyNavigation from './ArrowKeyNavigation'
+
 export default async function Page({ params, searchParams }: PageProps) {
   const { id } = params
   const i = +(searchParams.i ?? 1)
@@ -17,7 +19,8 @@ export default async function Page({ params, searchParams }: PageProps) {
           i + j > 0 && (
             <img
               alt="manga-image"
-              className={`h-lvh object-contain ${j === 0 ? '' : 'hidden'}`}
+              className={`h-svh object-contain ${j === 0 ? '' : 'hidden'}`}
+              fetchPriority={j === 0 ? 'high' : 'auto'}
               height={1536}
               referrerPolicy="no-referrer"
               src={`${HASHA_CDN_DOMAIN}/${id}/${String(i + j).padStart(maxLength, '0')}.webp`}
@@ -26,15 +29,16 @@ export default async function Page({ params, searchParams }: PageProps) {
           ),
       )}
       <Link
-        className="absolute left-0 top-0 h-full w-1/3"
+        className="absolute left-0 top-0 h-full w-1/3 focus:outline-none"
         href={`?max=${maxString}&i=${Math.max(1, i - 1)}`}
         replace
       />
       <Link
-        className="absolute right-0 top-0 h-full w-1/3"
+        className="absolute right-0 top-0 h-full w-1/3 focus:outline-none"
         href={`?max=${maxString}&i=${Math.min(i + 1, max)}`}
         replace
       />
+      <ArrowKeyNavigation i={i} max={max} />
     </div>
   )
 }
