@@ -12,6 +12,7 @@ type Props = {
 
 export default function PostItem({ post, locale }: Props) {
   const referredPost = post.referredPost
+
   return (
     <Link className="grid grid-cols-[auto_1fr] gap-2 px-4 py-3" href={`/post/${post.id}`}>
       <Squircle

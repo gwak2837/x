@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "lint": "eslint . --fix",
-    "postinstall": "cd backend && bun i && cd ../frontend && bun i",
+    "postinstall": "cd batch && bun i && cd ../backend && bun i && cd ../frontend && bun i",
     "prepare": "husky"
   },
   "devDependencies": {

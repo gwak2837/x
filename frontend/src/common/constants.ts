@@ -5,6 +5,7 @@ export const NEXT_PUBLIC_BBATON_REDIRECT_URI = process.env.NEXT_PUBLIC_BBATON_RE
 export const NEXT_PUBLIC_VERCEL_URL = process.env.NEXT_PUBLIC_VERCEL_URL ?? ''
 const NEXT_PUBLIC_VERCEL_ENV = process.env.NEXT_PUBLIC_VERCEL_ENV ?? ''
 
+export const HASHA_CDN_DOMAIN = 'https://cdn-nl-01.hasha.in'
 export const APPLICATION_NAME = '자유담 - 자유로운 이야기'
 export const APPLICATION_SHORT_NAME = '자유담'
 export const DESCRIPTION =
