@@ -1,5 +1,6 @@
 import type { LayoutProps } from '@/types/nextjs'
 
+import { dict } from '@/common/dict'
 import BellIcon from '@/svg/BellIcon'
 import BookmarkIcon from '@/svg/BookmarkIcon'
 import Dolphin from '@/svg/Dolphin'
@@ -52,30 +53,3 @@ export default function Layout({ children, params }: LayoutProps) {
     </div>
   )
 }
-
-const dict = {
-  홈: {
-    ko: '홈',
-    en: 'Home',
-  },
-  검색: {
-    ko: '검색',
-    en: 'Search',
-  },
-  글: {
-    ko: '글',
-    en: 'Posts',
-  },
-  알림: {
-    ko: '알림',
-    en: 'Notification',
-  },
-  북마크: {
-    ko: '북마크',
-    en: 'Bookmark',
-  },
-  로그인: {
-    ko: '로그인',
-    en: 'Login',
-  },
-} as const

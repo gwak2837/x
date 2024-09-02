@@ -1,6 +1,7 @@
 import type { PageProps } from '@/types/nextjs'
 
 import { NEXT_PUBLIC_BBATON_CLIENT_ID, NEXT_PUBLIC_BBATON_REDIRECT_URI } from '@/common/constants'
+import { dict } from '@/common/dict'
 import { Suspense } from 'react'
 
 import Login from './Login'
@@ -63,38 +64,3 @@ export default async function Page({ params }: PageProps) {
     </main>
   )
 }
-
-const dict = {
-  자유담_로그인: {
-    ko: '자유담 로그인',
-    en: 'Sign in Jayudam',
-  },
-  비바톤_익명인증: {
-    ko: '비바톤 익명인증',
-    en: 'Anonymous with BBaton',
-  },
-  구글_로그인: {
-    ko: '구글 로그인',
-    en: 'Sign in with Google',
-  },
-  본_서비스에_로그인하는_것으로: {
-    ko: '본 서비스에 로그인함으로써',
-    en: 'By signing in our service, you agree to our',
-  },
-  서비스이용약관: {
-    ko: '이용약관',
-    en: 'Terms of Service',
-  },
-  및: {
-    ko: '및',
-    en: 'and',
-  },
-  개인정보_처리방침: {
-    ko: '개인정보 처리방침',
-    en: 'Privacy Policy',
-  },
-  에_동의한_것으로_간주합니다: {
-    ko: '에 동의하는 것으로 간주합니다.',
-    en: '.',
-  },
-} as const

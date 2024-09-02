@@ -2,6 +2,7 @@
 
 import type { BaseParams } from '@/types/nextjs'
 
+import { dict } from '@/common/dict'
 import Modal from '@/components/Modal'
 import PenIcon from '@/svg/PenIcon'
 import { useAuthStore } from '@/zustand/auth'
@@ -38,10 +39,3 @@ export default function PublishButton() {
     </>
   )
 }
-
-const dict = {
-  게시하기: {
-    ko: '게시하기',
-    en: 'Create',
-  },
-} as const

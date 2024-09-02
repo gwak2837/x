@@ -1,6 +1,7 @@
 import type { Locale } from '@/middleware'
 
 import { THEME_COLOR } from '@/common/constants'
+import { dict } from '@/common/dict'
 import Squircle from '@/components/Squircle'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -71,10 +72,3 @@ export default function PostItem({ post, locale }: Props) {
     </Link>
   )
 }
-
-const dict = {
-  수정됨: {
-    en: 'Edited',
-    ko: '수정됨',
-  },
-} as const

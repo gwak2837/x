@@ -1,6 +1,7 @@
 import type { PageProps } from '@/types/nextjs'
 
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
+import { dict } from '@/common/dict'
 
 import TopNavigation from '../TopNavigation'
 import PostCreationForm from './PostCreationForm'
@@ -52,14 +53,3 @@ export default async function Page({ params }: PageProps) {
     </main>
   )
 }
-
-const dict = {
-  추천: {
-    en: 'Recommend',
-    ko: '추천',
-  },
-  팔로우_중: {
-    en: 'Following',
-    ko: '팔로우 중',
-  },
-} as const
