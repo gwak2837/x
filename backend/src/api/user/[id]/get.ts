@@ -3,7 +3,7 @@ import { NotFoundError, t, type Static } from 'elysia'
 import type { BaseElysia } from '../../..'
 
 import { UserGrade, UserSex, UserSuspendedType } from '../../../model/User'
-import { deeplyRemoveNull, isValidPostgresBigInt } from '../../../utils'
+import { deeplyRemoveNull, isValidPostgresBigInt } from '../../../util'
 
 export default (app: BaseElysia) =>
   app.get(

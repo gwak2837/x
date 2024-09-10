@@ -5,8 +5,8 @@ import { NotFoundError, t } from 'elysia'
 import type { BaseElysia } from '../../..'
 
 import { PostCategory, PostStatus } from '../../../model/Post'
-import { deeplyRemoveNull } from '../../../utils'
-import { removeZero } from '../../../utils/type'
+import { deeplyRemoveNull } from '../../../util'
+import { removeZero } from '../../../util/type'
 
 export default (app: BaseElysia) =>
   app.get(

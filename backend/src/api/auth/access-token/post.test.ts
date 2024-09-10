@@ -8,7 +8,7 @@ import { app } from '../../..'
 import { validBBatonTokenResponse, validBBatonUserResponse } from '../../../../test/mock'
 import { sql } from '../../../../test/postgres'
 import { UserSuspendedType } from '../../../model/User'
-import { TokenType, signJWT } from '../../../utils/jwt'
+import { TokenType, signJWT } from '../../../util/jwt'
 
 describe('POST /auth/access-token', async () => {
   const invalidUserId = '0'

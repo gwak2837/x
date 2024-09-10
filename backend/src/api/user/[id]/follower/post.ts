@@ -4,7 +4,7 @@ import type { BaseElysia } from '../../../..'
 
 import { UserFollowStatus } from '../../../../model/User'
 import { PostgresErrorCode } from '../../../../plugin/postgres'
-import { isValidPostgresBigInt } from '../../../../utils'
+import { isValidPostgresBigInt } from '../../../../util'
 
 export default (app: BaseElysia) =>
   app.post(

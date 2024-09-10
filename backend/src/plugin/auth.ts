@@ -1,6 +1,6 @@
 import type Elysia from 'elysia'
 
-import { TokenType, verifyJWT } from '../utils/jwt'
+import { TokenType, verifyJWT } from '../util/jwt'
 
 export default () => (app: Elysia) =>
   app.derive(async ({ error, headers }) => {

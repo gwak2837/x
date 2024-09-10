@@ -3,7 +3,7 @@ import { NotFoundError, t } from 'elysia'
 import type { BaseElysia } from '../../../..'
 
 import { UserFollowStatusInput } from '../../../../model/User'
-import { isValidPostgresBigInt } from '../../../../utils'
+import { isValidPostgresBigInt } from '../../../../util'
 
 export default (app: BaseElysia) =>
   app.patch(

@@ -5,7 +5,7 @@ import type { BaseElysia } from '../../..'
 import { extractHashtags } from '../../../common/post'
 import { MAX_HASHTAG_LENGTH } from '../../../constants'
 import { PostCategory, PostStatus } from '../../../model/Post'
-import { isValidPostgresBigInt, removeUndefinedKeys } from '../../../utils'
+import { isValidPostgresBigInt, removeUndefinedKeys } from '../../../util'
 
 export default (app: BaseElysia) =>
   app.patch(

@@ -4,8 +4,8 @@ import type { BaseElysia } from '../..'
 
 import { PostCategory, PostStatus } from '../../model/Post'
 import { POSTGRES_MAX_BIGINT_STRING } from '../../plugin/postgres'
-import { deeplyRemoveNull } from '../../utils'
-import { removeZero } from '../../utils/type'
+import { deeplyRemoveNull } from '../../util'
+import { removeZero } from '../../util/type'
 
 export default (app: BaseElysia) =>
   app.get(

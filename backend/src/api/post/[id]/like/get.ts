@@ -2,7 +2,7 @@ import { NotFoundError, type Static, t } from 'elysia'
 
 import type { BaseElysia } from '../../../..'
 
-import { isValidPostgresBigInt } from '../../../../utils'
+import { isValidPostgresBigInt } from '../../../../util'
 
 export default (app: BaseElysia) =>
   app.get(

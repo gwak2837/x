@@ -7,8 +7,8 @@ import type { BaseElysia } from '../../..'
 import { BBATON_CLIENT_ID, BBATON_CLIENT_SECRET, BBATON_REDIRECT_URI } from '../../../constants'
 import { OAuthProvider } from '../../../model/OAuth'
 import { PostgresErrorCode } from '../../../plugin/postgres'
-import { TokenType, signJWT } from '../../../utils/jwt'
-import { generateRandomNickname } from '../../../utils/nickname'
+import { TokenType, signJWT } from '../../../util/jwt'
+import { generateRandomNickname } from '../../../util/nickname'
 
 export default (app: BaseElysia) =>
   app.post(

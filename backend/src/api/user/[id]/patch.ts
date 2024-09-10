@@ -3,7 +3,7 @@ import { NotFoundError, type Static, t } from 'elysia'
 import type { BaseElysia } from '../../..'
 
 import { UserSuspendedTypeInput } from '../../../model/User'
-import { isValidPostgresBigInt, removeUndefinedKeys } from '../../../utils'
+import { isValidPostgresBigInt, removeUndefinedKeys } from '../../../util'
 
 export default (app: BaseElysia) =>
   app.patch(

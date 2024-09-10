@@ -3,9 +3,9 @@ import { type Static, t } from 'elysia'
 import type { BaseElysia } from '../../..'
 import type { UserSuspendedType } from '../../../model/User'
 
-import { isValidPostgresBigInt } from '../../../utils'
-import { LoginNotAllowed } from '../../../utils/auth'
-import { TokenType, signJWT, verifyJWT } from '../../../utils/jwt'
+import { isValidPostgresBigInt } from '../../../util'
+import { LoginNotAllowed } from '../../../util/auth'
+import { TokenType, signJWT, verifyJWT } from '../../../util/jwt'
 
 export default (app: BaseElysia) =>
   app.post(
