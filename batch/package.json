@@ -1,5 +1,5 @@
 {
-  "name": "hirosy",
+  "name": "@losy/batch",
   "module": "src/index.ts",
   "type": "module",
   "dependencies": {
