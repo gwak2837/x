@@ -17,6 +17,5 @@
   "[ignore]": { "editor.defaultFormatter": "foxundermoon.shell-format" },
   "[prisma]": { "editor.defaultFormatter": "Prisma.prisma" },
   "[shellscript]": { "editor.defaultFormatter": "foxundermoon.shell-format" },
-  "[sql]": { "editor.defaultFormatter": "mtxr.sqltools" },
   "[svg]": { "editor.defaultFormatter": "jock.svg" }
 }
