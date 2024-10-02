@@ -1,14 +1,70 @@
-import { driver, get작품ImageURL, get작품Infos, get작품ViewerPathes } from './hitomi'
+import { driver, getMangas } from './hitomi'
+import { MangaInfoType, encodeMangaType } from './model'
+import { sql } from './postgres'
 
 try {
-  const 작품Infos = await get작품Infos()
-  console.log('👀 - 작품Pathes:', 작품Infos)
-  // const 작품Pathes = await get작품Pathes()
-  // console.log('👀 - 작품Pathes:', 작품Pathes)
-  // const 작품ViewerPathes = await get작품ViewerPathes(작품Pathes[0])
-  // console.log('👀 - 작품ViewerPathes:', 작품ViewerPathes)
-  // const 작품이미지URL = await get작품ImageURL(작품ViewerPathes[0])
-  // console.log('👀 - 작품이미지URL:', 작품이미지URL)
+  const mangas = await getMangas()
+
+  const mangaRows = mangas.map((manga) => ({
+    ...manga,
+    type: encodeMangaType(manga.type),
+  }))
+
+  const mangaInfoRows = mangas.flatMap((manga) => [
+    ...manga.artists.map((artist) => ({
+      id: manga.id,
+      type: MangaInfoType.ARTISTS,
+      name: artist,
+    })),
+    ...manga.series.map((series) => ({
+      id: manga.id,
+      type: MangaInfoType.SERIES,
+      name: series,
+    })),
+    ...manga.characters.map((character) => ({
+      id: manga.id,
+      type: MangaInfoType.CHARACTERS,
+      name: character,
+    })),
+    ...manga.group.map((group) => ({
+      id: manga.id,
+      type: MangaInfoType.GROUP,
+      name: group,
+    })),
+    ...manga.tags.map((tag) => ({
+      id: manga.id,
+      type: MangaInfoType.TAGS,
+      name: tag,
+    })),
+  ])
+
+  await Promise.all([
+    sql`
+      INSERT INTO "Manga" ${sql(mangaRows, 'id', 'publishAt', 'type', 'title', 'imageCount')}
+      ON CONFLICT (id) DO NOTHING`,
+    sql`
+      INSERT INTO "MangaInfo" ${sql(mangaInfoRows, 'type', 'name')}
+      ON CONFLICT (type, name) DO NOTHING`,
+  ])
+
+  const mangaMangaInfoRows = mangaInfoRows.map(
+    (info) => sql`, (
+      (
+        SELECT id 
+        FROM "Manga" 
+        WHERE id = ${info.id}
+      ), (
+        SELECT id 
+        FROM "MangaInfo"
+        WHERE type = ${info.type} AND name = ${info.name}
+      )
+    )`,
+  )
+
+  await sql`
+    INSERT INTO "MangaMangaInfo" ("mangaId", "mangaInfoId")
+    VALUES (${mangas[0].id}, (SELECT id FROM "MangaInfo" LIMIT 1)) ${mangaMangaInfoRows}
+    ON CONFLICT ("mangaId", "mangaInfoId") DO NOTHING`
 } finally {
   await driver.quit()
 }

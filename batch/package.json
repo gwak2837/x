@@ -2,9 +2,13 @@
   "name": "@losy/batch",
   "module": "src/index.ts",
   "type": "module",
+  "scripts": {
+    "start": "NODE_ENV=development bun --env-file=.env.development.local run src/index.ts"
+  },
   "dependencies": {
     "cheerio": "^1.0.0",
     "node-fetch": "^3.3.2",
+    "postgres": "^3.4.4",
     "selenium-webdriver": "^4.24.0"
   },
   "devDependencies": {

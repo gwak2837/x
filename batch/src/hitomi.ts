@@ -13,35 +13,38 @@ type Params = {
   page?: number
 }
 
-export async function get작품Infos({ page = 1 }: Params = {}) {
+export async function getMangas({ page = 1 }: Params = {}) {
   await driver.get(`${HITOMI_DOMAIN}/index-korean.html${page > 1 ? `?page=${page}` : ''}`)
 
-  const 작품TitleSelector = 'body > div > div.gallery-content > div'
-  await driver.wait(until.elementLocated(By.css(작품TitleSelector)), 10000)
+  const 작품Selector = 'body > div > div.gallery-content > div'
+  await driver.wait(until.elementLocated(By.css(작품Selector)), 10000)
 
   const pageSource = await driver.getPageSource()
 
   const $ = cheerio.load(pageSource)
-  const mangas = $('body > div > div.gallery-content > div')
+  const mangas = $(작품Selector)
 
   return mangas
     .map((_, manga) => ({
-      hitomiId:
+      id:
         $(manga)
           .find('div > a')
           .attr('href')
           ?.match(/(\d+)\.html$/)?.[1] ?? '',
+      path: $(manga).find('div > a').attr('href'),
       title: $(manga).find('div > h1 > a').text(),
       artists: $(manga)
         .find('div > div.artist-list > ul > li > a')
         .map((_, artist) => $(artist).text())
-        .get(),
+        .get()
+        .filter((tag) => tag !== '...'),
       series: $(manga)
         .find(
           'div > div.dj-content > table > tbody > tr:nth-child(1) > td.series-list > ul > li > a',
         )
         .map((_, series) => $(series).text())
-        .get(),
+        .get()
+        .filter((tag) => tag !== '...'),
       type: $(manga)
         .find('div > div.dj-content > table > tbody > tr:nth-child(2) > td:nth-child(2) > a')
         .text(),
@@ -54,9 +57,43 @@ export async function get작품Infos({ page = 1 }: Params = {}) {
         .map((_, series) => $(series).text())
         .get()
         .filter((tag) => tag !== '...'),
-      createdAt: $(manga).find('div > div.dj-content > p').attr('data-posted') ?? '',
+      publishAt: $(manga).find('div > div.dj-content > p').attr('data-posted') ?? '',
+      imageCount: 0,
     }))
     .get()
+    .map((series) => ({
+      ...series,
+      publishAt: series.publishAt ? new Date(series.publishAt).toISOString() : '',
+    }))
+}
+
+type Params2 = {
+  path?: string
+}
+
+export async function getMangaDetailInfos({ path = '' }: Params2 = {}) {
+  await driver.get(`${HITOMI_DOMAIN}${path}`)
+
+  const mangaInfoSelector =
+    'body > div > div.content > div.gallery.dj-gallery > div > table > tbody'
+  await driver.wait(until.elementLocated(By.css(mangaInfoSelector)), 10000)
+
+  const pageSource = await driver.getPageSource()
+
+  const $ = cheerio.load(pageSource)
+  const mangaInfo = $(mangaInfoSelector)
+
+  return {
+    group: $(mangaInfo)
+      .find('#groups > ul > li > a')
+      .map((_, group) => $(group).text())
+      .get(),
+    characters: $(mangaInfo)
+      .find('#characters > li > a')
+      .map((_, character) => $(character).text())
+      .get(),
+    imageCount: $('body > div > div.content > div.gallery-preview.lillie > div > ul > li').length,
+  }
 }
 
 export async function get작품ViewerPathes(작품Path: string) {
