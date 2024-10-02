@@ -32,10 +32,11 @@ model User {
   oAuth OAuth[]
   posts Post[]
 
-  likedPosts      UserLikePost[]     @relation("likedPosts")
-  bookmarkedPosts UserBookmarkPost[] @relation("bookmarkedPosts")
-  following       UserFollow[]       @relation("following")
-  followers       UserFollow[]       @relation("followers")
+  likedPosts      UserLikePost[]      @relation("likedPosts")
+  bookmarkedPosts UserBookmarkPost[]  @relation("bookmarkedPosts")
+  following       UserFollow[]        @relation("following")
+  followers       UserFollow[]        @relation("followers")
+  mangas          UserBookmarkManga[] @relation("mangas")
 }
 
 model UserFollow {
@@ -129,4 +130,48 @@ model PostHashtag {
   hashtag Hashtag @relation("posts", fields: [hashtagId], references: [id])
 
   @@id([postId, hashtagId])
+}
+
+// hirosy
+model Manga {
+  id         BigInt   @id
+  publishAt  DateTime
+  type       Int      @db.SmallInt
+  title      String
+  imageCount Int      @default(0) @db.SmallInt
+
+  mangaInfos MangaMangaInfo[]    @relation("mangaInfos")
+  users      UserBookmarkManga[] @relation("users")
+
+  @@index([title])
+}
+
+model UserBookmarkManga {
+  userId  BigInt
+  mangaId BigInt
+
+  user  User  @relation("mangas", fields: [userId], references: [id])
+  manga Manga @relation("users", fields: [mangaId], references: [id])
+
+  @@id([userId, mangaId])
+}
+
+model MangaInfo {
+  id   BigInt @id @default(autoincrement())
+  type Int    @db.SmallInt
+  name String
+
+  mangas MangaMangaInfo[] @relation("mangas")
+
+  @@unique([type, name])
+}
+
+model MangaMangaInfo {
+  mangaId     BigInt
+  mangaInfoId BigInt
+
+  manga     Manga     @relation("mangaInfos", fields: [mangaId], references: [id])
+  mangaInfo MangaInfo @relation("mangas", fields: [mangaInfoId], references: [id])
+
+  @@id([mangaId, mangaInfoId])
 }

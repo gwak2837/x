@@ -8,9 +8,8 @@
 
 ### PRD: Notion
 
-#### user flow
-
-#### 고려할 사항
+- user flow
+- 고려할 사항
 
 ### Design: Figma
 
@@ -28,9 +27,9 @@
 
 ### 논의
 
-## 확인 🏗️
+## 테스트 방법 🏗️
 
-### Feature Flag
+### feature flag
 
 ### stage
 

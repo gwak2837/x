@@ -3,6 +3,7 @@ import getAccessToken from './api/auth/access-token/post'
 import loginByBBaton from './api/auth/bbaton/post'
 import logout from './api/auth/logout/delete'
 import getRefreshToken from './api/auth/refresh-token/post'
+import getMangas from './api/manga/get'
 import getComments from './api/post/[id]/comment/get'
 import deletePost from './api/post/[id]/delete'
 import getPost from './api/post/[id]/get'
@@ -22,6 +23,7 @@ export default (app: BaseElysia) =>
     .use(loginByBBaton)
     .use(logout)
     .use(getRefreshToken)
+    .use(getMangas)
     .use(getComments)
     .use(deletePost)
     .use(getPost)
