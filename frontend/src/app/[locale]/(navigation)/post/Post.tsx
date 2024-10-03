@@ -30,7 +30,7 @@ export default function Post({ post, locale }: Props) {
   return (
     <Link
       className={`${styles.parent} grid grid-cols-[auto_1fr] gap-2 border-b px-4 pb-2 pt-3 transition`}
-      href={`/post/${post.id}`}
+      href={`/${locale}/post/${post.id}`}
     >
       <Squircle
         className="text-white"

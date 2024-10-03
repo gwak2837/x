@@ -19,5 +19,5 @@ export default function Post({ initialPost }: Props) {
     enabled: Boolean(accessToken),
   })
 
-  return <pre>{JSON.stringify(post, null, 2)}</pre>
+  return <pre className="w-80 overflow-auto">{JSON.stringify(post, null, 2)}</pre>
 }

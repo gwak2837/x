@@ -26,7 +26,7 @@ export default function ReferredPost({ locale, referredPost }: Props) {
 
   function goToReferredPost(e: React.MouseEvent) {
     e.preventDefault()
-    router.push(`/post/${referredPost.id}`)
+    router.push(`/${locale}/post/${referredPost.id}`)
   }
 
   return (
