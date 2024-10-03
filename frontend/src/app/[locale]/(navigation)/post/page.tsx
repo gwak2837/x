@@ -2,6 +2,7 @@ import type { PageProps } from '@/types/nextjs'
 
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
 import { dict } from '@/common/dict'
+import { mockedPosts } from '@/mock/post'
 
 import TopNavigation from '../TopNavigation'
 import PostCreationForm from './PostCreationForm'
@@ -13,19 +14,19 @@ async function fetchPosts() {
 
     if (response.status >= 500) {
       console.error('👀 ~ error message:', await response.text())
-      return []
+      return null
     }
-    if (response.status >= 400) return []
+    if (response.status >= 400) return null
 
     return await response.json()
   } catch (error) {
     console.error('👀 ~ error:', error)
-    return []
+    return null
   }
 }
 
 export default async function Page({ params }: PageProps) {
-  const posts = await fetchPosts()
+  const posts = (await fetchPosts()) ?? mockedPosts
   const locale = params.locale
 
   return (
@@ -39,9 +40,7 @@ export default async function Page({ params }: PageProps) {
         </TopNavigation>
         <PostCreationForm className="" />
         <ul>
-          {posts.map((post: any) => (
-            <PostItem key={post.id} locale={locale} post={post} />
-          ))}
+          {posts?.map((post: any) => <PostItem key={post.id} locale={locale} post={post} />)}
           <div className="h-20" />
         </ul>
       </div>

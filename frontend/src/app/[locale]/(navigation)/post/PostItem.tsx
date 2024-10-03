@@ -5,6 +5,7 @@ import { dict } from '@/common/dict'
 import Squircle from '@/components/Squircle'
 import BookmarkIcon from '@/svg/BookmarkIcon'
 import Icon3Dots from '@/svg/Icon3Dots'
+import IconChart from '@/svg/IconChart'
 import IconChat from '@/svg/IconChat'
 import IconHeart from '@/svg/IconHeart'
 import IconRepeat from '@/svg/IconRepeat'
@@ -22,7 +23,7 @@ export default function PostItem({ post, locale }: Props) {
   const imageURLs = post.imageURLs
   const author = post.author
   const referredPost = post.referredPost
-  const referredPostAuthor = referredPost?.author
+  const referredAuthor = referredPost?.author
   const referredPostContent = referredPost?.content
 
   return (
@@ -33,10 +34,10 @@ export default function PostItem({ post, locale }: Props) {
       <Squircle
         className="text-white"
         fill={THEME_COLOR}
-        src="https://pbs.twimg.com/profile_images/1699716066455506944/z9gfVj-__x96.jpg"
+        src={author.profileImageURLs?.[0]}
         wrapperClassName="w-10"
       >
-        {'user.nickname'.slice(0, 2)}
+        {author.nickname.slice(0, 2)}
       </Squircle>
       <div className="grid gap-3">
         <div className="flex min-w-0 justify-between gap-1">
@@ -59,22 +60,20 @@ export default function PostItem({ post, locale }: Props) {
           <div className="grid min-w-0 max-w-prose overflow-hidden rounded-2xl border border-gray-400 transition hover:bg-gray-200 dark:border-gray-600 hover:dark:bg-gray-800">
             <div className="grid gap-1 p-3">
               <div className="flex min-w-0 justify-between gap-1">
-                <div className="flex min-w-0 gap-2 whitespace-nowrap">
+                <div className="flex min-w-0 gap-1 whitespace-nowrap">
                   <Squircle
                     className="text-white"
                     fill={THEME_COLOR}
-                    src="https://pbs.twimg.com/profile_images/1699716066455506944/z9gfVj-__x96.jpg"
+                    src={author.profileImageURLs?.[0]}
                     wrapperClassName="w-6 flex-shrink-0"
                   >
-                    {'user.nickname'.slice(0, 2)}
+                    {referredAuthor.nickname.slice(0, 2)}
                   </Squircle>
                   <div className="min-w-0 max-w-40 overflow-hidden font-semibold">
-                    {referredPostAuthor.nickname}
+                    {referredAuthor.nickname}
                   </div>
                   <div className="flex min-w-0 items-center gap-1 text-gray-500">
-                    <div className="min-w-10 max-w-40 overflow-hidden">
-                      @{referredPostAuthor.name}
-                    </div>
+                    <div className="min-w-10 max-w-40 overflow-hidden">@{referredAuthor.name}</div>
                     <span>·</span>
                     <div className="min-w-10 overflow-hidden">{post.createdAt}</div>
                     {referredPost.updatedAt && <div className="text-xs">{dict.수정됨[locale]}</div>}
@@ -95,7 +94,7 @@ export default function PostItem({ post, locale }: Props) {
         )}
       </div>
       <div className="col-start-2 grid grid-cols-[1fr_auto] gap-2 text-gray-600 dark:text-gray-400">
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-4 gap-2">
           <div className="flex items-center gap-1">
             <IconChat className="w-9 p-2" />
             {post.commentCount}
@@ -108,9 +107,13 @@ export default function PostItem({ post, locale }: Props) {
             <IconHeart className="w-9 p-2" />
             {post.likeCount}
           </div>
+          <div className="flex items-center gap-1">
+            <IconChart className="w-9 p-2" />
+            {post.viewCount}
+          </div>
         </div>
         <div className="flex">
-          <BookmarkIcon className="w-9 p-2" selected />
+          <BookmarkIcon className="w-9 p-2" selected={false} />
           <LogoutIcon className="w-9 -rotate-90 p-2" />
         </div>
       </div>
