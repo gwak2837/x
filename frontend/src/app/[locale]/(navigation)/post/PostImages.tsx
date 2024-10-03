@@ -16,7 +16,7 @@ export default function PostImages({ className = '', imageClassName = '', urls }
       {urls.map((url) => (
         <Image
           alt="post-image"
-          className={`h-full max-h-[512px] object-cover ${postImageCount === 1 ? 'w-fit' : ''} ${postImageCount === 3 ? 'first-of-type:row-span-full' : ''} ${imageClassName}`}
+          className={`h-full max-h-[512px] object-cover ${postImageCount === 1 ? 'w-full' : ''} ${postImageCount === 3 ? 'first-of-type:row-span-full' : ''} ${imageClassName}`}
           height={512}
           src={url}
           width={650}

@@ -3,6 +3,7 @@ import type { PageProps } from '@/types/nextjs'
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
 import { dict } from '@/common/dict'
 import { mockedPosts } from '@/mock/post'
+import Link from 'next/link'
 
 import TopNavigation from '../TopNavigation'
 import PostCreationForm from './PostCreationForm'
@@ -25,17 +26,30 @@ async function fetchPosts() {
   }
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params, searchParams }: PageProps) {
   const posts = (await fetchPosts()) ?? mockedPosts
   const locale = params.locale
+  const { r } = searchParams
 
   return (
     <main className="grid h-full lg:grid-cols-[auto_1fr]">
       <div className="md:border-r">
-        <TopNavigation className="border-b sm:sticky sm:animate-none" locale={locale}>
+        <TopNavigation className="border-b sm:sticky" locale={locale}>
           <div className="grid grid-cols-2 items-center">
-            <div className="p-2 text-center">{dict.추천[locale]}</div>
-            <div className="p-2 text-center">{dict.팔로우_중[locale]}</div>
+            <Link
+              aria-selected={r === '1'}
+              className="aria-selected: p-4 text-center transition hover:bg-gray-200 aria-selected:font-bold hover:dark:bg-gray-800"
+              href="?r=1"
+            >
+              {dict.추천[locale]}
+            </Link>
+            <Link
+              aria-selected={r === '2'}
+              className="p-4 text-center transition hover:bg-gray-200 aria-selected:font-bold hover:dark:bg-gray-800"
+              href="?r=2"
+            >
+              {dict.팔로우_중[locale]}
+            </Link>
           </div>
         </TopNavigation>
         <PostCreationForm className="" />
@@ -49,4 +63,4 @@ export default async function Page({ params }: PageProps) {
   )
 }
 
-// animate-fade-out-up supports-no-scroll-driven-animations:animate-none [animation-range:0px_93px] [animation-timeline:scroll()]
+// animate-fade-out-up supports-no-scroll-driven-animations:animate-none [animation-range:0px_93px] [animation-timeline:scroll()] sm:animate-none
