@@ -7,7 +7,7 @@ type Props = {
   className?: string
 }
 
-export default function Drawer({ className, children }: Props) {
+export default function Drawer({ className = '', children }: Props) {
   const [isOpened, setIsOpened] = useState(false)
 
   function openDrawer() {
@@ -16,7 +16,7 @@ export default function Drawer({ className, children }: Props) {
     bodyStyle.overflow = 'hidden'
     bodyStyle.pointerEvents = 'none'
     bodyStyle.touchAction = 'none'
-    bodyStyle.transform = 'translateX(80%)'
+    bodyStyle.margin = '0 -80% 0 80%'
   }
 
   function closeDrawer() {
@@ -25,7 +25,7 @@ export default function Drawer({ className, children }: Props) {
     bodyStyle.overflow = ''
     bodyStyle.pointerEvents = ''
     bodyStyle.touchAction = ''
-    bodyStyle.transform = ''
+    bodyStyle.margin = ''
   }
 
   function handleChange(e: ChangeEvent) {
@@ -50,12 +50,18 @@ export default function Drawer({ className, children }: Props) {
     }
   }, [])
 
+  useEffect(() => {
+    return () => {
+      closeDrawer()
+    }
+  }, [])
+
   return (
     <>
-      <label className={'peer relative ' + className}>
+      <label className={`peer relative ${className}`}>
         <input
           checked={isOpened}
-          className="hover:bg-midnight-500/10 hover:dark:bg-midnight-500/40 peer absolute inset-0 appearance-none overflow-hidden rounded-full transition-colors"
+          className="hover:bg-midnight-500/10 hover:dark:bg-midnight-500/40 peer absolute inset-0 appearance-none overflow-hidden rounded-full transition"
           onChange={handleChange}
           type="checkbox"
         />
@@ -64,10 +70,10 @@ export default function Drawer({ className, children }: Props) {
         </div>
       </label>
       <div
-        className="pointer-events-none fixed inset-0 z-50 h-dvh bg-black/25 opacity-0 transition duration-300 peer-has-[:checked]:pointer-events-auto peer-has-[:checked]:opacity-100 dark:bg-white/25"
+        className="pointer-events-none fixed inset-0 z-50 h-dvh bg-black/25 opacity-0 transition-all duration-300 peer-has-[:checked]:pointer-events-auto peer-has-[:checked]:ml-[80%] peer-has-[:checked]:opacity-100 dark:bg-white/25"
         onClick={closeDrawer}
       />
-      <div className="pointer-events-auto fixed inset-0 h-dvh w-4/5 -translate-x-full transition">
+      <div className="pointer-events-auto fixed inset-0 h-dvh w-4/5 -translate-x-full transition duration-300 peer-has-[:checked]:translate-x-0">
         {children[1]}
       </div>
     </>

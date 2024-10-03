@@ -32,7 +32,7 @@ export default async function Page({ params }: PageProps) {
     <main className="grid h-full lg:grid-cols-[auto_1fr]">
       <div className="border-gray-300 md:border-r dark:border-gray-700">
         <TopNavigation
-          className="animate-fade-out-up supports-no-scroll-driven-animations:animate-none border-b border-gray-300 [animation-range:0px_93px] [animation-timeline:scroll()] sm:sticky sm:animate-none dark:border-gray-700"
+          className="border-b border-gray-300 sm:sticky sm:animate-none dark:border-gray-700"
           locale={locale}
         >
           <div className="grid grid-cols-2 items-center">
@@ -40,7 +40,6 @@ export default async function Page({ params }: PageProps) {
             <div className="p-2 text-center">{dict.팔로우_중[locale]}</div>
           </div>
         </TopNavigation>
-        <div className="h-24 sm:hidden" />
         <PostCreationForm className="" />
         <ul>
           {posts.map((post: any) => (
@@ -53,3 +52,5 @@ export default async function Page({ params }: PageProps) {
     </main>
   )
 }
+
+// animate-fade-out-up supports-no-scroll-driven-animations:animate-none [animation-range:0px_93px] [animation-timeline:scroll()]

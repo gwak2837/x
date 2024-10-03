@@ -202,7 +202,7 @@ export default function RootLayout({ children, params }: LayoutProps) {
       <meta content={DESCRIPTION} name="subject" />
       <meta content="general" name="rating" />
 
-      <body className={`h-full transition duration-300 ${myFont.className}`}>
+      <body className={`h-full transition-all duration-300 ${myFont.className}`}>
         <ReactQueryProvider>{children}</ReactQueryProvider>
         <Authentication />
         <Toaster toastOptions={{ error: { duration: 6000 } }} />
