@@ -7,7 +7,7 @@ export const mockedPosts = [
     status: 0,
     content:
       'asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf',
-    imageURLs: ['https://pbs.twimg.com/media/GY5TDqeacAA3mkM?format=jpg'],
+    imageURLs: ['https://pbs.twimg.com/media/GY5vzT6akAArdbU?format=jpg'],
     referredPostId: '13',
     author: {
       id: '35',

@@ -39,7 +39,7 @@ export default function PostItem({ post, locale }: Props) {
       >
         {author.nickname.slice(0, 2)}
       </Squircle>
-      <div className="grid gap-3">
+      <div className="grid gap-3 lg:w-min">
         <div className="flex min-w-0 justify-between gap-1">
           <div className="flex min-w-0 gap-2 whitespace-nowrap max-[319px]:flex-wrap">
             <div className="min-w-0 overflow-hidden font-semibold">{author.nickname}</div>
@@ -93,28 +93,28 @@ export default function PostItem({ post, locale }: Props) {
           </div>
         )}
       </div>
-      <div className="col-start-2 grid grid-cols-[1fr_auto] gap-2 text-gray-600 dark:text-gray-400">
-        <div className="grid grid-cols-4 gap-2">
-          <div className="flex items-center gap-1">
-            <IconChat className="w-9 p-2" />
+      <div className="col-start-2 flex flex-wrap gap-2 text-gray-600 dark:text-gray-400">
+        <div className="grid grow grid-cols-4 gap-1 text-sm">
+          <div className="flex items-center">
+            <IconChat className="w-8 shrink-0 p-2" />
             {post.commentCount}
           </div>
-          <div className="flex items-center gap-1">
-            <IconRepeat className="w-9 p-2" />
+          <div className="flex items-center">
+            <IconRepeat className="w-8 shrink-0 p-2" />
             {post.repostCount}
           </div>
-          <div className="flex items-center gap-1">
-            <IconHeart className="w-9 p-2" />
+          <div className="flex items-center">
+            <IconHeart className="w-8 shrink-0 p-2" />
             {post.likeCount}
           </div>
-          <div className="flex items-center gap-1">
-            <IconChart className="w-9 p-2" />
+          <div className="flex items-center">
+            <IconChart className="w-8 shrink-0 p-2" />
             {post.viewCount}
           </div>
         </div>
         <div className="flex">
-          <BookmarkIcon className="w-9 p-2" selected={false} />
-          <LogoutIcon className="w-9 -rotate-90 p-2" />
+          <BookmarkIcon className="w-8 p-2" selected={false} />
+          <LogoutIcon className="w-8 -rotate-90 p-2" />
         </div>
       </div>
     </Link>
