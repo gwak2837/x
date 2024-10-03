@@ -10,14 +10,14 @@ import PostItem from './PostItem'
 async function fetchPosts() {
   try {
     const response = await fetch(`${NEXT_PUBLIC_BACKEND_URL}/post`)
+
     if (response.status >= 500) {
       console.error('👀 ~ error message:', await response.text())
       return []
     }
     if (response.status >= 400) return []
 
-    const posts = await response.json()
-    return posts
+    return await response.json()
   } catch (error) {
     console.error('👀 ~ error:', error)
     return []
@@ -30,11 +30,8 @@ export default async function Page({ params }: PageProps) {
 
   return (
     <main className="grid h-full lg:grid-cols-[auto_1fr]">
-      <div className="border-gray-300 md:border-r dark:border-gray-700">
-        <TopNavigation
-          className="border-b border-gray-300 sm:sticky sm:animate-none dark:border-gray-700"
-          locale={locale}
-        >
+      <div className="md:border-r">
+        <TopNavigation className="border-b sm:sticky sm:animate-none" locale={locale}>
           <div className="grid grid-cols-2 items-center">
             <div className="p-2 text-center">{dict.추천[locale]}</div>
             <div className="p-2 text-center">{dict.팔로우_중[locale]}</div>
@@ -45,7 +42,7 @@ export default async function Page({ params }: PageProps) {
           {posts.map((post: any) => (
             <PostItem key={post.id} locale={locale} post={post} />
           ))}
-          <div className="h-40" />
+          <div className="h-20" />
         </ul>
       </div>
       <div className="hidden lg:block">검색</div>

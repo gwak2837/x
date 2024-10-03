@@ -23,7 +23,7 @@ export default function TopNavigation({ children, className, locale }: Props) {
       <div className="flex items-center justify-between gap-2 px-2 sm:hidden">
         <Drawer>
           <MenuIcon className="relative h-10 w-10 cursor-pointer p-2" />
-          <div className="h-full overflow-x-auto border-r border-gray-300 p-4 dark:border-gray-700">
+          <div className="h-full overflow-x-auto border-r p-4">
             <DrawerProfileLink />
             <div>df</div>
             <div>df</div>

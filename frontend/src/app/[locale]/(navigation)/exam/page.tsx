@@ -11,7 +11,7 @@ export default async function Page({ params, searchParams }: PageProps) {
   return (
     <>
       <main className="h-full">
-        <TopNavigation className="border-b border-gray-300 dark:border-gray-700" locale={locale} />
+        <TopNavigation className="border-b" locale={locale} />
         <div className="h-12" />
 
         <pre className="overflow-x-scroll">{JSON.stringify({ params, searchParams }, null, 2)}</pre>

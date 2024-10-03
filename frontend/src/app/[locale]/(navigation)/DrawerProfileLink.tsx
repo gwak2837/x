@@ -77,7 +77,7 @@ export default function DrawerProfileLink({ className }: Props) {
           className="hover:bg-midnight-500/10 hover:dark:bg-midnight-500/40 peer absolute inset-0 appearance-none overflow-hidden rounded-full transition-colors"
           type="checkbox"
         />
-        <div className="pointer-events-none absolute -top-6 right-0 z-10 hidden w-[271px] -translate-y-full rounded-2xl border border-gray-300 bg-white p-4 opacity-0 shadow-lg transition-opacity peer-checked:pointer-events-auto peer-checked:opacity-100 xl:block dark:border-gray-700 dark:bg-gray-800">
+        <div className="pointer-events-none absolute -top-6 right-0 z-10 hidden w-[271px] -translate-y-full rounded-2xl border bg-white p-4 opacity-0 shadow-lg transition-opacity peer-checked:pointer-events-auto peer-checked:opacity-100 xl:block dark:bg-gray-800">
           <button
             className="group flex w-fit items-center gap-5 rounded-full p-3 text-red-500 transition-colors hover:bg-red-500/10 focus-visible:outline focus-visible:outline-red-600 active:scale-90 disabled:text-gray-500 disabled:hover:bg-inherit disabled:active:scale-100 xl:m-0 hover:dark:bg-red-500/20 focus:dark:outline-red-200 disabled:dark:text-gray-400"
             disabled={isPending}
