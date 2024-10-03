@@ -1,0 +1,9 @@
+.parent:hover:not(:has(.child:hover)) {
+  @media (hover: hover) and (pointer: fine) {
+    background-color: rgb(243 244 246);
+
+    @media (prefers-color-scheme: dark) {
+      background-color: rgb(17 24 39);
+    }
+  }
+}

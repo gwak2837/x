@@ -1,4 +1,5 @@
 import type { Locale } from '@/middleware'
+import type { TPost } from '@/mock/post'
 
 import { THEME_COLOR } from '@/common/constants'
 import { dict } from '@/common/dict'
@@ -12,23 +13,23 @@ import IconRepeat from '@/svg/IconRepeat'
 import LogoutIcon from '@/svg/LogoutIcon'
 import Link from 'next/link'
 
+import styles from './Post.module.css'
 import PostImages from './PostImages'
+import ReferredPost from './ReferredPost'
 
 type Props = {
-  post: Record<string, any>
+  post: TPost
   locale: Locale
 }
 
-export default function PostItem({ post, locale }: Props) {
+export default function Post({ post, locale }: Props) {
   const imageURLs = post.imageURLs
   const author = post.author
   const referredPost = post.referredPost
-  const referredAuthor = referredPost?.author
-  const referredPostContent = referredPost?.content
 
   return (
     <Link
-      className="grid grid-cols-[auto_1fr] gap-2 border-b px-4 pb-2 pt-3 transition hover:bg-gray-100 hover:dark:bg-gray-900"
+      className={`${styles.parent} grid grid-cols-[auto_1fr] gap-2 border-b px-4 pb-2 pt-3 transition`}
       href={`/post/${post.id}`}
     >
       <Squircle
@@ -56,42 +57,7 @@ export default function PostItem({ post, locale }: Props) {
         {imageURLs && (
           <PostImages className="max-h-[512px] overflow-hidden border" urls={imageURLs} />
         )}
-        {referredPost && (
-          <div className="grid min-w-0 max-w-prose overflow-hidden rounded-2xl border border-gray-400 transition hover:bg-gray-200 dark:border-gray-600 hover:dark:bg-gray-800">
-            <div className="grid gap-1 p-3">
-              <div className="flex min-w-0 justify-between gap-1">
-                <div className="flex min-w-0 gap-1 whitespace-nowrap">
-                  <Squircle
-                    className="text-white"
-                    fill={THEME_COLOR}
-                    src={author.profileImageURLs?.[0]}
-                    wrapperClassName="w-6 flex-shrink-0"
-                  >
-                    {referredAuthor.nickname.slice(0, 2)}
-                  </Squircle>
-                  <div className="min-w-0 max-w-40 overflow-hidden font-semibold">
-                    {referredAuthor.nickname}
-                  </div>
-                  <div className="flex min-w-0 items-center gap-1 text-gray-500">
-                    <div className="min-w-10 max-w-40 overflow-hidden">@{referredAuthor.name}</div>
-                    <span>·</span>
-                    <div className="min-w-10 overflow-hidden">{post.createdAt}</div>
-                    {referredPost.updatedAt && <div className="text-xs">{dict.수정됨[locale]}</div>}
-                  </div>
-                </div>
-                <Icon3Dots className="w-5 text-gray-600" />
-              </div>
-              {referredPostContent && <p>{referredPostContent}</p>}
-            </div>
-            {imageURLs && (
-              <PostImages
-                className="max-h-[256px] w-full"
-                imageClassName="w-full"
-                urls={imageURLs}
-              />
-            )}
-          </div>
-        )}
+        {referredPost && <ReferredPost locale={locale} referredPost={referredPost} />}
       </div>
       <div className="col-start-2 flex flex-wrap gap-2 text-gray-600 dark:text-gray-400">
         <div className="grid grow grid-cols-4 gap-1 text-sm">
