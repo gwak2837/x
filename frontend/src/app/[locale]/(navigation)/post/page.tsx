@@ -1,3 +1,4 @@
+import type { TPost } from '@/mock/post'
 import type { PageProps } from '@/types/nextjs'
 
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
@@ -19,7 +20,7 @@ async function fetchPosts() {
     }
     if (response.status >= 400) return null
 
-    return await response.json()
+    return (await response.json()) as TPost[]
   } catch (error) {
     console.error('👀 :', error)
     return null
@@ -67,7 +68,7 @@ export default async function Page({ params, searchParams }: PageProps) {
         </TopNavigation>
         <PostCreationForm className="" />
         <ul className="overscroll-none">
-          {posts?.map((post: any) => <Post key={post.id} locale={locale} post={post} />)}
+          {posts?.map((post) => <Post key={post.id} locale={locale} post={post} />)}
           <div className="h-20" />
         </ul>
       </div>
