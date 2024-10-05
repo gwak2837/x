@@ -14,16 +14,14 @@ export default function PostImages({ className = '', imageClassName = '', urls }
       className={`grid ${postImageCount > 1 ? 'aspect-video grid-cols-2' : 'w-fit'} ${postImageCount >= 3 ? 'grid-rows-2' : ''} max-w-prose gap-0.5 rounded-2xl ${className}`}
     >
       {urls.map((url, i) => (
-        <div className={`${postImageCount === 3 ? 'first-of-type:row-span-full' : ''}`}>
-          <Image
-            alt="post-image"
-            className={`h-full max-h-[512px] object-cover ${postImageCount === 1 ? 'w-full' : ''} ${imageClassName}`}
-            height={512}
-            key={i}
-            src={url}
-            width={650}
-          />
-        </div>
+        <Image
+          alt="post-image"
+          className={`h-full max-h-[512px] object-cover ${postImageCount === 1 ? 'w-full' : ''} ${postImageCount === 3 ? 'first-of-type:row-span-full' : ''} ${imageClassName}`}
+          height={512}
+          key={i}
+          src={url}
+          width={650}
+        />
       ))}
     </div>
   )
