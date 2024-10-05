@@ -10,30 +10,30 @@
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.4",
-    "@sentry/nextjs": "^8.26.0",
-    "@tanstack/react-query": "^5.51.23",
+    "@sentry/nextjs": "^8.33.1",
+    "@tanstack/react-query": "^5.59.0",
     "negotiator": "^0.6.3",
-    "next": "14.2.5",
+    "next": "^14.2.14",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.4.1",
     "sanitize.css": "^13.0.0",
-    "ua-parser-js": "^1.0.38",
-    "zustand": "^4.5.4"
+    "ua-parser-js": "^1.0.39",
+    "zustand": "^4.5.5"
   },
   "devDependencies": {
-    "@playwright/test": "^1.46.0",
+    "@playwright/test": "^1.47.2",
     "@types/negotiator": "^0.6.3",
     "@types/ua-parser-js": "^0.7.39",
-    "@types/node": "^20.14.15",
-    "@types/react": "^18.3.3",
+    "@types/node": "^20.16.10",
+    "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.20",
-    "cssnano": "^7.0.5",
-    "eslint": "^8.57.0",
+    "cssnano": "^7.0.6",
+    "eslint": "^8.57.1",
     "eslint-config-next": "14.2.4",
-    "postcss": "^8.4.41",
-    "tailwindcss": "^3.4.10",
-    "typescript": "^5.5.4"
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.13",
+    "typescript": "^5.6.2"
   }
 }

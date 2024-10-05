@@ -1,14 +1,8 @@
 'use client'
 
+import useIsMounted from '@/hook/useIsMounted'
 import Image from 'next/image'
-import {
-  type MouseEvent,
-  type ReactNode,
-  type TouchEvent,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import { type MouseEvent, type ReactNode, type TouchEvent, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 
 type Props = {
@@ -114,11 +108,7 @@ export default function Modal({
   }`
 
   // --
-  const [isMounted, setIsMounted] = useState(false)
-
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
+  const isMounted = useIsMounted()
 
   if (!isMounted) return null
 

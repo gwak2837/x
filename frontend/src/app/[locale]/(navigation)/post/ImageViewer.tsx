@@ -12,11 +12,11 @@ import Image from 'next/image'
 import { useRef, useState } from 'react'
 
 type Props = {
-  urls: string[]
+  imageURLs: string[]
   initialPost: TPost
 }
 
-export default function ImageViewer({ urls, initialPost }: Props) {
+export default function ImageViewer({ imageURLs, initialPost }: Props) {
   const [isPostVisible, setIsPostVisible] = useState(false)
   const [isOnFirstImage, firstRef] = useIsIntersected<HTMLDivElement>(true)
   const [isOnLastImage, lastRef] = useIsIntersected<HTMLDivElement>(false)
@@ -30,12 +30,11 @@ export default function ImageViewer({ urls, initialPost }: Props) {
     enabled: isPostVisible,
   })
 
-  const className = 'absolute disabled:opacity-25 rounded-full bg-white/50  dark:bg-black/50'
-
   const imageContainerRef = useRef<HTMLDivElement>(null)
-  const imageContainer = imageContainerRef.current
 
   function scrollToLeft() {
+    const imageContainer = imageContainerRef.current
+
     imageContainer?.scrollTo({
       left: imageContainer.scrollLeft - imageContainer.clientWidth,
       behavior: 'smooth',
@@ -43,18 +42,22 @@ export default function ImageViewer({ urls, initialPost }: Props) {
   }
 
   function scrollToRight() {
+    const imageContainer = imageContainerRef.current
+
     imageContainer?.scrollTo({
       left: imageContainer.scrollLeft + imageContainer.clientWidth,
       behavior: 'smooth',
     })
   }
 
+  const className = 'absolute disabled:opacity-25 rounded-full bg-white/50  dark:bg-black/50'
+
   return (
     <div className="fixed inset-0 z-10 grid grid-cols-[1fr_auto]">
       <div className="relative">
         <div className="flex h-full snap-x snap-mandatory overflow-x-auto" ref={imageContainerRef}>
           <div ref={firstRef} />
-          {urls.map((url, i) => (
+          {imageURLs.map((url, i) => (
             <div className="relative w-full flex-shrink-0 snap-center snap-always" key={i}>
               <Image alt="post-image" className="object-contain" fill src={url} />
             </div>
