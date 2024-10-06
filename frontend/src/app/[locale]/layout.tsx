@@ -203,10 +203,12 @@ export default function RootLayout({ children, params }: LayoutProps) {
       <meta content="general" name="rating" />
 
       <body className={`h-full overscroll-y-none transition-all duration-300 ${myFont.className}`}>
-        <ReactQueryProvider>{children}</ReactQueryProvider>
+        <ReactQueryProvider>
+          {children}
+          <div id="fixed-root" />
+        </ReactQueryProvider>
         <Authentication />
         <Toaster toastOptions={{ error: { duration: 6000 } }} />
-        <div id="modal-root" />
       </body>
     </html>
   )

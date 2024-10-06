@@ -55,7 +55,11 @@ export default function Post({ post, locale }: Props) {
         </div>
         <p className="min-w-0 max-w-prose lg:min-w-[65ch]">{post.content}</p>
         {imageURLs && (
-          <PostImages className="max-h-[512px] overflow-hidden border" urls={imageURLs} />
+          <PostImages
+            className="max-h-[512px] overflow-hidden border"
+            initialPost={post}
+            urls={imageURLs}
+          />
         )}
         {referredPost && <ReferredPost locale={locale} referredPost={referredPost} />}
       </div>

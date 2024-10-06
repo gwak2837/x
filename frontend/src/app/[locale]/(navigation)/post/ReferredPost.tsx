@@ -1,7 +1,7 @@
 'use client'
 
 import type { Locale } from '@/middleware'
-import type { TReferedPost } from '@/mock/post'
+import type { TPost, TReferedPost } from '@/mock/post'
 
 import { THEME_COLOR } from '@/common/constants'
 import { dict } from '@/common/dict'
@@ -63,6 +63,7 @@ export default function ReferredPost({ locale, referredPost }: Props) {
         <PostImages
           className="max-h-[256px] w-full"
           imageClassName="w-full"
+          initialPost={referredPost as TPost}
           urls={referredPostImageURLs}
         />
       )}
