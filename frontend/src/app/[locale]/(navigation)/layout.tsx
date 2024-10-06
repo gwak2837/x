@@ -19,7 +19,7 @@ export default function Layout({ children, params }: LayoutProps) {
   return (
     <div className="mx-auto grid h-full max-w-screen-md grid-rows-[auto_1fr] sm:grid-cols-[auto_1fr] lg:max-w-screen-lg xl:max-w-screen-xl">
       <header
-        className="pb-safe sticky bottom-0 z-10 order-2 grid h-fit w-full max-w-screen-md grid-cols-[4fr_1fr] overflow-y-auto border-t backdrop-blur sm:fixed sm:inset-auto sm:flex sm:h-full sm:w-20 sm:flex-col sm:justify-between sm:gap-8 sm:border-r sm:border-t-0 sm:p-2 lg:max-w-screen-lg xl:w-72 xl:max-w-screen-xl"
+        className="pb-safe sticky bottom-0 z-50 order-2 grid h-fit w-full max-w-screen-md grid-cols-[4fr_1fr] overflow-y-auto border-t backdrop-blur sm:fixed sm:inset-auto sm:flex sm:h-full sm:w-20 sm:flex-col sm:justify-between sm:gap-8 sm:border-r sm:border-t-0 sm:p-2 lg:max-w-screen-lg xl:w-72 xl:max-w-screen-xl"
         role="banner"
       >
         <nav

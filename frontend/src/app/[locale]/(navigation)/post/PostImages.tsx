@@ -14,6 +14,8 @@ type Props = {
   imageClassName?: string
 }
 
+const CLOSED = -1
+
 export default function PostImages({
   className = '',
   imageClassName = '',
@@ -21,7 +23,7 @@ export default function PostImages({
   urls,
 }: Props) {
   const postImageCount = urls.length
-  const [isOpened, setIsOpened] = useState(-1)
+  const [isOpened, setIsOpened] = useState(CLOSED)
 
   return (
     <div
@@ -42,12 +44,12 @@ export default function PostImages({
           width={650}
         />
       ))}
-      {isOpened > -1 && (
+      {isOpened !== CLOSED && (
         <ImagesViewer
           imageURLs={urls}
           initialImageIndex={isOpened}
           initialPost={initialPost}
-          onClose={() => setIsOpened(-1)}
+          onClose={() => setIsOpened(CLOSED)}
         />
       )}
     </div>

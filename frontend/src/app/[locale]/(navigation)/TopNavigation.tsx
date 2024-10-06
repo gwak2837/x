@@ -17,7 +17,7 @@ type Props = {
 export default function TopNavigation({ children, className, locale }: Props) {
   return (
     <nav
-      className={`sticky top-0 z-50 w-full bg-white dark:bg-black ${className}`}
+      className={`sticky top-0 z-40 w-full bg-white dark:bg-black ${className}`}
       role="navigation"
     >
       <div className="flex items-center justify-between gap-2 px-2 sm:hidden">

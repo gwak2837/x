@@ -22,7 +22,7 @@ type Props = {
   locale: Locale
 }
 
-export default function Post({ post, locale }: Props) {
+export default function PostItem({ post, locale }: Props) {
   const imageURLs = post.imageURLs
   const author = post.author
   const referredPost = post.referredPost
@@ -88,5 +88,51 @@ export default function Post({ post, locale }: Props) {
         </div>
       </div>
     </Link>
+  )
+}
+
+export function PostSkeleton() {
+  return (
+    <div
+      className={`${styles.parent} grid grid-cols-[auto_1fr] gap-2 border-b px-4 pb-2 pt-3 transition`}
+    >
+      <Squircle className="text-white" fill={THEME_COLOR} wrapperClassName="w-10" />
+      <div className="grid gap-3 lg:w-min">
+        <div className="flex min-w-0 justify-between gap-1">
+          <div className="inline-block h-6 w-full animate-pulse rounded-xl bg-gray-100 dark:bg-gray-900" />
+          <Icon3Dots className="w-5 text-gray-600" />
+        </div>
+        <p className="min-w-0 max-w-prose animate-pulse lg:min-w-[65ch]">
+          <span className="inline-block h-4 w-full rounded-full bg-gray-100 dark:bg-gray-900" />
+          <span className="inline-block h-4 w-1/2 rounded-full bg-gray-100 dark:bg-gray-900" />
+          <span className="inline-block h-4 w-2/3 rounded-full bg-gray-100 dark:bg-gray-900" />
+        </p>
+        <div className="inline-block h-60 w-full animate-pulse rounded-xl bg-gray-100 dark:bg-gray-900" />
+      </div>
+      <div className="col-start-2 flex flex-wrap gap-2 text-gray-600 dark:text-gray-400">
+        <div className="grid grow grid-cols-4 gap-1 text-sm">
+          <div className="flex items-center">
+            <IconChat className="w-8 shrink-0 p-2" />
+            <div className="h-4 w-full min-w-4 animate-pulse rounded-full bg-gray-100 dark:bg-gray-900" />
+          </div>
+          <div className="flex items-center">
+            <IconRepeat className="w-8 shrink-0 p-2" />
+            <div className="h-4 w-full min-w-4 animate-pulse rounded-full bg-gray-100 dark:bg-gray-900" />
+          </div>
+          <div className="flex items-center">
+            <IconHeart className="w-8 shrink-0 p-2" />
+            <div className="h-4 w-full min-w-4 animate-pulse rounded-full bg-gray-100 dark:bg-gray-900" />
+          </div>
+          <div className="flex items-center">
+            <IconChart className="w-8 shrink-0 p-2" />
+            <div className="h-4 w-full min-w-4 animate-pulse rounded-full bg-gray-100 dark:bg-gray-900" />
+          </div>
+        </div>
+        <div className="flex">
+          <BookmarkIcon className="w-8 p-2" selected={false} />
+          <LogoutIcon className="w-8 -rotate-90 p-2" />
+        </div>
+      </div>
+    </div>
   )
 }
