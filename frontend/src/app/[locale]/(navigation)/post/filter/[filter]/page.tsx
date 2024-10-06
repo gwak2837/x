@@ -2,8 +2,6 @@ import type { PageProps } from '@/types/nextjs'
 
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
 import { type TPost, mockedPosts } from '@/mock/post'
-import Image from 'next/image'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import type { Filter } from './enum'

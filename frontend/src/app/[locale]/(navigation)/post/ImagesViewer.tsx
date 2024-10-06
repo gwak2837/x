@@ -40,6 +40,7 @@ export default function ImagesViewer({
   const locale = params.locale
 
   const [isPostVisible, setIsPostVisible] = useState(false)
+  const [isMenuVisible, setIsMenuVisible] = useState(false)
   const [isOnFirstImage, firstRef] = useIsIntersected<HTMLDivElement>(false)
   const [isOnLastImage, lastRef] = useIsIntersected<HTMLDivElement>(false)
 
@@ -76,7 +77,7 @@ export default function ImagesViewer({
     onClose?.()
   }
 
-  const className = 'absolute disabled:opacity-25 rounded-full bg-white/50  dark:bg-black/50'
+  const className = 'absolute disabled:opacity-25 rounded-full bg-white/50 dark:bg-black/50'
 
   useEffect(() => {
     if (!initialImageIndex) return
@@ -97,7 +98,7 @@ export default function ImagesViewer({
       bodyStyle.overflow = ''
       bodyStyle.touchAction = ''
     }
-  }, [onClose, open])
+  }, [])
 
   return createPortal(
     <div className="fixed inset-0 z-50 grid grid-cols-[1fr_auto] bg-black/90">
@@ -120,25 +121,35 @@ export default function ImagesViewer({
               <IconX className="w-5" />
             </button>
           </KeybordShortcut>
-          <label
-            className={`${className} right-3 top-3 rounded-full bg-white/50 p-1 lg:hidden dark:bg-black/50`}
+          <button
+            className={`${className} right-3 top-3 p-1 lg:hidden`}
+            onClick={() => setIsMenuVisible(true)}
           >
-            <input className="peer hidden" type="checkbox" />
             <Icon3Dots className="w-7" />
-            <div className="pointer-events-none fixed inset-0 peer-checked:pointer-events-auto" />
-            <div className="absolute right-0 top-0 hidden overflow-hidden whitespace-nowrap rounded-xl border-2 bg-white text-sm font-bold peer-checked:block dark:bg-black">
-              <ul>
-                <li>
-                  <Link
-                    className="block px-4 py-3 transition hover:bg-gray-300 dark:hover:bg-gray-800"
-                    href={`/${locale}/post/${post.id}`}
-                  >
-                    게시물 보기
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </label>
+            {isMenuVisible && (
+              <>
+                <div
+                  className="pointer-events-auto fixed inset-0 cursor-default"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setIsMenuVisible(false)
+                  }}
+                />
+                <div className="absolute right-0 top-0 block overflow-hidden whitespace-nowrap rounded-xl border-2 bg-white text-sm font-bold dark:bg-black">
+                  <ul>
+                    <li>
+                      <Link
+                        className="block px-4 py-3 transition hover:bg-gray-300 dark:hover:bg-gray-800"
+                        href={`/${locale}/post/${post.id}`}
+                      >
+                        게시물 보기
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              </>
+            )}
+          </button>
           <button
             className={`${className} right-3 top-3 hidden p-1 lg:block`}
             onClick={() => setIsPostVisible((prev) => !prev)}
