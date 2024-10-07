@@ -1,6 +1,7 @@
 'use client'
 
 import useIsMounted from '@/hook/useIsMounted'
+import IconX from '@/svg/IconX'
 import Image from 'next/image'
 import { type MouseEvent, type ReactNode, type TouchEvent, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
@@ -103,7 +104,7 @@ export default function Modal({
     )
   }
 
-  const modalBackground = `fixed inset-0 z-40 flex items-center justify-center bg-black/20 dark:bg-black/80 transition duration-300 ${
+  const modalBackground = `fixed inset-0 z-50 flex items-center justify-center bg-black/20 dark:bg-black/80 transition duration-300 ${
     open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
   }`
 
@@ -115,14 +116,9 @@ export default function Modal({
   return createPortal(
     <div className={modalBackground} onClick={closeModal}>
       {showCloseButton && (
-        <Image
-          alt="x"
-          className="absolute right-0 top-0 z-50 cursor-pointer p-3"
-          height="48"
-          onClick={closeModal}
-          src="/assets/x.svg"
-          width="48"
-        />
+        <button onClick={closeModal}>
+          <IconX className="absolute right-2 top-2 z-50 w-8 cursor-pointer rounded-full bg-gray-500/30 p-1" />
+        </button>
       )}
       <div
         className={`absolute z-50 transition duration-300 ${open ? 'scale-100' : 'scale-90'} ${className}`}
