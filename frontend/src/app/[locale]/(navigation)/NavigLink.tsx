@@ -23,7 +23,7 @@ export default function NavigLink({
   onClick,
 }: Props) {
   const pathname = usePathname()
-  const isSelected = pathname === href
+  const isSelected = pathname.includes(href)
 
   return (
     <Link

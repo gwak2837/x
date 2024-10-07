@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation'
 
 import type { Filter } from './enum'
 
-import PostItem from '../../PostItem'
+import PostItem from './PostItem'
 import { filters } from './enum'
 
 type Params = {
@@ -39,6 +39,10 @@ export default async function Page({ params }: PageProps) {
 
   const locale = params.locale
   const posts = (await fetchPosts({ filter })) ?? mockedPosts
+
+  if (!posts) {
+    notFound()
+  }
 
   return <>{posts?.map((post) => <PostItem key={post.id} locale={locale} post={post} />)}</>
 }
