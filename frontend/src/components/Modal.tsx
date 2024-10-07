@@ -2,7 +2,6 @@
 
 import useIsMounted from '@/hook/useIsMounted'
 import IconX from '@/svg/IconX'
-import Image from 'next/image'
 import { type MouseEvent, type ReactNode, type TouchEvent, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 
