@@ -63,7 +63,7 @@ export default function ReferredPost({ locale, referredPost }: Props) {
         <PostImages
           className="max-h-[256px] w-full"
           imageClassName="w-full"
-          initialPost={referredPost as TPost}
+          initialPost={referredPost as unknown as TPost}
           urls={referredPostImageURLs}
         />
       )}

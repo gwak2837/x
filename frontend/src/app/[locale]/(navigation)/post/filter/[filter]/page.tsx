@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation'
 
 import type { Filter } from './enum'
 
-import PostItem from './PostItem'
+import PostItem from '../../../../../../components/post/PostItem'
 import { filters } from './enum'
 
 type Params = {

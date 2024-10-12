@@ -1,7 +1,23 @@
-export type TPost = (typeof mockedPosts)[number]
+export type TPost2 = (typeof mockedPosts)[number]
+export type TPost = { parentPosts?: TPost2[] } & TPost2
 export type TReferedPost = NonNullable<TPost['referredPost']>
 
 export const mockedPosts = [
+  {
+    id: '15',
+    createdAt: '2024-10-10T12:20:08.751Z',
+    publishAt: '2024-10-10T12:20:08.751Z',
+    status: 0,
+    content: '1123',
+    author: {
+      id: '35',
+      name: '22895fe0-011e-4517-a5fa-c10c0fde4162',
+      nickname: '열정적인 유혹자의 질서',
+      profileImageURLs: [
+        'https://pbs.twimg.com/profile_images/1841000372422524928/9OLUwaH7_400x400.jpg',
+      ],
+    },
+  },
   {
     id: '14',
     createdAt: '2024-07-31T15:35:35.465Z',
@@ -23,8 +39,8 @@ export const mockedPosts = [
     referredPost: {
       id: '13',
       createdAt: '2024-07-29T16:10:14.754Z',
+      updatedAt: '2024-07-25T15:53:37.803Z',
       publishAt: '2024-07-28T16:10:14.754Z',
-      updatedAt: '2024-07-30T16:10:14.754Z',
       category: 0,
       status: 0,
       content: 'asds',
@@ -37,16 +53,15 @@ export const mockedPosts = [
         id: '42',
         name: '94895fe0-011e-4517-a5fa-c10c0fde4161',
         nickname: 'asd',
-        profileImageURLs: [
-          'https://pbs.twimg.com/profile_images/1841000372422524928/9OLUwaH7_400x400.jpg',
-        ],
       },
     },
-    viewCount: 100,
+    viewCount: 1012,
+    commentCount: '1',
   },
   {
     id: '13',
     createdAt: '2024-07-29T16:10:14.754Z',
+    updatedAt: '2024-07-25T15:53:37.803Z',
     publishAt: '2024-07-28T16:10:14.754Z',
     status: 0,
     content: 'asds',
@@ -55,7 +70,11 @@ export const mockedPosts = [
       'https://pbs.twimg.com/media/GY4w-qgbcAA4XjW?format=jpg',
       'https://pbs.twimg.com/media/GY4w-qgbcAA4XjW?format=jpg',
     ],
-    author: { id: '42', name: '94895fe0-011e-4517-a5fa-c10c0fde4161', nickname: 'asd' },
+    author: {
+      id: '42',
+      name: '94895fe0-011e-4517-a5fa-c10c0fde4161',
+      nickname: 'asd',
+    },
     repostCount: '2',
   },
   {
@@ -72,6 +91,9 @@ export const mockedPosts = [
       id: '35',
       name: '22895fe0-011e-4517-a5fa-c10c0fde4162',
       nickname: '열정적인 유혹자의 질서',
+      profileImageURLs: [
+        'https://pbs.twimg.com/profile_images/1841000372422524928/9OLUwaH7_400x400.jpg',
+      ],
     },
   },
   {
@@ -90,6 +112,9 @@ export const mockedPosts = [
       id: '35',
       name: '22895fe0-011e-4517-a5fa-c10c0fde4162',
       nickname: '열정적인 유혹자의 질서',
+      profileImageURLs: [
+        'https://pbs.twimg.com/profile_images/1841000372422524928/9OLUwaH7_400x400.jpg',
+      ],
     },
   },
   {
@@ -104,10 +129,14 @@ export const mockedPosts = [
       id: '35',
       name: '22895fe0-011e-4517-a5fa-c10c0fde4162',
       nickname: '열정적인 유혹자의 질서',
+      profileImageURLs: [
+        'https://pbs.twimg.com/profile_images/1841000372422524928/9OLUwaH7_400x400.jpg',
+      ],
     },
     referredPost: {
       id: '13',
       createdAt: '2024-07-29T16:10:14.754Z',
+      updatedAt: '2024-07-25T15:53:37.803Z',
       publishAt: '2024-07-28T16:10:14.754Z',
       category: 0,
       status: 0,
@@ -117,9 +146,13 @@ export const mockedPosts = [
         'https://pbs.twimg.com/media/GY4w-qgbcAA4XjW?format=jpg',
         'https://pbs.twimg.com/media/GY4w-qgbcAA4XjW?format=jpg',
       ],
-      author: { id: '42', name: '94895fe0-011e-4517-a5fa-c10c0fde4161', nickname: 'asd' },
+      author: {
+        id: '42',
+        name: '94895fe0-011e-4517-a5fa-c10c0fde4161',
+        nickname: 'asd',
+      },
     },
-    commentCount: '2',
+    commentCount: '3',
   },
   {
     id: '6',
@@ -132,6 +165,9 @@ export const mockedPosts = [
       id: '35',
       name: '22895fe0-011e-4517-a5fa-c10c0fde4162',
       nickname: '열정적인 유혹자의 질서',
+      profileImageURLs: [
+        'https://pbs.twimg.com/profile_images/1841000372422524928/9OLUwaH7_400x400.jpg',
+      ],
     },
     referredPost: {
       id: '3',
@@ -143,6 +179,9 @@ export const mockedPosts = [
         id: '35',
         name: '22895fe0-011e-4517-a5fa-c10c0fde4162',
         nickname: '열정적인 유혹자의 질서',
+        profileImageURLs: [
+          'https://pbs.twimg.com/profile_images/1841000372422524928/9OLUwaH7_400x400.jpg',
+        ],
       },
     },
   },
@@ -156,6 +195,9 @@ export const mockedPosts = [
       id: '35',
       name: '22895fe0-011e-4517-a5fa-c10c0fde4162',
       nickname: '열정적인 유혹자의 질서',
+      profileImageURLs: [
+        'https://pbs.twimg.com/profile_images/1841000372422524928/9OLUwaH7_400x400.jpg',
+      ],
     },
   },
   {
@@ -168,6 +210,9 @@ export const mockedPosts = [
       id: '35',
       name: '22895fe0-011e-4517-a5fa-c10c0fde4162',
       nickname: '열정적인 유혹자의 질서',
+      profileImageURLs: [
+        'https://pbs.twimg.com/profile_images/1841000372422524928/9OLUwaH7_400x400.jpg',
+      ],
     },
   },
   {
@@ -180,6 +225,9 @@ export const mockedPosts = [
       id: '35',
       name: '22895fe0-011e-4517-a5fa-c10c0fde4162',
       nickname: '열정적인 유혹자의 질서',
+      profileImageURLs: [
+        'https://pbs.twimg.com/profile_images/1841000372422524928/9OLUwaH7_400x400.jpg',
+      ],
     },
     likeCount: '2',
     commentCount: '2',
@@ -195,6 +243,9 @@ export const mockedPosts = [
       id: '35',
       name: '22895fe0-011e-4517-a5fa-c10c0fde4162',
       nickname: '열정적인 유혹자의 질서',
+      profileImageURLs: [
+        'https://pbs.twimg.com/profile_images/1841000372422524928/9OLUwaH7_400x400.jpg',
+      ],
     },
   },
 ]

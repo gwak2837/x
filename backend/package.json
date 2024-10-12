@@ -15,18 +15,18 @@
     "pre-push": "bunx tsc --noEmit && cd ../ && eslint . --fix && prettier . --write --log-level=warn"
   },
   "dependencies": {
-    "@elysiajs/cors": "^1.1.0",
+    "@elysiajs/cors": "^1.1.1",
     "@elysiajs/server-timing": "^1.1.0",
-    "@elysiajs/swagger": "^1.1.0",
-    "elysia": "^1.1.4",
-    "jose": "^5.6.3",
+    "@elysiajs/swagger": "^1.1.5",
+    "elysia": "^1.1.20",
+    "jose": "^5.9.4",
     "postgres": "^3.4.4"
   },
   "devDependencies": {
-    "@types/bun": "^1.1.6",
+    "@types/bun": "^1.1.11",
     "bun-types": "latest",
     "dotenv-cli": "^7.4.2",
-    "prisma": "^5.17.0",
-    "typescript": "^5.5.4"
+    "prisma": "^5.20.0",
+    "typescript": "^5.6.3"
   }
 }

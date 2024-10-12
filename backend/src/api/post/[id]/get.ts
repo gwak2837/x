@@ -11,108 +11,147 @@ import { removeZero } from '../../../util/type'
 export default (app: BaseElysia) =>
   app.get(
     '/post/:id',
-    async ({ error, params, sql, userId }) => {
+    async ({ error, query, params, sql, userId }) => {
       const { id: postId } = params
       if (isNaN(+postId)) return error(400, 'Bad Request')
 
-      const [post] = await sql<[PostRow]>`
-        SELECT "Post".id,
-          "Post"."createdAt",
-          "Post"."updatedAt",
-          "Post"."deletedAt",
-          "Post"."publishAt",
-          "Post".category,
-          "Post".status,
-          "Post".content,
-          "Post"."imageURLs",
-          "Author".id AS "author_id",
-          "Author".name AS "author_name",
-          "Author".nickname AS "author_nickname",
-          "Author"."profileImageURLs" AS "author_profileImageURLs",
-          "ReferredPost".id AS "referredPost_id",
-          "ReferredPost"."createdAt" AS "referredPost_createdAt",
-          "ReferredPost"."updatedAt" AS "referredPost_updatedAt",
-          "ReferredPost"."deletedAt" AS "referredPost_deletedAt",
-          "ReferredPost"."publishAt" AS "referredPost_publishAt",
-          "ReferredPost".status AS "referredPost_status",
-          "ReferredPost".content AS "referredPost_content",
-          "ReferredPost"."imageURLs" AS "referredPost_imageURLs",
-          "ReferredAuthor".id AS "referredPostAuthor_id",
-          "ReferredAuthor".name AS "referredPostAuthor_name",
-          "ReferredAuthor".nickname AS "referredPostAuthor_nickname",
-          "ReferredAuthor"."profileImageURLs" AS "referredPostAuthor_profileImageURLs",
-          MAX(CASE WHEN "UserLikePost"."userId" = ${userId} THEN 1 ELSE 0 END) AS "likedByMe",
-          COUNT("UserLikePost"."postId") AS "likeCount",
-          COUNT("Comment".id) AS "commentCount",
-          COUNT("Repost".id) AS "repostCount"
-        FROM "Post"
-          LEFT JOIN "User" AS "Author" ON "Author".id = "Post"."authorId"
-          LEFT JOIN "Post" AS "ReferredPost" ON "ReferredPost".id = "Post"."referredPostId"
-          LEFT JOIN "User" AS "ReferredAuthor" ON "ReferredAuthor".id = "ReferredPost"."authorId"
-          LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author".id AND "UserFollow"."followerId" = ${userId}
-          LEFT JOIN "UserLikePost" ON "UserLikePost"."postId" = "Post".id
-          LEFT JOIN "Post" AS "Comment" ON "Comment"."parentPostId" = "Post".id
-          LEFT JOIN "Post" AS "Repost" ON "Repost"."referredPostId" = "Post".id
-        WHERE "Post".id = ${postId} AND (
-          "Post"."authorId" = ${userId} OR
-          "Post"."publishAt" < CURRENT_TIMESTAMP AND (
-            "Post".status = ${PostStatus.PUBLIC} OR 
-            "Post".status = ${PostStatus.ONLY_FOLLOWERS} AND "UserFollow"."leaderId" IS NOT NULL
-          )
-        )
-        GROUP BY "Post".id, "Author".id, "ReferredPost".id, "ReferredAuthor".id;`
-      if (!post) throw new NotFoundError()
+      const { include } = query
+      const shouldIncludeParentPost = include === 'parent-post'
 
-      return deeplyRemoveNull({
-        id: post.id,
-        createdAt: post.createdAt,
-        updatedAt: post.updatedAt,
-        deletedAt: post.deletedAt,
-        publishAt: post.publishAt,
-        category: post.category,
-        status: post.status,
-        content: post.content,
-        imageURLs: post.imageURLs,
-        ...(post.author_id &&
-          post.status !== PostStatus.ANNONYMOUS && {
-            author: {
-              id: post.author_id,
-              name: post.author_name,
-              nickname: post.author_nickname,
-              profileImageURLs: post.author_profileImageURLs,
+      const postRows = await sql<PostRow[]>`
+        ${
+          shouldIncludeParentPost
+            ? sql`
+        WITH RECURSIVE "BasePost" AS (`
+            : sql``
+        }
+          SELECT "Post".id,
+            "Post"."createdAt",
+            "Post"."updatedAt",
+            "Post"."deletedAt",
+            "Post"."publishAt",
+            "Post".category,
+            "Post".status,
+            "Post".content,
+            "Post"."imageURLs",
+            "Post"."parentPostId",
+            "Author".id AS "author_id",
+            "Author".name AS "author_name",
+            "Author".nickname AS "author_nickname",
+            "Author"."profileImageURLs" AS "author_profileImageURLs",
+            "ReferredPost".id AS "referredPost_id",
+            "ReferredPost"."createdAt" AS "referredPost_createdAt",
+            "ReferredPost"."updatedAt" AS "referredPost_updatedAt",
+            "ReferredPost"."deletedAt" AS "referredPost_deletedAt",
+            "ReferredPost"."publishAt" AS "referredPost_publishAt",
+            "ReferredPost".status AS "referredPost_status",
+            "ReferredPost".content AS "referredPost_content",
+            "ReferredPost"."imageURLs" AS "referredPost_imageURLs",
+            "ReferredAuthor".id AS "referredPostAuthor_id",
+            "ReferredAuthor".name AS "referredPostAuthor_name",
+            "ReferredAuthor".nickname AS "referredPostAuthor_nickname",
+            "ReferredAuthor"."profileImageURLs" AS "referredPostAuthor_profileImageURLs",
+            MAX(CASE WHEN "UserLikePost"."userId" = ${userId} THEN 1 ELSE 0 END) AS "likedByMe",
+            COUNT("UserLikePost"."postId") AS "likeCount",
+            COUNT("Comment".id) AS "commentCount",
+            COUNT("Repost".id) AS "repostCount"
+          FROM "Post"
+            LEFT JOIN "User" AS "Author" ON "Author".id = "Post"."authorId"
+            LEFT JOIN "Post" AS "ReferredPost" ON "ReferredPost".id = "Post"."referredPostId"
+            LEFT JOIN "User" AS "ReferredAuthor" ON "ReferredAuthor".id = "ReferredPost"."authorId"
+            LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author".id AND "UserFollow"."followerId" = ${userId}
+            LEFT JOIN "UserLikePost" ON "UserLikePost"."postId" = "Post".id
+            LEFT JOIN "Post" AS "Comment" ON "Comment"."parentPostId" = "Post".id
+            LEFT JOIN "Post" AS "Repost" ON "Repost"."referredPostId" = "Post".id
+          WHERE 
+          ${
+            shouldIncludeParentPost
+              ? sql``
+              : sql`
+            "Post".id = ${postId} AND`
+          } (
+            "Post"."authorId" = ${userId} OR
+            "Post"."publishAt" < CURRENT_TIMESTAMP AND (
+              "Post".status = ${PostStatus.PUBLIC} OR 
+              "Post".status = ${PostStatus.ONLY_FOLLOWERS} AND "UserFollow"."leaderId" IS NOT NULL
+            )
+          )
+          GROUP BY "Post".id, "Author".id, "ReferredPost".id, "ReferredAuthor".id
+        ${
+          shouldIncludeParentPost
+            ? sql`
+        ), "ParentPosts" AS (
+          SELECT * FROM "BasePost"
+          WHERE "BasePost".id = ${postId}
+          UNION ALL
+          SELECT "BasePost".* FROM "BasePost"
+            JOIN "ParentPosts" ON "BasePost".id = "ParentPosts"."parentPostId"
+        )
+        SELECT * FROM "ParentPosts"`
+            : sql``
+        }`
+      if (postRows.length === 0) throw new NotFoundError()
+
+      const posts = postRows.map((postRow) =>
+        deeplyRemoveNull({
+          id: postRow.id,
+          createdAt: postRow.createdAt,
+          updatedAt: postRow.updatedAt,
+          deletedAt: postRow.deletedAt,
+          publishAt: postRow.publishAt,
+          category: postRow.category,
+          status: postRow.status,
+          content: postRow.content,
+          imageURLs: postRow.imageURLs,
+          ...(postRow.author_id &&
+            postRow.status !== PostStatus.ANNONYMOUS && {
+              author: {
+                id: postRow.author_id,
+                name: postRow.author_name,
+                nickname: postRow.author_nickname,
+                profileImageURLs: postRow.author_profileImageURLs,
+              },
+            }),
+          ...(postRow.referredPost_id && {
+            referredPost: {
+              id: postRow.referredPost_id,
+              createdAt: postRow.referredPost_createdAt,
+              updatedAt: postRow.referredPost_updatedAt,
+              deletedAt: postRow.referredPost_deletedAt,
+              publishAt: postRow.referredPost_publishAt,
+              category: postRow.referredPost_category,
+              status: postRow.referredPost_status,
+              content: postRow.referredPost_content,
+              imageURLs: postRow.referredPost_imageURLs,
+              ...(postRow.referredPostAuthor_id &&
+                postRow.referredPost_status !== PostStatus.ANNONYMOUS && {
+                  author: {
+                    id: postRow.referredPostAuthor_id,
+                    name: postRow.referredPostAuthor_name,
+                    nickname: postRow.referredPostAuthor_nickname,
+                    profileImageURLs: postRow.referredPostAuthor_profileImageURLs,
+                  },
+                }),
             },
           }),
-        ...(post.referredPost_id && {
-          referredPost: {
-            id: post.referredPost_id,
-            createdAt: post.referredPost_createdAt,
-            updatedAt: post.referredPost_updatedAt,
-            deletedAt: post.referredPost_deletedAt,
-            publishAt: post.referredPost_publishAt,
-            category: post.referredPost_category,
-            status: post.referredPost_status,
-            content: post.referredPost_content,
-            imageURLs: post.referredPost_imageURLs,
-            ...(post.referredPostAuthor_id &&
-              post.referredPost_status !== PostStatus.ANNONYMOUS && {
-                author: {
-                  id: post.referredPostAuthor_id,
-                  name: post.referredPostAuthor_name,
-                  nickname: post.referredPostAuthor_nickname,
-                  profileImageURLs: post.referredPostAuthor_profileImageURLs,
-                },
-              }),
-          },
+          likedByMe: postRow.likedByMe === 1 || undefined,
+          likeCount: removeZero(postRow.likeCount),
+          commentCount: removeZero(postRow.commentCount),
+          repostCount: removeZero(postRow.repostCount),
         }),
-        likedByMe: post.likedByMe === 1 || undefined,
-        likeCount: removeZero(post.likeCount),
-        commentCount: removeZero(post.commentCount),
-        repostCount: removeZero(post.repostCount),
-      })
+      )
+
+      const parentPosts = posts.slice(1).reverse()
+
+      return {
+        ...posts[0],
+        parentPosts: parentPosts.length > 0 ? parentPosts : undefined,
+      }
     },
     {
       headers: t.Object({ authorization: t.Optional(t.String()) }),
       params: t.Object({ id: t.String({ maxLength: 19 }) }),
+      query: t.Object({ include: t.Optional(t.Literal('parent-post')) }),
       response: {
         200: schemaGETPostId,
         400: t.String(),
@@ -174,13 +213,20 @@ const post = {
   ),
 }
 
-const schemaGETPostId = t.Object({
-  ...post,
-  referredPost: t.Optional(t.Object(post)),
+const statistics = {
   likedByMe: t.Optional(t.Literal(true)),
   likeCount: t.Optional(t.String()),
   commentCount: t.Optional(t.String()),
   repostCount: t.Optional(t.String()),
+}
+
+const schemaGETPostId = t.Object({
+  ...post,
+  ...statistics,
+  referredPost: t.Optional(t.Object(post)),
+  parentPosts: t.Optional(
+    t.Array(t.Object({ ...post, ...statistics, referredPost: t.Optional(t.Object(post)) })),
+  ),
 })
 
 export type GETPostId = Static<typeof schemaGETPostId>

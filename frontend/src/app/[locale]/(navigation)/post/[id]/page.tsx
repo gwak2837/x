@@ -12,7 +12,7 @@ type Args = {
 
 async function fetchPost({ id }: Args) {
   try {
-    const response = await fetch(`${NEXT_PUBLIC_BACKEND_URL}/post/${id}`)
+    const response = await fetch(`${NEXT_PUBLIC_BACKEND_URL}/post/${id}?include=parent-post`)
 
     if (response.status >= 500) {
       console.error('👀 ~ message:', await response.text())
@@ -37,8 +37,9 @@ export default async function Page({ params }: PageProps) {
   }
 
   return (
-    <main className="min-h-[100dvh] p-4 sm:p-8 md:p-16 lg:p-24">
+    <main className="grid min-h-full lg:grid-cols-[auto_1fr]">
       <Post initialPost={initialPost} />
+      <div className="hidden lg:block">검색</div>
     </main>
   )
 }

@@ -3,7 +3,7 @@ import type { PageProps } from '@/types/nextjs'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import ImagesViewer from '../post/filter/[filter]/ImagesViewer'
+import ImagesViewer from '../../../../components/post/ImagesViewer'
 
 export default async function Page({ params, searchParams }: PageProps) {
   return (

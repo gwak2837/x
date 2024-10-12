@@ -8,14 +8,8 @@ export default function useIsIntersected<T extends HTMLElement>(initialState: bo
 
   useIntersectionObserver({
     targetRef,
-    onIntersect: () => {
-      console.log('👀 ~ onIntersect:')
-      setIsIntersected(true)
-    },
-    onLeave: () => {
-      console.log('👀 ~ onLeave:')
-      setIsIntersected(false)
-    },
+    onIntersect: () => setIsIntersected(true),
+    onLeave: () => setIsIntersected(false),
   })
 
   return [isIntersected, targetRef] as const

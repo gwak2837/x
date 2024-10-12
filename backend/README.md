@@ -40,7 +40,7 @@ bun run compile
 ## Test
 
 ```bash
-bun test:db
+bun test:docker
 bun test:prisma
 bun test
 ```
