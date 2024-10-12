@@ -12,7 +12,7 @@ export default function Layout({ children, params }: LayoutProps) {
   const filter = params.filter
 
   const className =
-    'p-4 text-center transition relative aria-selected:font-bold bg-white dark:bg-black sm:bg-white/50 sm:dark:bg-black/50 sm:hover:dark:bg-white/10 sm:hover:bg-black/10 aria-selected:text-black aria-selected:dark:text-white text-gray-500 dark:text-gray-400'
+    'p-4 text-center transition relative aria-selected:font-bold bg-white dark:bg-black sm:bg-white/50 sm:dark:bg-black/50 sm:hover:dark:bg-white/10 sm:hover:bg-black/10 aria-selected:text-black aria-selected:dark:text-white text-gray-600 dark:text-gray-400'
   const barClassName =
     'absolute bottom-0 left-1/2 -translate-x-1/2 h-1 rounded w-14 aria-selected:bg-midnight-500 aria-selected:dark:bg-gray-300'
 
@@ -20,7 +20,7 @@ export default function Layout({ children, params }: LayoutProps) {
     <main className="grid h-full lg:grid-cols-[auto_1fr]">
       <div className="md:border-r">
         <TopNavigation
-          className="border-b bg-black sm:sticky sm:bg-transparent sm:backdrop-blur"
+          className="border-b bg-black sm:sticky sm:bg-white/75 sm:backdrop-blur sm:dark:bg-black/75"
           locale={locale}
         >
           <div className="grid grid-cols-2 items-center">
