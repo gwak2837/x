@@ -27,7 +27,7 @@ export default function PostImages({
 
   return (
     <div
-      className={`grid ${postImageCount > 1 ? 'aspect-video grid-cols-2' : 'w-fit'} ${postImageCount >= 3 ? 'grid-rows-2' : ''} max-w-prose cursor-pointer gap-0.5 rounded-2xl ${className}`}
+      className={`grid ${postImageCount > 1 ? 'aspect-video grid-cols-2' : 'w-fit'} ${postImageCount >= 3 ? 'grid-rows-2' : ''} cursor-pointer gap-0.5 rounded-2xl ${className}`}
       onClick={(e) => {
         e.preventDefault()
         e.stopPropagation()

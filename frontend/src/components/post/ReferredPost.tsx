@@ -31,7 +31,7 @@ export default function ReferredPost({ locale, referredPost }: Props) {
 
   return (
     <div
-      className={`${styles.child} grid min-w-0 max-w-prose overflow-hidden rounded-2xl border border-gray-400 transition hover:bg-gray-200 dark:border-gray-600 hover:dark:bg-gray-800`}
+      className={`${styles.child} grid min-w-0 overflow-hidden rounded-2xl border border-gray-400 transition hover:bg-gray-200 dark:border-gray-600 hover:dark:bg-gray-800`}
       onClick={goToReferredPost}
     >
       <div className="grid gap-1 p-3">
@@ -57,7 +57,9 @@ export default function ReferredPost({ locale, referredPost }: Props) {
           </div>
           <Icon3Dots className="w-5 text-gray-600" />
         </div>
-        {referredPostContent && <p className="whitespace-pre-wrap">{referredPostContent}</p>}
+        {referredPostContent && (
+          <p className="max-w-prose whitespace-pre-wrap">{referredPostContent}</p>
+        )}
       </div>
       {referredPostImageURLs && (
         <PostImages

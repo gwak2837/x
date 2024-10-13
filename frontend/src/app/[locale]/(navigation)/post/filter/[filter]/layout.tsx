@@ -1,10 +1,10 @@
 import type { LayoutProps } from '@/types/nextjs'
 
 import { dict } from '@/common/dict'
+import PostCreationForm from '@/components/post/PostCreationForm'
 import Link from 'next/link'
 
 import TopNavigation from '../../../TopNavigation'
-import PostCreationForm from './PostCreationForm'
 import { Filter } from './enum'
 
 export default function Layout({ children, params }: LayoutProps) {
