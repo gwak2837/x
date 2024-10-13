@@ -16,7 +16,7 @@ export default (app: BaseElysia) =>
         cursor = POSTGRES_MAX_BIGINT_STRING,
         hashtags,
         limit = 30,
-        only = PostsOnly.OTHERS,
+        only = PostsOnly.RECOMMAND,
       } = query
 
       if (
@@ -99,8 +99,8 @@ export default (app: BaseElysia) =>
           AND (
             ${only === PostsOnly.MINE ? sql`"Post"."authorId" = ${userId!}` : sql``}
             ${only === PostsOnly.FOLLOWING ? sql`"UserFollow"."followerId" = ${userId!}` : sql``}
-            ${userId && only === PostsOnly.OTHERS ? sql`"Post"."authorId" != ${userId}` : sql``}
-            ${!userId && only === PostsOnly.OTHERS ? sql`TRUE` : sql``}
+            ${userId && only === PostsOnly.RECOMMAND ? sql`"Post"."authorId" != ${userId}` : sql``}
+            ${!userId && only === PostsOnly.RECOMMAND ? sql`TRUE` : sql``}
           ) AND (
             ${userId && only === PostsOnly.MINE ? sql`TRUE OR` : sql``}
             "Post".status = ${PostStatus.PUBLIC} OR 
@@ -178,7 +178,7 @@ export default (app: BaseElysia) =>
   )
 
 export enum PostsOnly {
-  OTHERS = 'others',
+  RECOMMAND = 'recommand',
   FOLLOWING = 'following',
   MINE = 'mine',
   LIKED = 'liked',

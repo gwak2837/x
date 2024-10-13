@@ -57,7 +57,7 @@ export default function ReferredPost({ locale, referredPost }: Props) {
           </div>
           <Icon3Dots className="w-5 text-gray-600" />
         </div>
-        {referredPostContent && <p>{referredPostContent}</p>}
+        {referredPostContent && <p className="whitespace-pre-wrap">{referredPostContent}</p>}
       </div>
       {referredPostImageURLs && (
         <PostImages

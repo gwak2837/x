@@ -4,6 +4,7 @@ import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
 import { mockedPosts } from '@/mock/post'
 import { notFound } from 'next/navigation'
 
+import BackButton from './BackButton'
 import Post from './Post'
 
 type Args = {
@@ -38,7 +39,13 @@ export default async function Page({ params }: PageProps) {
 
   return (
     <main className="grid min-h-full lg:grid-cols-[auto_1fr]">
-      <Post initialPost={initialPost} />
+      <div className="border-r">
+        <div className="sticky left-0 top-0 z-10 flex items-center gap-9 bg-black/85 p-2 backdrop-blur-md">
+          <BackButton />
+          <h3 className="text-xl font-bold">게시하기</h3>
+        </div>
+        <Post initialPost={initialPost} />
+      </div>
       <div className="hidden lg:block">검색</div>
     </main>
   )

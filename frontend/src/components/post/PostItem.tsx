@@ -64,7 +64,7 @@ export default function PostItem({ post, locale, isThread }: Props) {
             </div>
             <Icon3Dots className="w-5 text-gray-600" />
           </div>
-          <p className="min-w-0 max-w-prose lg:min-w-[65ch]">{post.content}</p>
+          <p className="min-w-0 max-w-prose whitespace-pre-wrap lg:min-w-[65ch]">{post.content}</p>
           {imageURLs && (
             <PostImages
               className="max-h-[512px] overflow-hidden border"
@@ -77,25 +77,25 @@ export default function PostItem({ post, locale, isThread }: Props) {
         <div className="flex flex-wrap gap-2 text-gray-600 dark:text-gray-400">
           <div className="grid grow grid-cols-4 gap-1 text-sm">
             <div className="flex items-center">
-              <IconChat className="w-8 shrink-0 p-2" />
+              <IconChat className="w-9 shrink-0 p-2" />
               {post.commentCount}
             </div>
             <div className="flex items-center">
-              <IconRepeat className="w-8 shrink-0 p-2" />
+              <IconRepeat className="w-9 shrink-0 p-2" />
               {post.repostCount}
             </div>
             <div className="flex items-center">
-              <IconHeart className="w-8 shrink-0 p-2" />
+              <IconHeart className="w-9 shrink-0 p-2" />
               {post.likeCount}
             </div>
             <div className="flex items-center">
-              <IconChart className="w-8 shrink-0 p-2" />
+              <IconChart className="w-9 shrink-0 p-2" />
               {post.viewCount}
             </div>
           </div>
           <div className="flex">
-            <BookmarkIcon className="w-8 p-2" selected={false} />
-            <LogoutIcon className="w-8 -rotate-90 p-2" />
+            <BookmarkIcon className="w-9 p-2" selected={false} />
+            <LogoutIcon className="w-9 -rotate-90 p-2" />
           </div>
         </div>
       </div>
