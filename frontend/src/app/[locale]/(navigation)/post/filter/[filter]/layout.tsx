@@ -42,7 +42,11 @@ export default function Layout({ children, params }: LayoutProps) {
             </Link>
           </div>
         </TopNavigation>
-        <PostCreationForm className="" />
+        <PostCreationForm
+          buttonText="게시하기"
+          className="border-b p-4"
+          placeholder="무슨 일이 일어나고 있나요?"
+        />
         <ul className="overscroll-none">
           {children}
           <div className="h-20" />

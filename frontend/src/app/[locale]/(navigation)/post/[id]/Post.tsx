@@ -90,34 +90,34 @@ export default function Post({ initialPost }: Props) {
             {
               Icon: IconChat,
               content: post.commentCount,
-              iconClassName: 'group-hover:bg-midnight-500',
+              iconClassName: 'group-hover:bg-midnight-500/20 group-hover:dark:bg-midnight-500/50',
             },
             {
               Icon: IconRepeat,
               content: post.repostCount,
-              iconClassName: 'group-hover:bg-green-500/50 group-hover:text-green-500',
+              iconClassName: 'group-hover:bg-green-500/20 group-hover:text-green-500',
               textClassName: 'hover:text-green-500',
             },
             {
               Icon: IconHeart,
               content: post.likeCount,
-              iconClassName: 'group-hover:bg-red-500/50 group-hover:text-red-500',
+              iconClassName: 'group-hover:bg-red-500/20 group-hover:text-red-500',
               textClassName: 'hover:text-red-500',
             },
             {
               Icon: IconChart,
               content: post.viewCount,
-              iconClassName: 'group-hover:bg-midnight-500',
+              iconClassName: 'group-hover:bg-midnight-500/20 group-hover:dark:bg-midnight-500/50',
             },
             {
               Icon: BookmarkIcon,
-              iconClassName: 'group-hover:bg-midnight-500',
+              iconClassName: 'group-hover:bg-midnight-500/20 group-hover:dark:bg-midnight-500/50',
             },
           ].map(({ Icon, content, iconClassName = '', textClassName = '' }, i) => (
             <div className="flex items-center" key={i}>
-              <button className={`group flex items-center ${textClassName}`}>
+              <button className={`group flex items-center transition ${textClassName}`}>
                 <Icon
-                  className={`w-10 shrink-0 rounded-full p-2 ${iconClassName}`}
+                  className={`w-10 shrink-0 rounded-full p-2 transition ${iconClassName}`}
                   selected={false}
                 />
                 {content}

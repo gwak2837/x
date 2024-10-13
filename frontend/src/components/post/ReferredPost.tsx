@@ -31,7 +31,7 @@ export default function ReferredPost({ locale, referredPost }: Props) {
 
   return (
     <div
-      className={`${styles.child} grid min-w-0 overflow-hidden rounded-2xl border border-gray-400 transition hover:bg-gray-200 dark:border-gray-600 hover:dark:bg-gray-800`}
+      className={`${styles.child} grid min-w-0 cursor-pointer overflow-hidden rounded-2xl border border-gray-400 transition hover:bg-gray-200 dark:border-gray-600 hover:dark:bg-gray-800`}
       onClick={goToReferredPost}
     >
       <div className="grid gap-1 p-3">
