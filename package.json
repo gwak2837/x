@@ -1,6 +1,6 @@
 {
-  "name": "losy",
-  "description": "Full stack Web Application (with Bun)",
+  "name": "x",
+  "description": "X clone with full stack (with Bun)",
   "version": "0.1.0",
   "type": "module",
   "scripts": {
