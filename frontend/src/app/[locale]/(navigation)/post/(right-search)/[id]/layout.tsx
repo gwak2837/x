@@ -22,6 +22,7 @@ export default function Layout({ post, comment }: LayoutProps) {
       </div>
       {post}
       {comment}
+      <div className="h-screen" />
     </>
   )
 }

@@ -40,17 +40,24 @@ export default function ReferredPost({ locale, referredPost }: Props) {
             <Squircle
               className="text-white"
               fill={THEME_COLOR}
-              src={referredAuthor.profileImageURLs?.[0]}
+              src={referredAuthor?.profileImageURLs?.[0]}
               wrapperClassName="w-6 flex-shrink-0"
             >
-              {referredAuthor.nickname.slice(0, 2)}
+              {referredAuthor?.nickname.slice(0, 2) ?? '탈퇴'}
             </Squircle>
-            <div className="min-w-0 max-w-40 overflow-hidden font-semibold">
-              {referredAuthor.nickname}
+            <div
+              aria-disabled={!referredAuthor}
+              className="min-w-0 max-w-40 overflow-hidden font-semibold"
+            >
+              {referredAuthor?.nickname ?? '탈퇴한 사용자입니다'}
             </div>
             <div className="flex min-w-0 items-center gap-1 text-gray-500">
-              <div className="min-w-10 max-w-40 overflow-hidden">@{referredAuthor.name}</div>
-              <span>·</span>
+              {referredAuthor && (
+                <>
+                  <div className="min-w-10 max-w-40 overflow-hidden">@{referredAuthor.name}</div>
+                  <span>·</span>
+                </>
+              )}
               <div className="min-w-10 overflow-hidden">{referredPost.createdAt}</div>
               {referredPost.updatedAt && <div className="text-xs">{dict.수정됨[locale]}</div>}
             </div>

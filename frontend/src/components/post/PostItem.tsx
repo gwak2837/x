@@ -31,16 +31,16 @@ export default function PostItem({ post, locale, isThread }: Props) {
   return (
     <Link
       className={`${styles.parent} grid min-w-0 grid-cols-[auto_1fr] gap-2 px-4 pb-2 pt-3 transition ${isThread ? '' : 'border-b'}`}
-      href={`/${locale}/post/${post.id}`}
+      href={`/${locale}/post/${post.id}#post`}
     >
       <div className="relative flex flex-col items-center gap-1">
         <Squircle
           className="text-white"
           fill={THEME_COLOR}
-          src={author.profileImageURLs?.[0]}
+          src={author?.profileImageURLs?.[0]}
           wrapperClassName="w-10 "
         >
-          {author.nickname.slice(0, 2)}
+          {author?.nickname.slice(0, 2) ?? '탈퇴'}
         </Squircle>
         {isThread && (
           <>
@@ -53,10 +53,19 @@ export default function PostItem({ post, locale, isThread }: Props) {
         <div className="grid gap-3">
           <div className="flex min-w-0 justify-between gap-1">
             <div className="flex min-w-0 gap-2 whitespace-nowrap max-[319px]:flex-wrap">
-              <div className="min-w-0 overflow-hidden font-semibold">{author.nickname}</div>
+              <div
+                aria-disabled={!author}
+                className="min-w-0 overflow-hidden font-semibold aria-disabled:text-gray-500"
+              >
+                {author?.nickname ?? '탈퇴한 사용자입니다'}
+              </div>
               <div className="flex min-w-0 items-center gap-1 text-gray-500">
-                <div className="min-w-10 overflow-hidden">@{author.name}</div>
-                <span>·</span>
+                {author && (
+                  <>
+                    <div className="min-w-10 overflow-hidden">@{author.name}</div>
+                    <span>·</span>
+                  </>
+                )}
                 <div className="min-w-10 overflow-hidden">{post.createdAt}</div>
                 {post.updatedAt && <div className="text-xs">({dict.수정됨[locale]})</div>}
               </div>

@@ -147,11 +147,6 @@ export const mockedPosts = [
         'https://pbs.twimg.com/media/GY4w-qgbcAA4XjW?format=jpg',
         'https://pbs.twimg.com/media/GY4w-qgbcAA4XjW?format=jpg',
       ],
-      author: {
-        id: '42',
-        name: '94895fe0-011e-4517-a5fa-c10c0fde4161',
-        nickname: 'asd',
-      },
     },
     commentCount: '3',
   },

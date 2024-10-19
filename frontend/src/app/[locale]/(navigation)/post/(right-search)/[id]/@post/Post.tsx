@@ -47,16 +47,16 @@ export default function Post({ initialPost }: Props) {
   const postRef = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {
-    console.log('👀 ~ postRef:', postRef)
     postRef.current?.scrollIntoView()
-  }, [post])
+  }, [])
 
   return (
     <section>
       {post.parentPosts?.map((post) => (
         <PostItem isThread key={post.id} locale={locale} post={post} />
       ))}
-      <div className="flex flex-col gap-4 px-4 py-3">
+      <div className="relative grid gap-4 px-4 py-3">
+        <div className="absolute -top-[56px]" id="post" ref={postRef} />
         <div className="flex justify-between">
           <div className="flex items-center gap-2">
             <Squircle
@@ -68,7 +68,7 @@ export default function Post({ initialPost }: Props) {
               {author?.nickname.slice(0, 2)}
             </Squircle>
             <div>
-              <div aria-disabled={!author} className="aria-disabled:text-gray-500">
+              <div aria-disabled={!author} className="font-semibold aria-disabled:text-gray-500">
                 {author?.nickname ?? '탈퇴한 사용자입니다'}
               </div>
               {author && <div className="text-gray-500">@{author.name}</div>}
