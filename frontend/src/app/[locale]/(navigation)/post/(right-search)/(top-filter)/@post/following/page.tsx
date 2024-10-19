@@ -1,17 +1,13 @@
-import type { PageProps } from '@/types/nextjs'
+import type { TPost } from '@/mock/post'
+import type { BasePageProps } from '@/types/nextjs'
+import type { Params } from 'next/dist/shared/lib/router/utils/route-matcher'
 
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
-import { type TPost, mockedPosts } from '@/mock/post'
+import PostItem from '@/components/post/PostItem'
+import { mockedPosts } from '@/mock/post'
 import { notFound } from 'next/navigation'
 
-import type { Filter } from './enum'
-
-import PostItem from '../../../../../../components/post/PostItem'
-import { filters } from './enum'
-
-type Params = {
-  filter: Filter
-}
+import { Filter } from '../../enum'
 
 async function fetchPosts({ filter }: Params) {
   try {
@@ -30,15 +26,9 @@ async function fetchPosts({ filter }: Params) {
   }
 }
 
-export default async function Page({ params }: PageProps) {
-  const filter = params.filter as Filter
-
-  if (!filters.includes(filter)) {
-    notFound()
-  }
-
+export default async function Page({ params }: BasePageProps) {
   const locale = params.locale
-  const posts = (await fetchPosts({ filter })) ?? mockedPosts
+  const posts = (await fetchPosts({ filter: Filter.following })) ?? mockedPosts
 
   if (!posts) {
     notFound()

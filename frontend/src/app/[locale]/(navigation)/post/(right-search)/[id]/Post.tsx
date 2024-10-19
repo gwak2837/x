@@ -19,6 +19,7 @@ import IconRepeat from '@/svg/IconRepeat'
 import { useAuthStore } from '@/zustand/auth'
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
+import { useRef } from 'react'
 
 import FollowButton from './FollowButton'
 
@@ -43,12 +44,15 @@ export default function Post({ initialPost }: Props) {
   const author = post.author
   const referredPost = post.referredPost
 
+  const postRef = useRef<HTMLDivElement>(null)
+
   return (
-    <section>
+    <section className="">
       {post.parentPosts?.map((post) => (
         <PostItem isThread key={post.id} locale={locale} post={post} />
       ))}
-      <div className="grid gap-4 px-4 py-3">
+      <div className="relative -top-[56px] w-full" id="post" />
+      <div className="grid gap-4 px-4 py-3" ref={postRef}>
         <div className="flex justify-between">
           <div className="flex items-center gap-2">
             <Squircle
@@ -69,7 +73,7 @@ export default function Post({ initialPost }: Props) {
             <Icon3Dots className="w-5 text-gray-500" />
           </div>
         </div>
-        <p className="min-w-0 max-w-prose whitespace-pre-wrap text-lg">{post.content}</p>
+        <p className="min-w-0 whitespace-pre-wrap text-lg">{post.content}</p>
         {post.imageURLs && (
           <PostImages
             className="max-h-[512px] overflow-hidden border"
@@ -126,7 +130,6 @@ export default function Post({ initialPost }: Props) {
           ))}
         </div>
         <PostCreationForm author={author} buttonText="답글" placeholder="답글 게시하기" />
-        <div className="h-screen" />
       </div>
     </section>
   )

@@ -1,4 +1,4 @@
-import type { PageProps } from '@/types/nextjs'
+import type { BasePageProps } from '@/types/nextjs'
 
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
 import { mockedPosts } from '@/mock/post'
@@ -29,7 +29,7 @@ async function fetchPost({ id }: Args) {
   }
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params }: BasePageProps) {
   const { id } = params
   const initialPost = (await fetchPost({ id })) ?? mockedPosts.find((post) => post.id === id)
 
@@ -38,20 +38,17 @@ export default async function Page({ params }: PageProps) {
   }
 
   return (
-    <main className="grid min-h-full lg:grid-cols-[auto_1fr]">
-      <div className="md:border-r">
-        <div className="sticky left-0 top-0 z-10 flex items-center justify-between gap-9 bg-white/85 p-2 backdrop-blur-md dark:bg-black/85">
-          <div className="flex items-center gap-9">
-            <BackButton />
-            <h3 className="text-xl font-bold">게시하기</h3>
-          </div>
-          <div>
-            <button className="text-white">게시</button>
-          </div>
+    <>
+      <div className="sticky left-0 top-0 z-10 flex items-center justify-between gap-9 bg-white/85 p-2 backdrop-blur-md dark:bg-black/85">
+        <div className="flex items-center gap-9">
+          <BackButton />
+          <h3 className="text-xl font-bold">게시하기</h3>
         </div>
-        <Post initialPost={initialPost} />
+        <div>
+          <button className="text-white">게시</button>
+        </div>
       </div>
-      <div className="hidden lg:block">검색</div>
-    </main>
+      <Post initialPost={initialPost} />
+    </>
   )
 }

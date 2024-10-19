@@ -1,4 +1,4 @@
-import type { LayoutProps } from '@/types/nextjs'
+import type { BaseLayoutProps } from '@/types/nextjs'
 import type { Metadata, Viewport } from 'next'
 
 import {
@@ -192,7 +192,7 @@ export async function generateStaticParams() {
   return [{ locale: 'ko' }, { locale: 'en' }]
 }
 
-export default function RootLayout({ children, params }: LayoutProps) {
+export default function RootLayout({ children, params }: BaseLayoutProps) {
   return (
     <html className="h-full" lang={params.locale}>
       <link color={THEME_COLOR} href="/safari-pinned-tab.svg" rel="mask-icon" />

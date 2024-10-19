@@ -2,12 +2,12 @@ import type { Locale } from '@/middleware'
 
 import { type ReactNode } from 'react'
 
-export type LayoutProps<Param extends Record<string, unknown> = Record<string, string>> = {
+export type BaseLayoutProps<Param extends Record<string, unknown> = Record<string, string>> = {
   children: ReactNode
   params: { locale: Locale } & Param
 }
 
-export type PageProps<T extends Record<string, unknown> = Record<string, string>> = {
+export type BasePageProps<T extends Record<string, unknown> = Record<string, string>> = {
   params: { locale: Locale } & T
   searchParams: Record<string, string | string[] | undefined>
 }

@@ -1,11 +1,11 @@
-import type { PageProps } from '@/types/nextjs'
+import type { BasePageProps } from '@/types/nextjs'
 
 import Image from 'next/image'
 import Link from 'next/link'
 
 import TopNavigation from '../TopNavigation'
 
-export default async function Page({ params, searchParams }: PageProps) {
+export default async function Page({ params, searchParams }: BasePageProps) {
   const locale = params.locale
 
   return (

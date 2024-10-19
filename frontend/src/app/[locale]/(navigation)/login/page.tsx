@@ -1,4 +1,4 @@
-import type { PageProps } from '@/types/nextjs'
+import type { BasePageProps } from '@/types/nextjs'
 
 import { NEXT_PUBLIC_BBATON_CLIENT_ID, NEXT_PUBLIC_BBATON_REDIRECT_URI } from '@/common/constants'
 import { dict } from '@/common/dict'
@@ -6,7 +6,7 @@ import { Suspense } from 'react'
 
 import Login from './Login'
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params }: BasePageProps) {
   const locale = params.locale
 
   return (

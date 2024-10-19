@@ -1,10 +1,10 @@
-import type { PageProps } from '@/types/nextjs'
+import type { BasePageProps } from '@/types/nextjs'
 
 import { permanentRedirect } from 'next/navigation'
 
-import { filters } from './filter/[filter]/enum'
+import { filters } from './(right-search)/(top-filter)/enum'
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params }: BasePageProps) {
   const locale = params.locale
-  permanentRedirect(`/${locale}/post/filter/${filters[0]}`)
+  permanentRedirect(`/${locale}/post/${filters[0]}`)
 }

@@ -1,11 +1,11 @@
-import type { PageProps } from '@/types/nextjs'
+import type { BasePageProps } from '@/types/nextjs'
 
 import { HASHA_CDN_DOMAIN } from '@/common/constants'
 import Link from 'next/link'
 
 import ArrowKeyNavigation from './ArrowKeyNavigation'
 
-export default async function Page({ params, searchParams }: PageProps) {
+export default async function Page({ params, searchParams }: BasePageProps) {
   const { id } = params
   const i = +(searchParams.i ?? 1)
   const maxString = searchParams.max ?? '1'

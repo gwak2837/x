@@ -111,7 +111,13 @@ export default function ImagesViewer({
             <div ref={firstRef} />
             {imageURLs.map((url, i) => (
               <div className="relative w-full flex-shrink-0 snap-center snap-always" key={i}>
-                <Image alt="post-image" className="object-contain" fill src={url} />
+                <Image
+                  alt="post-image"
+                  className="animate-pulse bg-white/10 object-contain"
+                  fill
+                  onLoad={(e) => ((e.target as HTMLImageElement).className = 'object-contain')}
+                  src={url}
+                />
               </div>
             ))}
             <div ref={lastRef} />

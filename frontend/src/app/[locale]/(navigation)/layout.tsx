@@ -1,4 +1,4 @@
-import type { LayoutProps } from '@/types/nextjs'
+import type { BaseLayoutProps } from '@/types/nextjs'
 
 import { dict } from '@/common/dict'
 import BellIcon from '@/svg/BellIcon'
@@ -13,7 +13,7 @@ import LoginLink from './LoginLink'
 import NavigLink from './NavigLink'
 import PublishButton from './PublishButton'
 
-export default function Layout({ children, params }: LayoutProps) {
+export default function Layout({ children, params }: BaseLayoutProps) {
   const locale = params.locale
 
   return (

@@ -36,10 +36,11 @@ export default function PostImages({
       {urls.map((url, i) => (
         <Image
           alt="post-image"
-          className={`h-full object-cover ${postImageCount === 1 ? 'w-full' : ''} ${postImageCount === 3 ? 'first-of-type:row-span-full' : ''} ${imageClassName}`}
+          className={`h-full bg-gray-200 object-cover dark:bg-gray-800 ${postImageCount === 1 ? 'w-full' : ''} ${postImageCount === 3 ? 'first-of-type:row-span-full' : ''} ${imageClassName}`}
           height={512}
           key={i}
           onClick={() => setIsOpened(i)}
+          onLoad={(e) => (e.target as HTMLImageElement).classList.remove('animate-pulse')}
           src={url}
           width={650}
         />

@@ -1,7 +1,7 @@
-import type { PageProps } from '@/types/nextjs'
+import type { BasePageProps } from '@/types/nextjs'
 
 import { permanentRedirect } from 'next/navigation'
 
-export default function HomePage({ params }: PageProps) {
+export default function HomePage({ params }: BasePageProps) {
   permanentRedirect(`${params.locale}/exam`)
 }

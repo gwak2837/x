@@ -30,7 +30,7 @@ export default function PostItem({ post, locale, isThread }: Props) {
 
   return (
     <Link
-      className={`${styles.parent} grid grid-cols-[auto_1fr] gap-2 px-4 pb-2 pt-3 transition ${isThread ? '' : 'border-b'}`}
+      className={`${styles.parent} grid min-w-0 grid-cols-[auto_1fr] gap-2 px-4 pb-2 pt-3 transition ${isThread ? '' : 'border-b'}`}
       href={`/${locale}/post/${post.id}`}
     >
       <div className="relative flex flex-col items-center gap-1">
@@ -50,11 +50,10 @@ export default function PostItem({ post, locale, isThread }: Props) {
         )}
       </div>
       <div className="grid gap-2">
-        <div className="grid gap-3 lg:w-min">
+        <div className="grid gap-3">
           <div className="flex min-w-0 justify-between gap-1">
             <div className="flex min-w-0 gap-2 whitespace-nowrap max-[319px]:flex-wrap">
               <div className="min-w-0 overflow-hidden font-semibold">{author.nickname}</div>
-
               <div className="flex min-w-0 items-center gap-1 text-gray-500">
                 <div className="min-w-10 overflow-hidden">@{author.name}</div>
                 <span>·</span>
@@ -64,7 +63,7 @@ export default function PostItem({ post, locale, isThread }: Props) {
             </div>
             <Icon3Dots className="w-5 text-gray-600" />
           </div>
-          <p className="min-w-0 max-w-prose whitespace-pre-wrap lg:min-w-[65ch]">{post.content}</p>
+          <p className="min-w-0 whitespace-pre-wrap">{post.content}</p>
           {imageURLs && (
             <PostImages
               className="max-h-[512px] overflow-hidden border"
