@@ -240,13 +240,5 @@ export const mockedPosts = [
     publishAt: '2024-07-07T12:46:59.455Z',
     status: 0,
     content: 'asdfasdf',
-    author: {
-      id: '35',
-      name: '22895fe0-011e-4517-a5fa-c10c0fde4162',
-      nickname: '열정적인 유혹자의 질서',
-      profileImageURLs: [
-        'https://pbs.twimg.com/profile_images/1841000372422524928/9OLUwaH7_400x400.jpg',
-      ],
-    },
   },
 ]

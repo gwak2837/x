@@ -19,7 +19,7 @@ import IconRepeat from '@/svg/IconRepeat'
 import { useAuthStore } from '@/zustand/auth'
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
-import { useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 
 import FollowButton from './FollowButton'
 
@@ -46,26 +46,32 @@ export default function Post({ initialPost }: Props) {
 
   const postRef = useRef<HTMLDivElement>(null)
 
+  useLayoutEffect(() => {
+    console.log('👀 ~ postRef:', postRef)
+    postRef.current?.scrollIntoView()
+  }, [post])
+
   return (
-    <section className="">
+    <section>
       {post.parentPosts?.map((post) => (
         <PostItem isThread key={post.id} locale={locale} post={post} />
       ))}
-      <div className="relative -top-[56px] w-full" id="post" />
-      <div className="grid gap-4 px-4 py-3" ref={postRef}>
+      <div className="flex flex-col gap-4 px-4 py-3">
         <div className="flex justify-between">
           <div className="flex items-center gap-2">
             <Squircle
               className="text-white"
               fill={THEME_COLOR}
-              src={author.profileImageURLs?.[0]}
+              src={author?.profileImageURLs?.[0]}
               wrapperClassName="w-10 flex-shrink-0"
             >
-              {author.nickname.slice(0, 2)}
+              {author?.nickname.slice(0, 2)}
             </Squircle>
             <div>
-              <div>{author.nickname}</div>
-              <div className="text-gray-500">@{author.name}</div>
+              <div aria-disabled={!author} className="aria-disabled:text-gray-500">
+                {author?.nickname ?? '탈퇴한 사용자입니다'}
+              </div>
+              {author && <div className="text-gray-500">@{author.name}</div>}
             </div>
           </div>
           <div className="flex items-center gap-2">

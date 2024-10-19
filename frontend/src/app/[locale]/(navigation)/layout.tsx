@@ -17,7 +17,7 @@ export default function Layout({ children, params }: BaseLayoutProps) {
   const locale = params.locale
 
   return (
-    <div className="mx-auto grid h-full max-w-screen-md grid-rows-[auto_1fr] sm:grid-cols-[auto_1fr] lg:max-w-screen-lg xl:max-w-screen-xl">
+    <div className="mx-auto grid h-full max-w-screen-md grid-rows-[auto_1fr] sm:grid-cols-[auto_1fr] sm:grid-rows-none lg:max-w-screen-lg xl:max-w-screen-xl">
       <header
         className="pb-safe sticky bottom-0 z-50 order-2 grid h-fit w-full max-w-screen-md grid-cols-[4fr_1fr] overflow-y-auto border-t bg-white/75 backdrop-blur-md sm:fixed sm:inset-auto sm:flex sm:h-full sm:w-20 sm:flex-col sm:justify-between sm:gap-8 sm:border-r sm:border-t-0 sm:p-2 lg:max-w-screen-lg xl:w-72 xl:max-w-screen-xl dark:bg-black/75"
         role="banner"
@@ -49,7 +49,7 @@ export default function Layout({ children, params }: BaseLayoutProps) {
         <LoginLink />
       </header>
       <div className="w-0 sm:w-20 xl:w-72" />
-      <div className="order-1 sm:min-h-screen">{children}</div>
+      <div className="order-1">{children}</div>
     </div>
   )
 }

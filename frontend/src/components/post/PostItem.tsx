@@ -105,15 +105,15 @@ export default function PostItem({ post, locale, isThread }: Props) {
 export function PostSkeleton() {
   return (
     <div
-      className={`${styles.parent} grid grid-cols-[auto_1fr] gap-2 border-b px-4 pb-2 pt-3 transition`}
+      className={`${styles.parent} grid min-w-0 grid-cols-[auto_1fr] gap-2 border-b px-4 pb-2 pt-3 transition`}
     >
       <Squircle className="text-white" fill={THEME_COLOR} wrapperClassName="w-10" />
-      <div className="grid gap-3 lg:w-min">
+      <div className="grid gap-3">
         <div className="flex min-w-0 justify-between gap-1">
           <div className="inline-block h-6 w-full animate-pulse rounded-xl bg-gray-100 dark:bg-gray-800" />
           <Icon3Dots className="w-5 text-gray-600" />
         </div>
-        <p className="min-w-0 max-w-prose animate-pulse lg:min-w-[65ch]">
+        <p className="min-w-0 animate-pulse">
           <span className="inline-block h-4 w-full rounded-full bg-gray-100 dark:bg-gray-800" />
           <span className="inline-block h-4 w-1/2 rounded-full bg-gray-100 dark:bg-gray-800" />
           <span className="inline-block h-4 w-2/3 rounded-full bg-gray-100 dark:bg-gray-800" />

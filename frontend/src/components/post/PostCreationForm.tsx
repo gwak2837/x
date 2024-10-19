@@ -26,6 +26,7 @@ export default function PostCreationForm({
   placeholder,
   buttonText = '게시하기',
 }: Props) {
+  const [content, setContent] = useState('')
   const [previewURLs, setPreviewURLs] = useState<string[]>([])
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -60,12 +61,11 @@ export default function PostCreationForm({
         />
       ),
     },
-    { Icon: IconMapPin, Input: <input className="hidden" disabled={!author} /> },
+    {
+      Icon: IconMapPin,
+      Input: <input className="hidden" disabled={!author} />,
+    },
   ]
-
-  function removePreviewURL(index: number) {
-    setPreviewURLs((prev) => prev.filter((_, i) => i !== index))
-  }
 
   return (
     <form
@@ -93,11 +93,13 @@ export default function PostCreationForm({
           className="h-7 max-h-screen w-full max-w-prose resize-none text-xl focus:outline-none"
           disabled={!author}
           maxRows={25}
+          onChange={(e) => setContent(e.target.value)}
           onKeyDown={(e) => {
             console.log(e.key)
           }}
           placeholder={placeholder}
           required
+          value={content}
         />
         {previewURLs.length > 0 && (
           <div className="relative flex max-w-prose snap-x snap-mandatory gap-1 overflow-x-auto pb-4">
@@ -107,7 +109,7 @@ export default function PostCreationForm({
               >
                 <button
                   className="absolute right-1 top-1 rounded-full bg-black/70 p-2"
-                  onClick={() => removePreviewURL(i)}
+                  onClick={() => setPreviewURLs((prev) => prev.filter((_, j) => j !== i))}
                   type="button"
                 >
                   <IconX className="w-5 text-white" />
@@ -138,9 +140,9 @@ export default function PostCreationForm({
             ))}
           </div>
           <div className="flex items-center gap-3">
-            <div>{0}</div>
+            <div>{content.length}</div>
             <button
-              className="bg-midnight-500 whitespace-nowrap rounded-full px-4 py-2 text-white disabled:bg-gray-500"
+              className="bg-midnight-500 whitespace-nowrap rounded-full px-4 py-2 text-white disabled:bg-gray-200 disabled:text-gray-500 disabled:dark:bg-gray-800"
               disabled={!author}
               type="submit"
             >
