@@ -48,7 +48,7 @@ export default function Post({ initialPost }: Props) {
 
   useLayoutEffect(() => {
     postRef.current?.scrollIntoView()
-  }, [])
+  }, [post])
 
   return (
     <section>
@@ -82,7 +82,7 @@ export default function Post({ initialPost }: Props) {
         <p className="min-w-0 whitespace-pre-wrap text-lg">{post.content}</p>
         {post.imageURLs && (
           <PostImages
-            className="max-h-[512px] overflow-hidden border"
+            className="w-full overflow-hidden border"
             initialPost={post}
             urls={post.imageURLs}
           />

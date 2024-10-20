@@ -3,15 +3,14 @@
 import type { TAuthor } from '@/mock/post'
 
 import { THEME_COLOR } from '@/common/constants'
-import IconImage from '@/svg/IconImage'
-import IconMapPin from '@/svg/IconMapPin'
 import IconX from '@/svg/IconX'
 import Image from 'next/image'
 import { useState } from 'react'
-import toast from 'react-hot-toast'
 import TextareaAutosize from 'react-textarea-autosize'
 
 import Squircle from '../Squircle'
+import PostGeolocationButton from './button/PostGeolocationButton'
+import PostImageButton from './button/PostImageButton'
 
 type Props = {
   className?: string
@@ -27,45 +26,8 @@ export default function PostCreationForm({
   buttonText = '게시하기',
 }: Props) {
   const [content, setContent] = useState('')
+  const [hasFocusedBefore, setHasFocusedBefore] = useState(false)
   const [previewURLs, setPreviewURLs] = useState<string[]>([])
-
-  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const input = event.target as HTMLInputElement
-    const files = input.files
-
-    if (!files) {
-      toast.error('파일을 선택해주세요.')
-      return
-    }
-
-    if (files.length > MAX_FILES) {
-      toast.error(`파일 개수는 최대 ${MAX_FILES}개까지 선택할 수 있습니다.`)
-      input.value = ''
-      return
-    }
-
-    setPreviewURLs(Array.from(files).map((file) => URL.createObjectURL(file)))
-  }
-
-  const buttons = [
-    {
-      Icon: IconImage,
-      Input: (
-        <input
-          accept="image/*"
-          className="hidden"
-          disabled={!author}
-          multiple
-          onChange={handleFileChange}
-          type="file"
-        />
-      ),
-    },
-    {
-      Icon: IconMapPin,
-      Input: <input className="hidden" disabled={!author} />,
-    },
-  ]
 
   return (
     <form
@@ -80,8 +42,8 @@ export default function PostCreationForm({
       >
         {author?.nickname.slice(0, 2)}
       </Squircle>
-      <div className="grid gap-3">
-        {author && (
+      <div className="grid items-center gap-3">
+        {hasFocusedBefore && author && (
           <button className="text-left">
             <span className="text-midnight-500 dark:font-semibold dark:text-white">
               @{author.name}{' '}
@@ -94,6 +56,7 @@ export default function PostCreationForm({
           disabled={!author}
           maxRows={25}
           onChange={(e) => setContent(e.target.value)}
+          onFocus={() => setHasFocusedBefore(true)}
           onKeyDown={(e) => {
             console.log(e.key)
           }}
@@ -126,33 +89,28 @@ export default function PostCreationForm({
             ))}
           </div>
         )}
-        <div className="flex justify-between gap-2">
-          <div className="text-midnight-500 flex -translate-x-2 items-center dark:text-white">
-            {buttons.map(({ Icon, Input }, i) => (
-              <label
-                aria-disabled={!author}
-                className="hover:bg-midnight-500/20 hover:dark:bg-midnight-500/50 h-fit rounded-full p-2 transition aria-disabled:cursor-not-allowed aria-disabled:text-gray-500 hover:aria-disabled:bg-transparent hover:aria-disabled:dark:bg-transparent"
-                key={i}
+        {hasFocusedBefore && (
+          <div className="flex justify-between gap-2">
+            <div className="text-midnight-500 flex -translate-x-2 items-center dark:text-white">
+              <PostImageButton disabled={!author} onPreviewImageChange={setPreviewURLs} />
+              <PostGeolocationButton
+                disabled={!author}
+                onLocationChange={(geolocation) => console.log(geolocation)}
+              />
+            </div>
+            <div className="flex items-center gap-3">
+              <div>{content.length}</div>
+              <button
+                className="bg-midnight-500 whitespace-nowrap rounded-full px-4 py-2 text-white disabled:bg-gray-200 disabled:text-gray-500 disabled:dark:bg-gray-800"
+                disabled={!author}
+                type="submit"
               >
-                {Input}
-                <Icon className="w-5" />
-              </label>
-            ))}
+                {buttonText}
+              </button>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            <div>{content.length}</div>
-            <button
-              className="bg-midnight-500 whitespace-nowrap rounded-full px-4 py-2 text-white disabled:bg-gray-200 disabled:text-gray-500 disabled:dark:bg-gray-800"
-              disabled={!author}
-              type="submit"
-            >
-              {buttonText}
-            </button>
-          </div>
-        </div>
+        )}
       </div>
     </form>
   )
 }
-
-const MAX_FILES = 4
