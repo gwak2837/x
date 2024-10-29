@@ -31,7 +31,7 @@ export default function PostItem({ post, locale, isThread }: Props) {
   return (
     <Link
       className={`${styles.parent} grid min-w-0 grid-cols-[auto_1fr] gap-2 px-4 pb-2 pt-3 transition ${isThread ? '' : 'border-b'}`}
-      href={`/${locale}/post/${post.id}#post`}
+      href={`/${locale}/post/${post.id}`}
     >
       <div className="relative flex flex-col items-center gap-1">
         <Squircle
@@ -44,8 +44,8 @@ export default function PostItem({ post, locale, isThread }: Props) {
         </Squircle>
         {isThread && (
           <>
-            <div className="h-full w-0.5 dark:bg-gray-700" />
-            <div className="absolute -bottom-4 left-1/2 h-4 w-0.5 -translate-x-1/2 dark:bg-gray-700" />
+            <div className="h-full w-0.5 bg-gray-300 dark:bg-gray-700" />
+            <div className="absolute -bottom-4 left-1/2 h-4 w-0.5 -translate-x-1/2 bg-gray-300 dark:bg-gray-700" />
           </>
         )}
       </div>

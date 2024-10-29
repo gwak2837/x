@@ -39,6 +39,7 @@ export default (app: BaseElysia) =>
             "Author".name AS "author_name",
             "Author".nickname AS "author_nickname",
             "Author"."profileImageURLs" AS "author_profileImageURLs",
+            (CASE WHEN "UserFollow"."followerId" IS NOT NULL THEN 1 ELSE 0 END) AS "author_isFollowing",
             "ReferredPost".id AS "referredPost_id",
             "ReferredPost"."createdAt" AS "referredPost_createdAt",
             "ReferredPost"."updatedAt" AS "referredPost_updatedAt",
@@ -51,7 +52,7 @@ export default (app: BaseElysia) =>
             "ReferredAuthor".name AS "referredPostAuthor_name",
             "ReferredAuthor".nickname AS "referredPostAuthor_nickname",
             "ReferredAuthor"."profileImageURLs" AS "referredPostAuthor_profileImageURLs",
-            MAX(CASE WHEN "UserLikePost"."userId" = ${userId} THEN 1 ELSE 0 END) AS "likedByMe",
+            (CASE WHEN "UserLikePost"."userId" IS NOT NULL THEN 1 ELSE 0 END) AS "likedByMe",
             COUNT("UserLikePost"."postId") AS "likeCount",
             COUNT("Comment".id) AS "commentCount",
             COUNT("Repost".id) AS "repostCount"
@@ -60,7 +61,7 @@ export default (app: BaseElysia) =>
             LEFT JOIN "Post" AS "ReferredPost" ON "ReferredPost".id = "Post"."referredPostId"
             LEFT JOIN "User" AS "ReferredAuthor" ON "ReferredAuthor".id = "ReferredPost"."authorId"
             LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author".id AND "UserFollow"."followerId" = ${userId}
-            LEFT JOIN "UserLikePost" ON "UserLikePost"."postId" = "Post".id
+            LEFT JOIN "UserLikePost" ON "UserLikePost"."postId" = "Post".id AND "UserLikePost"."userId" = ${userId}
             LEFT JOIN "Post" AS "Comment" ON "Comment"."parentPostId" = "Post".id
             LEFT JOIN "Post" AS "Repost" ON "Repost"."referredPostId" = "Post".id
           WHERE 
@@ -76,7 +77,7 @@ export default (app: BaseElysia) =>
               "Post".status = ${PostStatus.ONLY_FOLLOWERS} AND "UserFollow"."leaderId" IS NOT NULL
             )
           )
-          GROUP BY "Post".id, "Author".id, "ReferredPost".id, "ReferredAuthor".id
+          GROUP BY "Post".id, "Author".id, "UserFollow"."followerId", "ReferredPost".id, "ReferredAuthor".id, "UserLikePost"."userId"
         ${
           shouldIncludeParentPost
             ? sql`
@@ -110,6 +111,7 @@ export default (app: BaseElysia) =>
                 name: postRow.author_name,
                 nickname: postRow.author_nickname,
                 profileImageURLs: postRow.author_profileImageURLs,
+                isFollowing: postRow.author_isFollowing === 1 || undefined,
               },
             }),
           ...(postRow.referredPost_id && {
@@ -174,6 +176,7 @@ export type PostRow = {
   author_name: string | null
   author_nickname: string | null
   author_profileImageURLs: string[] | null
+  author_isFollowing: 0 | 1
   referredPost_id: string | null
   referredPost_createdAt: Date | null
   referredPost_updatedAt: Date | null
@@ -209,6 +212,7 @@ const post = {
       name: t.Optional(t.String()),
       nickname: t.Optional(t.String()),
       profileImageURLs: t.Optional(t.Array(t.String())),
+      isFollowing: t.Optional(t.Boolean()),
     }),
   ),
 }

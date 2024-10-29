@@ -3,7 +3,7 @@
 import type { FormEvent } from 'react'
 
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
-import { useAuthStore } from '@/zustand/auth'
+import { useAuthStore } from '@/model/auth'
 
 export default function PostForm() {
   const accessToken = useAuthStore((state) => state.accessToken)

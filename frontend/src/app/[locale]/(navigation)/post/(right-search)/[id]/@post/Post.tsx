@@ -10,16 +10,18 @@ import PostImages from '@/components/post/PostImages'
 import PostItem from '@/components/post/PostItem'
 import ReferredPost from '@/components/post/ReferredPost'
 import useFetchWithAuth from '@/hook/useFetchWithAuth'
+import { getUserId, useAuthStore } from '@/model/auth'
+import { useFollowStore } from '@/model/follow'
+import useUserQuery from '@/query/useUserQuery'
 import BookmarkIcon from '@/svg/BookmarkIcon'
 import Icon3Dots from '@/svg/Icon3Dots'
 import IconChart from '@/svg/IconChart'
 import IconChat from '@/svg/IconChat'
 import IconHeart from '@/svg/IconHeart'
 import IconRepeat from '@/svg/IconRepeat'
-import { useAuthStore } from '@/zustand/auth'
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
-import { useLayoutEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 import FollowButton from './FollowButton'
 
@@ -33,6 +35,9 @@ export default function Post({ initialPost }: Props) {
 
   const accessToken = useAuthStore((state) => state.accessToken)
   const fetchWithAuth = useFetchWithAuth()
+  const userId = getUserId(accessToken)
+
+  const { data: user } = useUserQuery({ id: userId })
 
   const { data: post } = useQuery({
     queryKey: ['post', initialPost.id],
@@ -43,11 +48,14 @@ export default function Post({ initialPost }: Props) {
 
   const author = post.author
   const referredPost = post.referredPost
+  const isMyPost = userId === author?.id
 
-  const postRef = useRef<HTMLDivElement>(null)
+  const setFollow = useFollowStore((state) => state.setFollow)
 
-  useLayoutEffect(() => {
-    postRef.current?.scrollIntoView()
+  useEffect(() => {
+    if (!author || isMyPost || !userId) return
+
+    setFollow({ leaderId: author.id, followerId: userId, isFollowing: true })
   }, [post])
 
   return (
@@ -56,9 +64,8 @@ export default function Post({ initialPost }: Props) {
         <PostItem isThread key={post.id} locale={locale} post={post} />
       ))}
       <div className="relative grid gap-4 px-4 py-3">
-        <div className="absolute -top-[56px]" id="post" ref={postRef} />
-        <div className="flex justify-between">
-          <div className="flex items-center gap-2">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex gap-2">
             <Squircle
               className="text-white"
               fill={THEME_COLOR}
@@ -75,7 +82,7 @@ export default function Post({ initialPost }: Props) {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <FollowButton />
+            {!isMyPost && author && <FollowButton leader={author} />}
             <Icon3Dots className="w-5 text-gray-500" />
           </div>
         </div>
@@ -135,7 +142,11 @@ export default function Post({ initialPost }: Props) {
             </div>
           ))}
         </div>
-        <PostCreationForm author={author} buttonText="답글" placeholder="답글 게시하기" />
+        <PostCreationForm
+          author={user}
+          buttonText="답글"
+          placeholder={user ? '답글 게시하기' : '답글을 작성하려면 로그인하세요'}
+        />
       </div>
     </section>
   )

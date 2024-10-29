@@ -9,8 +9,7 @@ import useLogoutMutation from '@/query/useLogoutMutation'
 import useUserQuery from '@/query/useUserQuery'
 import LogoutIcon from '@/svg/LogoutIcon'
 import MoreIcon from '@/svg/MoreIcon'
-import { parseJWT } from '@/util'
-import { useAuthStore } from '@/zustand/auth'
+import { getUserId, useAuthStore } from '@/model/auth'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import toast from 'react-hot-toast'
@@ -19,7 +18,7 @@ export default function ProfileLink() {
   const { locale } = useParams<BaseParams>()
 
   const { accessToken, setAccessToken } = useAuthStore()
-  const userId = (parseJWT(accessToken)?.sub ?? '') as string
+  const userId = getUserId(accessToken)
   const { data: user } = useUserQuery({ id: userId })
   const userNickname = user?.nickname ?? ''
   const userName = user?.name ?? ''

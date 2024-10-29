@@ -7,19 +7,21 @@ type Params = {
 
 export default function useUserQuery({ id }: Params) {
   const fetchWithAuth = useFetchWithAuth()
+  const userQueryKey = getUserQueryKey({ id })
 
   return useQuery({
-    queryKey: getUserQueryKey({ id }),
-    queryFn: () =>
-      fetchWithAuth<{ name: string; nickname: string; profileImageURLs: string[] }>(`/user/${id}`),
+    queryKey: userQueryKey,
+    queryFn: () => fetchWithAuth<Response>(userQueryKey[0]),
     enabled: Boolean(id),
   })
 }
 
-type Params2 = {
-  id: string
+type Response = {
+  name: string
+  nickname: string
+  profileImageURLs: string[]
 }
 
-export function getUserQueryKey({ id }: Params2) {
+export function getUserQueryKey({ id }: Params) {
   return [`/user/${id}`]
 }

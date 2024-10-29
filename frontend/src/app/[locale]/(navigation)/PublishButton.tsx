@@ -4,8 +4,8 @@ import type { BaseParams } from '@/types/nextjs'
 
 import { dict } from '@/common/dict'
 import Modal from '@/components/Modal'
+import { useAuthStore } from '@/model/auth'
 import PenIcon from '@/svg/PenIcon'
-import { useAuthStore } from '@/zustand/auth'
 import { useParams } from 'next/navigation'
 import { useState } from 'react'
 

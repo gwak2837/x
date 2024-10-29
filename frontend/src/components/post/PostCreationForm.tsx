@@ -1,7 +1,5 @@
 'use client'
 
-import type { TAuthor } from '@/mock/post'
-
 import { THEME_COLOR } from '@/common/constants'
 import IconX from '@/svg/IconX'
 import Image from 'next/image'
@@ -14,7 +12,11 @@ import PostImageButton from './button/PostImageButton'
 
 type Props = {
   className?: string
-  author?: TAuthor
+  author?: {
+    name: string
+    nickname: string
+    profileImageURLs?: string[]
+  }
   placeholder?: string
   buttonText?: string
 }

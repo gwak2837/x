@@ -70,10 +70,10 @@ export default function Drawer({ className = '', children }: Props) {
         </div>
       </label>
       <div
-        className="pointer-events-none fixed inset-0 z-50 h-dvh bg-black/25 opacity-0 transition-all duration-300 peer-has-[:checked]:pointer-events-auto peer-has-[:checked]:ml-[80%] peer-has-[:checked]:opacity-100 dark:bg-white/25"
+        className="pointer-events-none fixed inset-0 z-50 bg-black/25 opacity-0 transition-all duration-300 peer-has-[:checked]:pointer-events-auto peer-has-[:checked]:ml-[80%] peer-has-[:checked]:opacity-100 dark:bg-black/50"
         onClick={closeDrawer}
       />
-      <div className="pointer-events-auto fixed inset-0 h-dvh w-4/5 -translate-x-full transition duration-300 peer-has-[:checked]:translate-x-0">
+      <div className="pointer-events-auto fixed inset-0 w-4/5 -translate-x-full transition duration-300 peer-has-[:checked]:translate-x-0">
         {children[1]}
       </div>
     </>
