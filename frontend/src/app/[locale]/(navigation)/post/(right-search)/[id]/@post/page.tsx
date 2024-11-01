@@ -1,7 +1,6 @@
 import type { BasePageProps } from '@/types/nextjs'
 
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
-import { mockedPosts } from '@/mock/post'
 import { notFound } from 'next/navigation'
 
 import Post from './Post'
@@ -30,7 +29,7 @@ async function fetchPost({ id }: Args) {
 
 export default async function Page({ params }: BasePageProps) {
   const { id } = params
-  const initialPost = (await fetchPost({ id })) ?? mockedPosts.find((post) => post.id === id)
+  const initialPost = await fetchPost({ id })
 
   if (!initialPost) {
     notFound()

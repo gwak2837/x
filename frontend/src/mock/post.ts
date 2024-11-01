@@ -3,7 +3,7 @@ export type TPost = { parentPosts?: TPost2[] } & TPost2
 export type TAuthor = (typeof mockedPosts)[number]['author']
 export type TReferedPost = NonNullable<TPost['referredPost']>
 
-export const mockedPosts = [
+const mockedPosts = [
   {
     id: '15',
     createdAt: '2024-10-10T12:20:08.751Z',

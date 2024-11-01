@@ -4,7 +4,6 @@ import type { Params } from 'next/dist/shared/lib/router/utils/route-matcher'
 
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
 import PostItem from '@/components/post/PostItem'
-import { mockedPosts } from '@/mock/post'
 import { notFound } from 'next/navigation'
 
 import { Filter } from '../../enum'
@@ -28,7 +27,7 @@ async function fetchPosts({ filter }: Params) {
 
 export default async function Page({ params }: BasePageProps) {
   const locale = params.locale
-  const posts = (await fetchPosts({ filter: Filter.recommand })) ?? mockedPosts
+  const posts = await fetchPosts({ filter: Filter.recommand })
 
   if (!posts) {
     notFound()
