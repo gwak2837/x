@@ -5,7 +5,7 @@ import type { TPost } from '@/mock/post'
 
 import { THEME_COLOR } from '@/common/constants'
 import Squircle from '@/components/Squircle'
-import PostCreationForm from '@/components/post/PostCreationForm'
+import PostCreationForm, { PostCreationFormSkeleton } from '@/components/post/PostCreationForm'
 import PostImages from '@/components/post/PostImages'
 import PostItem from '@/components/post/PostItem'
 import ReferredPost from '@/components/post/ReferredPost'
@@ -21,7 +21,7 @@ import IconHeart from '@/svg/IconHeart'
 import IconRepeat from '@/svg/IconRepeat'
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 
 import FollowButton from './FollowButton'
 
@@ -34,10 +34,8 @@ export default function Post({ initialPost }: Props) {
   const locale = params.locale as Locale
 
   const accessToken = useAuthStore((state) => state.accessToken)
-  const fetchWithAuth = useFetchWithAuth()
   const userId = getUserId(accessToken)
-
-  const { data: user } = useUserQuery({ id: userId })
+  const fetchWithAuth = useFetchWithAuth()
 
   const { data: post } = useQuery({
     queryKey: ['post', initialPost.id],
@@ -142,11 +140,9 @@ export default function Post({ initialPost }: Props) {
             </div>
           ))}
         </div>
-        <PostCreationForm
-          author={user}
-          buttonText="답글"
-          placeholder={user ? '답글 게시하기' : '답글을 작성하려면 로그인하세요'}
-        />
+        <Suspense fallback={<PostCreationFormSkeleton />}>
+          <PostCreationForm buttonText="답글" placeholder="답글 게시하기" />
+        </Suspense>
       </div>
     </section>
   )

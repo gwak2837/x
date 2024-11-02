@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   APPLICATION_NAME,
   APPLICATION_SHORT_NAME,

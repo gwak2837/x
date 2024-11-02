@@ -1,6 +1,8 @@
 'use client'
 
 import { THEME_COLOR } from '@/common/constants'
+import { getUserId, useAuthStore } from '@/model/auth'
+import useUserQuery from '@/query/useUserQuery'
 import IconX from '@/svg/IconX'
 import Image from 'next/image'
 import { useState } from 'react'
@@ -12,24 +14,22 @@ import PostImageButton from './button/PostImageButton'
 
 type Props = {
   className?: string
-  author?: {
-    name: string
-    nickname: string
-    profileImageURLs?: string[]
-  }
   placeholder?: string
   buttonText?: string
 }
 
 export default function PostCreationForm({
   className = '',
-  author,
+
   placeholder,
   buttonText = '게시하기',
 }: Props) {
   const [content, setContent] = useState('')
   const [hasFocusedBefore, setHasFocusedBefore] = useState(false)
   const [previewURLs, setPreviewURLs] = useState<string[]>([])
+
+  const accessToken = useAuthStore((state) => state.accessToken)
+  const { data: author } = useUserQuery({ id: getUserId(accessToken) })
 
   return (
     <form
@@ -116,4 +116,8 @@ export default function PostCreationForm({
       </div>
     </form>
   )
+}
+
+export function PostCreationFormSkeleton() {
+  return <div className="h-20 animate-pulse bg-gray-500" />
 }

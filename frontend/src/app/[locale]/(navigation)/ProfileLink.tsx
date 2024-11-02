@@ -1,23 +1,28 @@
 'use client'
 
 import type { BaseParams } from '@/types/nextjs'
-import type { MouseEvent } from 'react'
 
 import { THEME_COLOR } from '@/common/constants'
 import Squircle from '@/components/Squircle'
 import { getUserId, useAuthStore } from '@/model/auth'
 import useLogoutMutation from '@/query/useLogoutMutation'
 import useUserQuery from '@/query/useUserQuery'
+import LoginIcon from '@/svg/LoginIcon'
 import LogoutIcon from '@/svg/LogoutIcon'
 import MoreIcon from '@/svg/MoreIcon'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import { useParams, usePathname } from 'next/navigation'
+import { type MouseEvent } from 'react'
 import toast from 'react-hot-toast'
+
+import NavigLink from './NavigLink'
 
 export default function ProfileLink() {
   const { locale } = useParams<BaseParams>()
+  const pathname = usePathname()
 
-  const { accessToken, setAccessToken } = useAuthStore()
+  const { accessToken, isLoading, setAccessToken } = useAuthStore()
+
   const userId = getUserId(accessToken)
   const { data: user } = useUserQuery({ id: userId })
   const userNickname = user?.nickname ?? ''
@@ -38,7 +43,11 @@ export default function ProfileLink() {
     localStorage.removeItem('refresh-token')
   }
 
-  return (
+  if (isLoading) {
+    return '...'
+  }
+
+  return user ? (
     <Link
       className="relative flex items-center justify-center rounded-full sm:px-2 sm:py-4 xl:px-0"
       href={`/${locale}/@${userName}`}
@@ -46,7 +55,7 @@ export default function ProfileLink() {
       <Squircle
         className="text-white"
         fill={THEME_COLOR}
-        src={user?.profileImageURLs?.[0]}
+        src={user.profileImageURLs?.[0]}
         wrapperClassName="w-8 flex-shrink-0 sm:w-10"
       >
         {userNickname.slice(0, 2)}
@@ -96,5 +105,14 @@ export default function ProfileLink() {
         <MoreIcon className="relative hidden w-11 cursor-pointer p-3 xl:block" />
       </label>
     </Link>
+  ) : (
+    <NavigLink
+      Icon={LoginIcon}
+      className="sm:py-2"
+      href={`/${locale}/login`}
+      onClick={() => sessionStorage.setItem('login-redirection', pathname)}
+    >
+      로그인
+    </NavigLink>
   )
 }

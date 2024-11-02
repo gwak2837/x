@@ -11,12 +11,12 @@ export default function useUserQuery({ id }: Params) {
 
   return useQuery({
     queryKey: userQueryKey,
-    queryFn: () => fetchWithAuth<Response>(userQueryKey[0]),
+    queryFn: () => fetchWithAuth<UserQueryResponse>(userQueryKey[0]),
     enabled: Boolean(id),
   })
 }
 
-type Response = {
+type UserQueryResponse = {
   name: string
   nickname: string
   profileImageURLs: string[]

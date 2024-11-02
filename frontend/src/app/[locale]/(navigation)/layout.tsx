@@ -8,17 +8,16 @@ import HomeIcon from '@/svg/HomeIcon'
 import PostIcon from '@/svg/PostIcon'
 import SearchIcon from '@/svg/SearchIcon'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
-import LoginLink from './LoginLink'
 import NavigLink from './NavigLink'
+import ProfileLink from './ProfileLink'
 import PublishButton from './PublishButton'
 
 export default async function Layout(props: BaseLayoutProps) {
-  const params = await props.params;
+  const params = await props.params
 
-  const {
-    children
-  } = props;
+  const { children } = props
 
   const locale = params.locale
 
@@ -52,7 +51,7 @@ export default async function Layout(props: BaseLayoutProps) {
           </NavigLink>
           <PublishButton />
         </nav>
-        <LoginLink />
+        <ProfileLink />
       </header>
       <div className="w-0 sm:w-20 xl:w-72" />
       <div className="order-1">{children}</div>
