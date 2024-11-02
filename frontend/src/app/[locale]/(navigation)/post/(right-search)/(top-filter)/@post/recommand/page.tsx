@@ -1,12 +1,15 @@
 import type { TPost } from '@/mock/post'
 import type { BasePageProps } from '@/types/nextjs'
-import type { Params } from 'next/dist/shared/lib/router/utils/route-matcher'
 
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
 import PostItem from '@/components/post/PostItem'
 import { notFound } from 'next/navigation'
 
 import { Filter } from '../../enum'
+
+type Params = {
+  filter: Filter
+}
 
 async function fetchPosts({ filter }: Params) {
   try {
@@ -26,7 +29,7 @@ async function fetchPosts({ filter }: Params) {
 }
 
 export default async function Page(props: BasePageProps) {
-  const params = await props.params;
+  const params = await props.params
   const locale = params.locale
   const posts = await fetchPosts({ filter: Filter.recommand })
 

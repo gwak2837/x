@@ -100,121 +100,125 @@ export default function ImagesViewer({
     }
   }, [])
 
-  return createPortal(
-    <div className="fixed inset-0 z-50 grid grid-cols-[1fr_auto] bg-black/90">
-      <div className="grid grid-rows-[1fr_auto]">
-        <div className="relative">
-          <div
-            className="flex h-full snap-x snap-mandatory overflow-x-auto"
-            ref={imageContainerRef}
-          >
-            <div ref={firstRef} />
-            {imageURLs.map((url, i) => (
-              <div className="relative w-full flex-shrink-0 snap-center snap-always" key={i}>
-                <Image
-                  alt="post-image"
-                  className="animate-pulse bg-white/10 object-contain"
-                  fill
-                  onLoad={(e) => ((e.target as HTMLImageElement).className = 'object-contain')}
-                  src={url}
-                />
+  return (
+    <>
+      {createPortal(
+        <div className="fixed inset-0 z-50 grid grid-cols-[1fr_auto] bg-black/90">
+          <div className="grid grid-rows-[1fr_auto]">
+            <div className="relative">
+              <div
+                className="flex h-full snap-x snap-mandatory overflow-x-auto"
+                ref={imageContainerRef}
+              >
+                <div ref={firstRef} />
+                {imageURLs.map((url, i) => (
+                  <div className="relative w-full flex-shrink-0 snap-center snap-always" key={i}>
+                    <Image
+                      alt="post-image"
+                      className="animate-pulse bg-white/10 object-contain"
+                      fill
+                      onLoad={(e) => ((e.target as HTMLImageElement).className = 'object-contain')}
+                      src={url}
+                    />
+                  </div>
+                ))}
+                <div ref={lastRef} />
               </div>
-            ))}
-            <div ref={lastRef} />
-          </div>
-          <KeybordShortcut keyCode="Escape" onKeyDown={handleClose}>
-            <button className={`${className} left-3 top-3 p-2`} onClick={handleClose}>
-              <IconX className="w-5" />
-            </button>
-          </KeybordShortcut>
-          <button
-            className={`${className} right-3 top-3 p-1 lg:hidden`}
-            onClick={() => setIsMenuVisible(true)}
-          >
-            <Icon3Dots className="w-7" />
-            {isMenuVisible && (
-              <>
-                <div
-                  className="pointer-events-auto fixed inset-0 cursor-default"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setIsMenuVisible(false)
-                  }}
+              <KeybordShortcut keyCode="Escape" onKeyDown={handleClose}>
+                <button className={`${className} left-3 top-3 p-2`} onClick={handleClose}>
+                  <IconX className="w-5" />
+                </button>
+              </KeybordShortcut>
+              <button
+                className={`${className} right-3 top-3 p-1 lg:hidden`}
+                onClick={() => setIsMenuVisible(true)}
+              >
+                <Icon3Dots className="w-7" />
+                {isMenuVisible && (
+                  <>
+                    <div
+                      className="pointer-events-auto fixed inset-0 cursor-default"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setIsMenuVisible(false)
+                      }}
+                    />
+                    <div className="absolute right-0 top-0 block overflow-hidden whitespace-nowrap rounded-xl border-2 bg-white text-sm font-bold dark:bg-black">
+                      <ul>
+                        <li>
+                          <Link
+                            className="block px-4 py-3 transition hover:bg-gray-300 dark:hover:bg-gray-800"
+                            href={`/${locale}/post/${post.id}`}
+                          >
+                            게시물 보기
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+                  </>
+                )}
+              </button>
+              <button
+                className={`${className} right-3 top-3 hidden p-1 lg:block`}
+                onClick={() => setIsPostVisible((prev) => !prev)}
+              >
+                <IconDoubleAngleBrackets
+                  aria-selected={isPostVisible}
+                  className="w-7 aria-selected:rotate-180"
                 />
-                <div className="absolute right-0 top-0 block overflow-hidden whitespace-nowrap rounded-xl border-2 bg-white text-sm font-bold dark:bg-black">
-                  <ul>
-                    <li>
-                      <Link
-                        className="block px-4 py-3 transition hover:bg-gray-300 dark:hover:bg-gray-800"
-                        href={`/${locale}/post/${post.id}`}
-                      >
-                        게시물 보기
-                      </Link>
-                    </li>
-                  </ul>
+              </button>
+              <KeybordShortcut keyCode="ArrowLeft" onKeyDown={scrollToLeft}>
+                <button
+                  className={`${className} left-4 top-1/2 -translate-y-1/2 p-2`}
+                  disabled={isOnFirstImage}
+                  onClick={scrollToLeft}
+                >
+                  <IconArrow className="w-5" />
+                </button>
+              </KeybordShortcut>
+              <KeybordShortcut keyCode="ArrowRight" onKeyDown={scrollToRight}>
+                <button
+                  className={`${className} right-4 top-1/2 -translate-y-1/2 p-2`}
+                  disabled={isOnLastImage}
+                  onClick={scrollToRight}
+                >
+                  <IconArrow className="w-5 rotate-180" />
+                </button>
+              </KeybordShortcut>
+            </div>
+            <div className="pb-safe px-safe m-1 flex flex-wrap justify-center gap-2 text-white">
+              <div className="grid grow grid-cols-4 gap-1 text-sm">
+                <div className="flex items-center justify-center">
+                  <IconChat className="w-9 shrink-0 p-2" />
+                  {post.commentCount}
                 </div>
-              </>
-            )}
-          </button>
-          <button
-            className={`${className} right-3 top-3 hidden p-1 lg:block`}
-            onClick={() => setIsPostVisible((prev) => !prev)}
-          >
-            <IconDoubleAngleBrackets
-              aria-selected={isPostVisible}
-              className="w-7 aria-selected:rotate-180"
-            />
-          </button>
-          <KeybordShortcut keyCode="ArrowLeft" onKeyDown={scrollToLeft}>
-            <button
-              className={`${className} left-4 top-1/2 -translate-y-1/2 p-2`}
-              disabled={isOnFirstImage}
-              onClick={scrollToLeft}
-            >
-              <IconArrow className="w-5" />
-            </button>
-          </KeybordShortcut>
-          <KeybordShortcut keyCode="ArrowRight" onKeyDown={scrollToRight}>
-            <button
-              className={`${className} right-4 top-1/2 -translate-y-1/2 p-2`}
-              disabled={isOnLastImage}
-              onClick={scrollToRight}
-            >
-              <IconArrow className="w-5 rotate-180" />
-            </button>
-          </KeybordShortcut>
-        </div>
-        <div className="pb-safe px-safe m-1 flex flex-wrap justify-center gap-2 text-white">
-          <div className="grid grow grid-cols-4 gap-1 text-sm">
-            <div className="flex items-center justify-center">
-              <IconChat className="w-9 shrink-0 p-2" />
-              {post.commentCount}
-            </div>
-            <div className="flex items-center justify-center">
-              <IconRepeat className="w-9 shrink-0 p-2" />
-              {post.repostCount}
-            </div>
-            <div className="flex items-center justify-center">
-              <IconHeart className="w-9 shrink-0 p-2" />
-              {post.likeCount}
-            </div>
-            <div className="flex items-center justify-center">
-              <IconChart className="w-9 shrink-0 p-2" />
-              {post.viewCount}
+                <div className="flex items-center justify-center">
+                  <IconRepeat className="w-9 shrink-0 p-2" />
+                  {post.repostCount}
+                </div>
+                <div className="flex items-center justify-center">
+                  <IconHeart className="w-9 shrink-0 p-2" />
+                  {post.likeCount}
+                </div>
+                <div className="flex items-center justify-center">
+                  <IconChart className="w-9 shrink-0 p-2" />
+                  {post.viewCount}
+                </div>
+              </div>
+              <div className="flex">
+                <BookmarkIcon className="w-9 p-2" selected={false} />
+                <LogoutIcon className="w-9 -rotate-90 p-2" />
+              </div>
             </div>
           </div>
-          <div className="flex">
-            <BookmarkIcon className="w-9 p-2" selected={false} />
-            <LogoutIcon className="w-9 -rotate-90 p-2" />
-          </div>
-        </div>
-      </div>
-      {isPostVisible && (
-        <div className="hidden h-full w-96 overflow-auto bg-white lg:block dark:bg-black">
-          <pre className="">{JSON.stringify(post, null, 2)}</pre>
-        </div>
+          {isPostVisible && (
+            <div className="hidden h-full w-96 overflow-auto bg-white lg:block dark:bg-black">
+              <pre className="">{JSON.stringify(post, null, 2)}</pre>
+            </div>
+          )}
+        </div>,
+        document.getElementById('fixed-root') ?? document.body,
       )}
-    </div>,
-    document.getElementById('fixed-root') ?? document.body,
+    </>
   )
 }
