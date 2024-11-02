@@ -112,31 +112,35 @@ export default function Modal({
 
   if (!isMounted) return null
 
-  return createPortal(
-    <div className={modalBackground} onClick={closeModal}>
-      {showCloseButton && (
-        <button onClick={closeModal}>
-          <IconX className="absolute right-2 top-2 z-50 w-8 cursor-pointer rounded-full bg-gray-500/30 p-1" />
-        </button>
-      )}
-      <div
-        className={`absolute z-50 transition duration-300 ${open ? 'scale-100' : 'scale-90'} ${className}`}
-        onClick={(e) => e.stopPropagation()}
-        ref={showDragButton ? modalRef : null}
-      >
-        {showDragButton && (
+  return (
+    <>
+      {createPortal(
+        <div className={modalBackground} onClick={closeModal}>
+          {showCloseButton && (
+            <button onClick={closeModal}>
+              <IconX className="absolute right-2 top-2 z-50 w-8 cursor-pointer rounded-full bg-gray-500/30 p-1" />
+            </button>
+          )}
           <div
-            className="absolute left-0 right-0 top-0 z-50 flex h-4 cursor-move justify-center p-2 pb-6"
-            onDragStart={(e) => e.preventDefault()}
-            onMouseDown={dragModalMouse}
-            onTouchStart={dragModalTouch}
+            className={`absolute z-50 transition duration-300 ${open ? 'scale-100' : 'scale-90'} ${className}`}
+            onClick={(e) => e.stopPropagation()}
+            ref={showDragButton ? modalRef : null}
           >
-            <div className="h-1 w-8 rounded-full bg-slate-400 dark:bg-slate-600" />
+            {showDragButton && (
+              <div
+                className="absolute left-0 right-0 top-0 z-50 flex h-4 cursor-move justify-center p-2 pb-6"
+                onDragStart={(e) => e.preventDefault()}
+                onMouseDown={dragModalMouse}
+                onTouchStart={dragModalTouch}
+              >
+                <div className="h-1 w-8 rounded-full bg-slate-400 dark:bg-slate-600" />
+              </div>
+            )}
+            {children}
           </div>
-        )}
-        {children}
-      </div>
-    </div>,
-    document.getElementById('modal-root') ?? document.body,
+        </div>,
+        document.getElementById('modal-root') ?? document.body,
+      )}
+    </>
   )
 }
