@@ -1,7 +1,8 @@
+import type { NextConfig } from 'next'
+
 import { withSentryConfig } from '@sentry/nextjs'
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
   compiler: {
     ...(process.env.NEXT_PUBLIC_VERCEL_ENV === 'production' && {
       removeConsole: { exclude: ['error'] },

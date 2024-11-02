@@ -10,7 +10,14 @@ type LayoutProps = {
   post: ReactNode
 } & BaseLayoutProps
 
-export default function Layout({ params, filter, post }: LayoutProps) {
+export default async function Layout(props: LayoutProps) {
+  const params = await props.params;
+
+  const {
+    filter,
+    post
+  } = props;
+
   const locale = params.locale
 
   return (

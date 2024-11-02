@@ -2,13 +2,14 @@ import { t } from 'elysia'
 
 import type { BaseElysia } from '../../../..'
 
-import { PostCategory, PostStatus } from '../../../../model/Post'
+import { PostCategory } from '../../../../model/Post'
+import { PostStatus } from '../../../../model/Post'
 import { POSTGRES_MAX_BIGINT_STRING } from '../../../../plugin/postgres'
 import { deeplyRemoveNull, isValidPostgresBigInt } from '../../../../util'
 import { removeZero } from '../../../../util/type'
 
-export default (app: BaseElysia) =>
-  app.get(
+export default function GETPostIdComment(app: BaseElysia) {
+  return app.get(
     '/post/:id/comment',
     async ({ error, params, query, sql, userId }) => {
       const { id: postId } = params
@@ -194,6 +195,7 @@ export default (app: BaseElysia) =>
       },
     },
   )
+}
 
 type CommentRow = {
   id: string

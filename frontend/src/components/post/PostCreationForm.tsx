@@ -71,6 +71,7 @@ export default function PostCreationForm({
             {previewURLs.map((url, i) => (
               <div
                 className={`relative max-h-[512px] shrink-0 snap-always overflow-hidden rounded-2xl border bg-gray-500 ${i === 0 ? 'snap-start' : ''} ${i === previewURLs.length - 1 ? 'snap-end' : ''} ${i === 0 && previewURLs.length === 1 ? 'w-full' : 'w-1/2'}`}
+                key={url}
               >
                 <button
                   className="absolute right-1 top-1 rounded-full bg-black/70 p-2"

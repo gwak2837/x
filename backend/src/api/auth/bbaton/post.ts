@@ -10,8 +10,8 @@ import { PostgresErrorCode } from '../../../plugin/postgres'
 import { TokenType, signJWT } from '../../../util/jwt'
 import { generateRandomNickname } from '../../../util/nickname'
 
-export default (app: BaseElysia) =>
-  app.post(
+export default function POSTAuthBBaton(app: BaseElysia) {
+  return app.post(
     '/auth/bbaton',
     async ({ error, query, sql }) => {
       const code = query.code
@@ -133,6 +133,7 @@ export default (app: BaseElysia) =>
       },
     },
   )
+}
 
 export type POSTAuthBBatonResponse200 = Static<typeof response200Schema>
 

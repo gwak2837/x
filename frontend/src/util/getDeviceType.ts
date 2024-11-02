@@ -9,7 +9,7 @@ import { UAParser } from 'ua-parser-js'
  * 예: PC/태블릿/모바일 환경에 따라 텍스트를 구분해서 보여주는 경우
  */
 export default async function getDeviceType() {
-  const { get } = headers()
+  const { get } = await headers()
   const userAgentString = get('user-agent')
   const userAgentInstance = new UAParser(userAgentString || '')
   const device = userAgentInstance.getDevice()

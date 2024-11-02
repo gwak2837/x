@@ -27,7 +27,8 @@ async function fetchPost({ id }: Args) {
   }
 }
 
-export default async function Page({ params }: BasePageProps) {
+export default async function Page(props: BasePageProps) {
+  const params = await props.params;
   const { id } = params
   const initialPost = await fetchPost({ id })
 

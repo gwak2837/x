@@ -25,7 +25,8 @@ async function fetchPosts({ filter }: Params) {
   }
 }
 
-export default async function Page({ params }: BasePageProps) {
+export default async function Page(props: BasePageProps) {
+  const params = await props.params;
   const locale = params.locale
   const posts = await fetchPosts({ filter: Filter.recommand })
 

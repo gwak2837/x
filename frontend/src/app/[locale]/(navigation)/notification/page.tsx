@@ -5,7 +5,9 @@ import Link from 'next/link'
 
 import ImagesViewer from '../../../../components/post/ImagesViewer'
 
-export default async function Page({ params, searchParams }: BasePageProps) {
+export default async function Page(props: BasePageProps) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   return (
     <div className="p-4 sm:p-8 md:p-16 lg:p-24">
       <ImagesViewer

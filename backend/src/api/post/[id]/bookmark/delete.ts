@@ -4,8 +4,8 @@ import type { BaseElysia } from '../../../..'
 
 import { isValidPostgresBigInt } from '../../../../util'
 
-export default (app: BaseElysia) =>
-  app.delete(
+export default function DELETEPostIdBookmark(app: BaseElysia) {
+  return app.delete(
     '/post/:id/bookmark',
     async ({ error, params, sql, userId }) => {
       if (!userId) return error(401, 'Unauthorized')
@@ -32,6 +32,7 @@ export default (app: BaseElysia) =>
       },
     },
   )
+}
 
 export type DELETEPostIdBookmarkResponse200 = Static<typeof response200Schema>
 

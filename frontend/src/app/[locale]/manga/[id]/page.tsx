@@ -5,7 +5,9 @@ import Link from 'next/link'
 
 import ArrowKeyNavigation from './ArrowKeyNavigation'
 
-export default async function Page({ params, searchParams }: BasePageProps) {
+export default async function Page(props: BasePageProps) {
+  const searchParams = await props.searchParams
+  const params = await props.params
   const { id } = params
   const i = +(searchParams.i ?? 1)
   const maxString = searchParams.max ?? '1'
@@ -22,6 +24,7 @@ export default async function Page({ params, searchParams }: BasePageProps) {
               className={`h-svh object-contain ${j === 0 ? '' : 'hidden'}`}
               fetchPriority={j === 0 ? 'high' : 'auto'}
               height={1536}
+              key={j}
               referrerPolicy="no-referrer"
               src={`${HASHA_CDN_DOMAIN}/${id}/${String(i + j).padStart(maxLength, '0')}.webp`}
               width={1536}

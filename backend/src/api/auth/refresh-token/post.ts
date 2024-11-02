@@ -7,8 +7,8 @@ import { isValidPostgresBigInt } from '../../../util'
 import { LoginNotAllowed } from '../../../util/auth'
 import { TokenType, signJWT, verifyJWT } from '../../../util/jwt'
 
-export default (app: BaseElysia) =>
-  app.post(
+export default function POSTAuthRefreshToken(app: BaseElysia) {
+  return app.post(
     '/auth/refresh-token',
     async ({ error, headers, sql }) => {
       const auth = headers['authorization']
@@ -52,6 +52,7 @@ export default (app: BaseElysia) =>
       },
     },
   )
+}
 
 export type POSTAuthRefreshTokenResponse200 = Static<typeof response200Schema>
 

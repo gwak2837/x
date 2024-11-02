@@ -192,7 +192,13 @@ export async function generateStaticParams() {
   return [{ locale: 'ko' }, { locale: 'en' }]
 }
 
-export default function RootLayout({ children, params }: BaseLayoutProps) {
+export default async function RootLayout(props: BaseLayoutProps) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   return (
     <html className="h-full" lang={params.locale}>
       <link color={THEME_COLOR} href="/safari-pinned-tab.svg" rel="mask-icon" />

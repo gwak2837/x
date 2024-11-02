@@ -22,7 +22,7 @@ export default function KeybordShortcut({ withAltKey, children, keyCode, onKeyDo
     return () => {
       document.removeEventListener('keydown', downHandler)
     }
-  }, [keyCode, onKeyDown])
+  }, [keyCode, onKeyDown, withAltKey])
 
   return <>{children}</>
 }

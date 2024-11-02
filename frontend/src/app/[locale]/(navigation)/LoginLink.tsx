@@ -2,8 +2,8 @@
 
 import type { BaseParams } from '@/types/nextjs'
 
-import LoginIcon from '@/svg/LoginIcon'
 import { useAuthStore } from '@/model/auth'
+import LoginIcon from '@/svg/LoginIcon'
 import { useParams, usePathname } from 'next/navigation'
 
 import NavigLink from './NavigLink'

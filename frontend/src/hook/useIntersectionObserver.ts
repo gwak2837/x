@@ -49,5 +49,5 @@ export default function useIntersectionObserver({
         observer.unobserve(target)
       }
     }
-  }, [targetRef.current])
+  }, [targetRef])
 }

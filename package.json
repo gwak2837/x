@@ -7,17 +7,18 @@
     "lint": "eslint . --fix"
   },
   "devDependencies": {
-    "@eslint/compat": "^1.1.1",
-    "@eslint/js": "^9.7.0",
-    "eslint": "^9.7.0",
+    "@eslint/compat": "^1.2.2",
+    "@eslint/js": "^9.14.0",
+    "@tanstack/eslint-plugin-query": "^5.59.7",
+    "eslint": "^9.14.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-n": "^17.9.0",
+    "eslint-plugin-n": "^17.12.0",
     "eslint-plugin-perfectionist": "^2.11.0",
-    "eslint-plugin-promise": "^6.4.0",
+    "eslint-plugin-promise": "^6.6.0",
     "prettier": "3.3.3",
-    "prettier-plugin-tailwindcss": "^0.6.5",
-    "typescript-eslint": "^7.16.0"
+    "prettier-plugin-tailwindcss": "^0.6.8",
+    "typescript-eslint": "^7.18.0"
   },
   "workspaces": [
     "backend",

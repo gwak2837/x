@@ -6,7 +6,8 @@ import { Suspense } from 'react'
 
 import Login from './Login'
 
-export default async function Page({ params }: BasePageProps) {
+export default async function Page(props: BasePageProps) {
+  const params = await props.params;
   const locale = params.locale
 
   return (

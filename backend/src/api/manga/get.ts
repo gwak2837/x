@@ -5,8 +5,8 @@ import type { BaseElysia } from '../..'
 import { MangaInfoTypeString } from '../../model/MangaInfo'
 import { POSTGRES_MAX_BIGINT_STRING } from '../../plugin/postgres'
 
-export default (app: BaseElysia) =>
-  app.get(
+export default function GETManga(app: BaseElysia) {
+  return app.get(
     '/manga',
     async ({ error, query, sql }) => {
       const { cursor = POSTGRES_MAX_BIGINT_STRING, limit = 10, types, names } = query
@@ -56,6 +56,7 @@ export default (app: BaseElysia) =>
       },
     },
   )
+}
 
 type MangaRow = {
   id: string

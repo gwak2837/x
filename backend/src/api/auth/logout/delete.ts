@@ -2,8 +2,8 @@ import { NotFoundError, type Static, t } from 'elysia'
 
 import type { BaseElysia } from '../../..'
 
-export default (app: BaseElysia) =>
-  app.delete(
+export default function DELETEAuthLogout(app: BaseElysia) {
+  return app.delete(
     '/auth/logout',
     async ({ error, sql, userId }) => {
       if (!userId) return error(401, 'Unauthorized')
@@ -27,6 +27,7 @@ export default (app: BaseElysia) =>
       },
     },
   )
+}
 
 export type DELETEAuthLogoutResponse200 = Static<typeof response200Schema>
 

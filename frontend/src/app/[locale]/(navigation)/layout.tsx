@@ -13,7 +13,13 @@ import LoginLink from './LoginLink'
 import NavigLink from './NavigLink'
 import PublishButton from './PublishButton'
 
-export default function Layout({ children, params }: BaseLayoutProps) {
+export default async function Layout(props: BaseLayoutProps) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   const locale = params.locale
 
   return (

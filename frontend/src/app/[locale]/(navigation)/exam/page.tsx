@@ -5,7 +5,9 @@ import Link from 'next/link'
 
 import TopNavigation from '../TopNavigation'
 
-export default async function Page({ params, searchParams }: BasePageProps) {
+export default async function Page(props: BasePageProps) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const locale = params.locale
 
   return (

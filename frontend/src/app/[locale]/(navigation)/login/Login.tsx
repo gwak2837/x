@@ -53,7 +53,7 @@ export default function Login() {
       success: '로그인했어요',
       error: '로그인에 실패했어요',
     })
-  }, [code])
+  }, [code, provider])
 
   return reason ? <div className="text-sm text-red-500 sm:text-base">{reason}</div> : null
 }

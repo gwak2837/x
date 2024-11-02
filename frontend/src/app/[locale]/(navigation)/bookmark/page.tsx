@@ -3,7 +3,9 @@ import type { BasePageProps } from '@/types/nextjs'
 import Image from 'next/image'
 import Link from 'next/link'
 
-export default async function Page({ params, searchParams }: BasePageProps) {
+export default async function Page(props: BasePageProps) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const { locale } = params
 
   return (
