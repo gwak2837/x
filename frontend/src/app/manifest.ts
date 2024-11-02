@@ -38,28 +38,24 @@ export default function manifest(): MetadataRoute.Manifest {
         src: 'assets/screenshot/1.webp',
         sizes: '3680x2262',
         type: 'image/webp',
-        // @ts-expect-error
         form_factor: 'wide',
       },
       {
         src: 'assets/screenshot/2.webp',
         sizes: '3680x2262',
         type: 'image/webp',
-        // @ts-expect-error
         form_factor: 'wide',
       },
       {
         src: 'assets/screenshot/3.webp',
         sizes: '3680x2262',
         type: 'image/webp',
-        // @ts-expect-error
         form_factor: 'wide',
       },
       {
         src: 'assets/screenshot/4.webp',
         sizes: '3680x2262',
         type: 'image/webp',
-        // @ts-expect-error
         form_factor: 'wide',
       },
     ],
