@@ -4,12 +4,12 @@ import { type ReactNode } from 'react'
 
 export type BaseLayoutProps<Param extends Record<string, unknown> = Record<string, string>> = {
   children: ReactNode
-  params: { locale: Locale } & Param
+  params: Promise<{ locale: Locale } & Param>
 }
 
 export type BasePageProps<T extends Record<string, unknown> = Record<string, string>> = {
-  params: { locale: Locale } & T
-  searchParams: Record<string, string | string[] | undefined>
+  params: Promise<{ locale: Locale } & T>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
 export type ErrorProps = {

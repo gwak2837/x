@@ -9,7 +9,7 @@ import globals from 'globals'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import tseslint from 'typescript-eslint'
-import pluginQuery from '@tanstack/eslint-plugin-query'
+// import pluginQuery from '@tanstack/eslint-plugin-query'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -44,6 +44,8 @@ export default [
     rules: {
       'no-async-promise-executor': 'off',
       'no-empty-pattern': 'warn',
+
+      '@next/next/no-html-link-for-pages': ['error', 'frontend'],
 
       '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
       '@typescript-eslint/consistent-type-imports': 'error',
