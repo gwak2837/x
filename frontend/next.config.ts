@@ -11,9 +11,6 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  experimental: {
-    ppr: true,
-  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'pbs.twimg.com' },

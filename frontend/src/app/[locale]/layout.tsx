@@ -16,7 +16,7 @@ import { defaultLocale, locales } from '@/middleware'
 import localFont from 'next/font/local'
 import { Toaster } from 'react-hot-toast'
 
-import Authentication from './Authentication'
+import AccessTokenFetcher from './AccessTokenFetcher'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -193,11 +193,9 @@ export async function generateStaticParams() {
 }
 
 export default async function RootLayout(props: BaseLayoutProps) {
-  const params = await props.params;
+  const params = await props.params
 
-  const {
-    children
-  } = props;
+  const { children } = props
 
   return (
     <html className="h-full" lang={params.locale}>
@@ -213,7 +211,7 @@ export default async function RootLayout(props: BaseLayoutProps) {
           {children}
           <div id="fixed-root" />
         </ReactQueryProvider>
-        <Authentication />
+        <AccessTokenFetcher />
         <Toaster toastOptions={{ error: { duration: 6000 } }} />
       </body>
     </html>

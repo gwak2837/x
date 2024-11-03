@@ -3,6 +3,7 @@
 import type { BaseParams } from '@/types/nextjs'
 
 import { THEME_COLOR } from '@/common/constants'
+import { LocalStorage, SessionStorage } from '@/common/storage'
 import Squircle from '@/components/Squircle'
 import { getUserId, useAuthStore } from '@/model/auth'
 import useLogoutMutation from '@/query/useLogoutMutation'
@@ -21,10 +22,9 @@ export default function ProfileLink() {
   const { locale } = useParams<BaseParams>()
   const pathname = usePathname()
 
-  const { accessToken, isLoading, setAccessToken } = useAuthStore()
-
+  const { accessToken, setAccessToken } = useAuthStore()
   const userId = getUserId(accessToken)
-  const { data: user } = useUserQuery({ id: userId })
+  const { data: user, isLoading: isUserLoading } = useUserQuery({ id: userId })
   const userNickname = user?.nickname ?? ''
   const userName = user?.name ?? ''
 
@@ -40,11 +40,19 @@ export default function ProfileLink() {
     })
 
     setAccessToken('')
-    localStorage.removeItem('refresh-token')
+    localStorage.removeItem(LocalStorage.REFRESH_TOKEN)
   }
 
-  if (isLoading) {
-    return '...'
+  if (accessToken === null || isUserLoading) {
+    return (
+      <div className="flex items-center justify-center sm:py-4">
+        <Squircle fill={THEME_COLOR} wrapperClassName="w-8 animate-pulse flex-shrink-0 sm:w-10" />
+        <div className="mx-3 hidden w-full min-w-0 gap-1 py-0.5 xl:grid">
+          <div className="h-5 animate-pulse rounded-xl bg-gray-200 xl:block dark:bg-gray-800" />
+          <div className="h-5 animate-pulse rounded-xl bg-gray-200 xl:block dark:bg-gray-800" />
+        </div>
+      </div>
+    )
   }
 
   return user ? (
@@ -60,21 +68,13 @@ export default function ProfileLink() {
       >
         {userNickname.slice(0, 2)}
       </Squircle>
-      <div className="ml-3 hidden w-full min-w-0 gap-1 xl:grid">
-        {userNickname ? (
-          <div className="hidden overflow-hidden whitespace-nowrap leading-5 xl:block">
-            {userNickname}
-          </div>
-        ) : (
-          <div className="hidden h-5 animate-pulse rounded-full bg-gray-300 xl:block dark:bg-gray-700" />
-        )}
-        {userName ? (
-          <div className="dark:text-midnight-400 text-midnight-300 hidden overflow-hidden text-ellipsis whitespace-nowrap leading-5 xl:block">
-            @{userName}
-          </div>
-        ) : (
-          <div className="hidden h-5 w-3/4 animate-pulse rounded-full bg-gray-300 xl:block dark:bg-gray-700" />
-        )}
+      <div className="ml-3 hidden w-full min-w-0 gap-1 py-0.5 xl:grid">
+        <div className="hidden overflow-hidden whitespace-nowrap leading-5 xl:block">
+          {userNickname}
+        </div>
+        <div className="dark:text-midnight-400 text-midnight-300 hidden overflow-hidden text-ellipsis whitespace-nowrap leading-5 xl:block">
+          @{userName}
+        </div>
       </div>
       <label className="relative" onClick={(e) => e.stopPropagation()}>
         <input
@@ -108,9 +108,9 @@ export default function ProfileLink() {
   ) : (
     <NavigLink
       Icon={LoginIcon}
-      className="sm:py-2"
+      className="sm:py-4"
       href={`/${locale}/login`}
-      onClick={() => sessionStorage.setItem('login-redirection', pathname)}
+      onClick={() => sessionStorage.setItem(SessionStorage.LOGIN_REDIRECTION, pathname)}
     >
       로그인
     </NavigLink>

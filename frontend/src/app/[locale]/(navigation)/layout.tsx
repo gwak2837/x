@@ -8,7 +8,6 @@ import HomeIcon from '@/svg/HomeIcon'
 import PostIcon from '@/svg/PostIcon'
 import SearchIcon from '@/svg/SearchIcon'
 import Link from 'next/link'
-import { Suspense } from 'react'
 
 import NavigLink from './NavigLink'
 import ProfileLink from './ProfileLink'

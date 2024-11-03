@@ -2,7 +2,7 @@ import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
 import { useAuthStore } from '@/model/auth'
 
 export default function useFetchWithAuth() {
-  const authStore = useAuthStore()
+  const { accessToken, setAccessToken } = useAuthStore()
 
   return async <T extends Record<string, unknown>>(
     input: Parameters<typeof fetch>[0],
@@ -12,11 +12,11 @@ export default function useFetchWithAuth() {
       ...init,
       headers: {
         ...init?.headers,
-        Authorization: `Bearer ${authStore.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     })
     if (response.status === 401) {
-      authStore.setAccessToken('')
+      setAccessToken(null)
       throw new Error(await response.text())
     }
     if (response.status >= 400) throw new Error(await response.text())

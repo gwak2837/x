@@ -2,17 +2,15 @@ import { parseJWT } from '@/util'
 import { create } from 'zustand'
 
 export type AuthStore = {
-  accessToken: string
-  isLoading: boolean
-  setAccessToken: (token: string) => void
+  accessToken: string | null
+  setAccessToken: (accessToken: string | null) => void
 }
 
 export const useAuthStore = create<AuthStore>()((set) => ({
-  accessToken: '',
-  isLoading: true,
-  setAccessToken: (accessToken) => set(() => ({ accessToken, isLoading: false })),
+  accessToken: null,
+  setAccessToken: (accessToken) => set(() => ({ accessToken })),
 }))
 
-export function getUserId(accessToken: string) {
-  return (parseJWT(accessToken)?.sub ?? '') as string
+export function getUserId(accessToken: string | null) {
+  return (parseJWT(accessToken ?? '')?.sub ?? '') as string
 }

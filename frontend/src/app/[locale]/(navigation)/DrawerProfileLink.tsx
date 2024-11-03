@@ -4,13 +4,13 @@ import type { BaseParams } from '@/types/nextjs'
 import type { MouseEvent } from 'react'
 
 import { THEME_COLOR } from '@/common/constants'
+import { LocalStorage } from '@/common/storage'
 import Squircle from '@/components/Squircle'
-import { useAuthStore } from '@/model/auth'
+import { getUserId, useAuthStore } from '@/model/auth'
 import useLogoutMutation from '@/query/useLogoutMutation'
 import useUserQuery from '@/query/useUserQuery'
 import LogoutIcon from '@/svg/LogoutIcon'
 import MoreIcon from '@/svg/MoreIcon'
-import { parseJWT } from '@/util'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import toast from 'react-hot-toast'
@@ -23,7 +23,7 @@ export default function DrawerProfileLink({ className }: Props) {
   const { locale } = useParams<BaseParams>()
 
   const { accessToken, setAccessToken } = useAuthStore()
-  const userId = (parseJWT(accessToken)?.sub ?? '') as string
+  const userId = getUserId(accessToken)
   const { data: user } = useUserQuery({ id: userId })
   const userNickname = user?.nickname ?? ''
   const userName = user?.name ?? ''
@@ -40,7 +40,7 @@ export default function DrawerProfileLink({ className }: Props) {
     })
 
     setAccessToken('')
-    localStorage.removeItem('refresh-token')
+    localStorage.removeItem(LocalStorage.REFRESH_TOKEN)
   }
 
   return (

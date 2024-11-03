@@ -1,16 +1,19 @@
 'use client'
 
 import { NEXT_PUBLIC_BACKEND_URL } from '@/common/constants'
+import { LocalStorage, SessionStorage } from '@/common/storage'
 import { useAuthStore } from '@/model/auth'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 
+import { LoginSearchParams } from './enum'
+
 export default function Login() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const code = searchParams.get('code')
-  const provider = searchParams.get('provider')
+  const code = searchParams.get(LoginSearchParams.CODE)
+  const provider = searchParams.get(LoginSearchParams.PROVIDER)
   const [reason, setReason] = useState('')
   const setAccessToken = useAuthStore((state) => state.setAccessToken)
 
@@ -33,12 +36,12 @@ export default function Login() {
         }
 
         const result = await response.json()
+        localStorage.setItem(LocalStorage.REFRESH_TOKEN, result.refreshToken)
         setAccessToken(result.accessToken)
-        localStorage.setItem('refresh-token', result.refreshToken)
         resolve()
 
-        const loginRedirection = sessionStorage.getItem('login-redirection') ?? '/'
-
+        const loginRedirection = sessionStorage.getItem(SessionStorage.LOGIN_REDIRECTION) ?? '/'
+        sessionStorage.removeItem(SessionStorage.LOGIN_REDIRECTION)
         const deletedSearchParams = new URLSearchParams(searchParams)
         deletedSearchParams.delete('code')
         deletedSearchParams.delete('provider')
