@@ -14,6 +14,7 @@ import {
 import ReactQueryProvider from '@/components/ReactQueryProvider'
 import { defaultLocale, locales } from '@/middleware'
 import localFont from 'next/font/local'
+import { Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
 
 import AccessTokenFetcher from './AccessTokenFetcher'
@@ -211,7 +212,9 @@ export default async function RootLayout(props: BaseLayoutProps) {
           {children}
           <div id="fixed-root" />
         </ReactQueryProvider>
-        <AccessTokenFetcher />
+        <Suspense>
+          <AccessTokenFetcher />
+        </Suspense>
         <Toaster toastOptions={{ error: { duration: 6000 } }} />
       </body>
     </html>
