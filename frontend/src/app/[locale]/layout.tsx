@@ -13,7 +13,6 @@ import {
 } from '@/common/constants'
 import ReactQueryProvider from '@/components/ReactQueryProvider'
 import { defaultLocale, locales } from '@/middleware'
-import localFont from 'next/font/local'
 import { Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
 
@@ -183,12 +182,6 @@ export const viewport: Viewport = {
   colorScheme: 'light',
 }
 
-const myFont = localFont({
-  src: './PretendardVariable.woff2',
-  display: 'swap',
-  weight: '400 700',
-})
-
 export async function generateStaticParams() {
   return [{ locale: 'ko' }, { locale: 'en' }]
 }
@@ -202,12 +195,11 @@ export default async function RootLayout(props: BaseLayoutProps) {
     <html className="h-full" lang={params.locale}>
       <link color={THEME_COLOR} href="/safari-pinned-tab.svg" rel="mask-icon" />
       <meta content={THEME_COLOR} name="msapplication-TileColor" />
-
       <meta content="yes" name="mobile-web-app-capable" />
       <meta content={DESCRIPTION} name="subject" />
       <meta content="general" name="rating" />
 
-      <body className={`h-full overscroll-y-none transition-all duration-300 ${myFont.className}`}>
+      <body className="h-full overscroll-y-none transition-all duration-300">
         <ReactQueryProvider>
           {children}
           <div id="fixed-root" />

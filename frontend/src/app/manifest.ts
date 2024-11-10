@@ -34,25 +34,25 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
     screenshots: [
       {
-        src: 'assets/screenshot/1.webp',
+        src: 'asset/screenshot/1.webp',
         sizes: '3680x2262',
         type: 'image/webp',
         form_factor: 'wide',
       },
       {
-        src: 'assets/screenshot/2.webp',
+        src: 'asset/screenshot/2.webp',
         sizes: '3680x2262',
         type: 'image/webp',
         form_factor: 'wide',
       },
       {
-        src: 'assets/screenshot/3.webp',
+        src: 'asset/screenshot/3.webp',
         sizes: '3680x2262',
         type: 'image/webp',
         form_factor: 'wide',
       },
       {
-        src: 'assets/screenshot/4.webp',
+        src: 'asset/screenshot/4.webp',
         sizes: '3680x2262',
         type: 'image/webp',
         form_factor: 'wide',
