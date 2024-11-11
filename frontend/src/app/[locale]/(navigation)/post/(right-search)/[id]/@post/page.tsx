@@ -11,7 +11,10 @@ type Args = {
 
 async function fetchPost({ id }: Args) {
   try {
-    const response = await fetch(`${NEXT_PUBLIC_BACKEND_URL}/post/${id}?include=parent-post`)
+    const response = await fetch(`${NEXT_PUBLIC_BACKEND_URL}/post/${id}?include=parent-post`, {
+      cache: 'force-cache',
+      next: { tags: ['post', id] },
+    })
 
     if (response.status >= 500) {
       console.error('👀 ~ message:', await response.text())
@@ -28,7 +31,7 @@ async function fetchPost({ id }: Args) {
 }
 
 export default async function Page(props: BasePageProps) {
-  const params = await props.params;
+  const params = await props.params
   const { id } = params
   const initialPost = await fetchPost({ id })
 

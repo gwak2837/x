@@ -3,24 +3,22 @@
 import type { BaseParams } from '@/types/nextjs'
 
 import { THEME_COLOR } from '@/common/constants'
-import { LocalStorage, SessionStorage } from '@/common/storage'
+import { LocalStorage } from '@/common/storage'
 import Squircle from '@/components/Squircle'
 import { getUserId, useAuthStore } from '@/model/auth'
 import useLogoutMutation from '@/query/useLogoutMutation'
 import useUserQuery from '@/query/useUserQuery'
-import LoginIcon from '@/svg/LoginIcon'
 import LogoutIcon from '@/svg/LogoutIcon'
 import MoreIcon from '@/svg/MoreIcon'
 import Link from 'next/link'
-import { useParams, usePathname } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { type MouseEvent } from 'react'
 import toast from 'react-hot-toast'
 
-import NavigLink from './NavigLink'
+import LoginLink from './LoginLink'
 
 export default function ProfileLink() {
   const { locale } = useParams<BaseParams>()
-  const pathname = usePathname()
 
   const { accessToken, setAccessToken } = useAuthStore()
   const userId = getUserId(accessToken)
@@ -106,13 +104,6 @@ export default function ProfileLink() {
       </label>
     </Link>
   ) : (
-    <NavigLink
-      Icon={LoginIcon}
-      className="sm:py-4"
-      href={`/${locale}/login`}
-      onClick={() => sessionStorage.setItem(SessionStorage.LOGIN_REDIRECTION, pathname)}
-    >
-      로그인
-    </NavigLink>
+    <LoginLink />
   )
 }
