@@ -1,12 +1,10 @@
+import type { BaseElysia } from '@/index'
+
+import { PostCategory, PostStatus } from '@/model/Post'
+import { POSTGRES_MAX_BIGINT_STRING } from '@/plugin/postgres'
+import { deeplyRemoveNull, isValidPostgresBigInt } from '@/util'
+import { removeZero } from '@/util/type'
 import { t } from 'elysia'
-
-import type { BaseElysia } from '../../../..'
-
-import { PostCategory } from '../../../../model/Post'
-import { PostStatus } from '../../../../model/Post'
-import { POSTGRES_MAX_BIGINT_STRING } from '../../../../plugin/postgres'
-import { deeplyRemoveNull, isValidPostgresBigInt } from '../../../../util'
-import { removeZero } from '../../../../util/type'
 
 export default function GETPostIdComment(app: BaseElysia) {
   return app.get(

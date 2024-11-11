@@ -1,11 +1,10 @@
+import type { BaseElysia } from '@/index'
+import type { UserSuspendedType } from '@/model/User'
+
+import { isValidPostgresBigInt } from '@/util'
+import { LoginNotAllowed } from '@/util/auth'
+import { TokenType, signJWT, verifyJWT } from '@/util/jwt'
 import { type Static, t } from 'elysia'
-
-import type { BaseElysia } from '../../..'
-import type { UserSuspendedType } from '../../../model/User'
-
-import { isValidPostgresBigInt } from '../../../util'
-import { LoginNotAllowed } from '../../../util/auth'
-import { TokenType, signJWT, verifyJWT } from '../../../util/jwt'
 
 export default function POSTAuthRefreshToken(app: BaseElysia) {
   return app.post(

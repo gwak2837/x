@@ -1,15 +1,11 @@
-import type { Static } from 'elysia'
+import type { BaseElysia } from '@/index'
 
-import { NotFoundError, t } from 'elysia'
+import { PostCategory, PostStatus } from '@/model/Post'
+import { deeplyRemoveNull } from '@/util'
+import { NotFoundError, type Static, t } from 'elysia'
 
-import type { BaseElysia } from '../../..'
-
-import { PostCategory, PostStatus } from '../../../model/Post'
-import { deeplyRemoveNull } from '../../../util'
-import { removeZero } from '../../../util/type'
-
-export default (app: BaseElysia) =>
-  app.get(
+export default function GETPostId(app: BaseElysia) {
+  return app.get(
     '/post/:id',
     async ({ error, query, params, sql, userId }) => {
       const { id: postId } = params
@@ -39,7 +35,6 @@ export default (app: BaseElysia) =>
             "Author".name AS "author_name",
             "Author".nickname AS "author_nickname",
             "Author"."profileImageURLs" AS "author_profileImageURLs",
-            (CASE WHEN "UserFollow"."followerId" IS NOT NULL THEN 1 ELSE 0 END) AS "author_isFollowing",
             "ReferredPost".id AS "referredPost_id",
             "ReferredPost"."createdAt" AS "referredPost_createdAt",
             "ReferredPost"."updatedAt" AS "referredPost_updatedAt",
@@ -51,19 +46,12 @@ export default (app: BaseElysia) =>
             "ReferredAuthor".id AS "referredPostAuthor_id",
             "ReferredAuthor".name AS "referredPostAuthor_name",
             "ReferredAuthor".nickname AS "referredPostAuthor_nickname",
-            "ReferredAuthor"."profileImageURLs" AS "referredPostAuthor_profileImageURLs",
-            (CASE WHEN "UserLikePost"."userId" IS NOT NULL THEN 1 ELSE 0 END) AS "likedByMe",
-            COUNT("UserLikePost"."postId") AS "likeCount",
-            COUNT("Comment".id) AS "commentCount",
-            COUNT("Repost".id) AS "repostCount"
+            "ReferredAuthor"."profileImageURLs" AS "referredPostAuthor_profileImageURLs"
           FROM "Post"
             LEFT JOIN "User" AS "Author" ON "Author".id = "Post"."authorId"
             LEFT JOIN "Post" AS "ReferredPost" ON "ReferredPost".id = "Post"."referredPostId"
             LEFT JOIN "User" AS "ReferredAuthor" ON "ReferredAuthor".id = "ReferredPost"."authorId"
             LEFT JOIN "UserFollow" ON "UserFollow"."leaderId" = "Author".id AND "UserFollow"."followerId" = ${userId}
-            LEFT JOIN "UserLikePost" ON "UserLikePost"."postId" = "Post".id AND "UserLikePost"."userId" = ${userId}
-            LEFT JOIN "Post" AS "Comment" ON "Comment"."parentPostId" = "Post".id
-            LEFT JOIN "Post" AS "Repost" ON "Repost"."referredPostId" = "Post".id
           WHERE 
           ${
             shouldIncludeParentPost
@@ -77,7 +65,7 @@ export default (app: BaseElysia) =>
               "Post".status = ${PostStatus.ONLY_FOLLOWERS} AND "UserFollow"."leaderId" IS NOT NULL
             )
           )
-          GROUP BY "Post".id, "Author".id, "UserFollow"."followerId", "ReferredPost".id, "ReferredAuthor".id, "UserLikePost"."userId"
+          GROUP BY "Post".id, "Author".id, "UserFollow"."followerId", "ReferredPost".id, "ReferredAuthor".id
         ${
           shouldIncludeParentPost
             ? sql`
@@ -111,7 +99,6 @@ export default (app: BaseElysia) =>
                 name: postRow.author_name,
                 nickname: postRow.author_nickname,
                 profileImageURLs: postRow.author_profileImageURLs,
-                isFollowing: postRow.author_isFollowing === 1 || undefined,
               },
             }),
           ...(postRow.referredPost_id && {
@@ -136,10 +123,6 @@ export default (app: BaseElysia) =>
                 }),
             },
           }),
-          likedByMe: postRow.likedByMe === 1 || undefined,
-          likeCount: removeZero(postRow.likeCount),
-          commentCount: removeZero(postRow.commentCount),
-          repostCount: removeZero(postRow.repostCount),
         }),
       )
 
@@ -161,6 +144,7 @@ export default (app: BaseElysia) =>
       },
     },
   )
+}
 
 export type PostRow = {
   id: string
@@ -176,7 +160,6 @@ export type PostRow = {
   author_name: string | null
   author_nickname: string | null
   author_profileImageURLs: string[] | null
-  author_isFollowing: 0 | 1
   referredPost_id: string | null
   referredPost_createdAt: Date | null
   referredPost_updatedAt: Date | null
@@ -190,10 +173,6 @@ export type PostRow = {
   referredPostAuthor_name: string | null
   referredPostAuthor_nickname: string | null
   referredPostAuthor_profileImageURLs: string[] | null
-  likedByMe: 0 | 1
-  likeCount: string
-  commentCount: string
-  repostCount: string
 }
 
 const post = {
@@ -217,20 +196,10 @@ const post = {
   ),
 }
 
-const statistics = {
-  likedByMe: t.Optional(t.Literal(true)),
-  likeCount: t.Optional(t.String()),
-  commentCount: t.Optional(t.String()),
-  repostCount: t.Optional(t.String()),
-}
-
 const schemaGETPostId = t.Object({
   ...post,
-  ...statistics,
   referredPost: t.Optional(t.Object(post)),
-  parentPosts: t.Optional(
-    t.Array(t.Object({ ...post, ...statistics, referredPost: t.Optional(t.Object(post)) })),
-  ),
+  parentPosts: t.Optional(t.Array(t.Object({ ...post, referredPost: t.Optional(t.Object(post)) }))),
 })
 
 export type GETPostId = Static<typeof schemaGETPostId>

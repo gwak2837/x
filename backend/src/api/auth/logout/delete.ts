@@ -1,6 +1,6 @@
-import { NotFoundError, type Static, t } from 'elysia'
+import type { BaseElysia } from '@/index'
 
-import type { BaseElysia } from '../../..'
+import { NotFoundError, type Static, t } from 'elysia'
 
 export default function DELETEAuthLogout(app: BaseElysia) {
   return app.delete(

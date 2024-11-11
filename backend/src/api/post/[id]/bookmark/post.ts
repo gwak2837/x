@@ -1,8 +1,7 @@
+import type { BaseElysia } from '@/index'
+
+import { isValidPostgresBigInt } from '@/util'
 import { NotFoundError, type Static, t } from 'elysia'
-
-import type { BaseElysia } from '../../../..'
-
-import { isValidPostgresBigInt } from '../../../../util'
 
 export default function POSTPostIdBookmark(app: BaseElysia) {
   return app.post(

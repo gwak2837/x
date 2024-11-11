@@ -1,14 +1,12 @@
+import type { BaseElysia } from '@/index'
 import type { PostgresError } from 'postgres'
 
+import { BBATON_CLIENT_ID, BBATON_CLIENT_SECRET, BBATON_REDIRECT_URI } from '@/constants'
+import { OAuthProvider } from '@/model/OAuth'
+import { PostgresErrorCode } from '@/plugin/postgres'
+import { TokenType, signJWT } from '@/util/jwt'
+import { generateRandomNickname } from '@/util/nickname'
 import { type Static, t } from 'elysia'
-
-import type { BaseElysia } from '../../..'
-
-import { BBATON_CLIENT_ID, BBATON_CLIENT_SECRET, BBATON_REDIRECT_URI } from '../../../constants'
-import { OAuthProvider } from '../../../model/OAuth'
-import { PostgresErrorCode } from '../../../plugin/postgres'
-import { TokenType, signJWT } from '../../../util/jwt'
-import { generateRandomNickname } from '../../../util/nickname'
 
 export default function POSTAuthBBaton(app: BaseElysia) {
   return app.post(

@@ -52,10 +52,9 @@ export default [
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': 'warn',
 
-      'import/no-anonymous-default-export': 'off',
-
       'n/no-missing-import': 'off',
       'n/no-unsupported-features/node-builtins': 'off',
+      'n/no-unpublished-import': 'off',
 
       'perfectionist/sort-enums': 'off',
       'perfectionist/sort-objects': 'off',
